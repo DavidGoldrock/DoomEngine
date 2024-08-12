@@ -2,7 +2,7 @@
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 import os
 
-from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS
+from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES
 from entites.LineDef import LineDef
 from entites.Thing import Thing
 from entites.Lump import Lump
@@ -55,3 +55,5 @@ if __name__ == "__main__":
     # print(SIDEDEFS(br,level1Lumps))
     # print((VERTEXES(br,level1Lumps)))
     # print((SEGS(br,level1Lumps)))
+    # print((SSECTORS(br,level1Lumps)))
+    print((NODES(br,level1Lumps)))

@@ -1,7 +1,9 @@
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 from entites.LineDef import LineDef
+from entites.Node import Node
 from entites.Seg import Seg
 from entites.SideDef import SideDef
+from entites.SubSector import SubSector
 from entites.Thing import Thing
 from entites.Lump import Lump
 import numpy as np
@@ -81,8 +83,8 @@ THINGS
 """
 
 
-def THINGS(br, levelLumps: list[Lump]):
-    _, levelThingLump = findInLumpArray(levelLumps, "THINGS")
+def THINGS(br, levelLump: list[Lump]):
+    _, levelThingLump = findInLumpArray(levelLump, "THINGS")
     data = br.readLumpData(levelThingLump)
     br2 = ConsecutiveBytearrayReader(data)
     levelThings = []
@@ -106,8 +108,8 @@ LINEDEFS
 """
 
 
-def LINEDEFS(br, levelLumps: list[Lump]):
-    _, levelLineDefLump = findInLumpArray(levelLumps, "LINEDEFS")
+def LINEDEFS(br, levelLump: list[Lump]):
+    _, levelLineDefLump = findInLumpArray(levelLump, "LINEDEFS")
     data = br.readLumpData(levelLineDefLump)
     br2 = ConsecutiveBytearrayReader(data)
     levelLineDefs = []
@@ -141,8 +143,8 @@ SIDEDEFS
 """
 
 
-def SIDEDEFS(br, levelLumps: list[Lump]):
-    _, levelSideDefLump = findInLumpArray(levelLumps, "SIDEDEFS")
+def SIDEDEFS(br, levelLump: list[Lump]):
+    _, levelSideDefLump = findInLumpArray(levelLump, "SIDEDEFS")
     data = br.readLumpData(levelSideDefLump)
     br2 = ConsecutiveBytearrayReader(data)
     levelSideDefs = []
@@ -164,8 +166,8 @@ VERTEXES
 """
 
 
-def VERTEXES(br, levelLumps: list[Lump]):
-    _, levelVertexsLump = findInLumpArray(levelLumps, "VERTEXES")
+def VERTEXES(br, levelLump: list[Lump]):
+    _, levelVertexsLump = findInLumpArray(levelLump, "VERTEXES")
     data = br.readLumpData(levelVertexsLump)
     br2 = ConsecutiveBytearrayReader(data)
     levelVertexes = []
@@ -180,8 +182,8 @@ SEGS
 """
 
 
-def SEGS(br, levelLumps: list[Lump]):
-    _, levelSegsLump = findInLumpArray(levelLumps, "SEGS")
+def SEGS(br, levelLump: list[Lump]):
+    _, levelSegsLump = findInLumpArray(levelLump, "SEGS")
     data = br.readLumpData(levelSegsLump)
     br2 = ConsecutiveBytearrayReader(data)
     levelSegs = []
@@ -195,3 +197,53 @@ def SEGS(br, levelLumps: list[Lump]):
 
         levelSegs.append(Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
     return levelSegs
+
+"""
+SSECTORS
+"""
+
+
+def SSECTORS(br, levelLump: list[Lump]):
+    _, levelSsectorsLump = findInLumpArray(levelLump, "SSECTORS")
+    data = br.readLumpData(levelSsectorsLump)
+    br2 = ConsecutiveBytearrayReader(data)
+    levelSsectors = []
+    for i in range(levelSsectorsLump.size // 4):
+        segCount  = br2.readBytes(2, int)
+        firstSegNumber = br2.readBytes(2, int)
+
+        levelSsectors.append(SubSector(segCount, firstSegNumber))
+        print(levelSsectors[i])
+    return levelSsectors
+
+"""
+NODES
+"""
+
+def NODES(br, levelLump: list[Lump]):
+    _, levelNodesLump = findInLumpArray(levelLump, "NODES")
+    data = br.readLumpData(levelNodesLump)
+    br2 = ConsecutiveBytearrayReader(data)
+    levelNodes = []
+    for i in range(levelNodesLump.size // 28):
+        x = br2.readBytes(2, int)
+        y = br2.readBytes(2, int)
+
+        deltaX = br2.readBytes(2, int)
+        deltaY = br2.readBytes(2, int)
+
+        rightBoundingBoxTop = br2.readBytes(2, int)
+        rightBoundingBoxBottom = br2.readBytes(2, int)
+        rightBoundingBoxLeft = br2.readBytes(2, int)
+        rightBoundingBoxRight = br2.readBytes(2, int)
+
+        leftBoundingBoxTop = br2.readBytes(2, int)
+        leftBoundingBoxBottom = br2.readBytes(2, int)
+        leftBoundingBoxLeft = br2.readBytes(2, int)
+        leftBoundingBoxRight = br2.readBytes(2, int)
+
+        rightChild = br2.readBytes(2, int)
+        leftChild = br2.readBytes(2, int)
+
+        levelNodes.append(Node(x, y, deltaX, deltaY, rightBoundingBoxTop, rightBoundingBoxBottom, rightBoundingBoxLeft, rightBoundingBoxRight, leftBoundingBoxTop, leftBoundingBoxBottom, leftBoundingBoxLeft, leftBoundingBoxRight, rightChild, leftChild))
+    return levelNodes
