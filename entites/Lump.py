@@ -5,6 +5,6 @@ class Lump:
         self.name = name
 
     def __str__(self):
-        return f"{self.filepos=}, {self.size=}, {self.name=}"
+        return f"{self.name=}, {self.filepos=}, {self.size=}"
 
     __repr__ = __str__

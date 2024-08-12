@@ -1,5 +1,6 @@
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 from entites.LineDef import LineDef
+from entites.Seg import Seg
 from entites.SideDef import SideDef
 from entites.Thing import Thing
 from entites.Lump import Lump
@@ -168,9 +169,29 @@ def VERTEXES(br, levelLumps: list[Lump]):
     data = br.readLumpData(levelVertexsLump)
     br2 = ConsecutiveBytearrayReader(data)
     levelVertexes = []
-    for i in range(levelVertexsLump.size // 30):
+    for i in range(levelVertexsLump.size // 4):
         x = br2.readBytes(2, int)
         y = br2.readBytes(2, int)
         levelVertexes.append(np.array([x, y]))
-        print(levelVertexes[i])
     return levelVertexes
+
+"""
+SEGS
+"""
+
+
+def SEGS(br, levelLumps: list[Lump]):
+    _, levelSegsLump = findInLumpArray(levelLumps, "SEGS")
+    data = br.readLumpData(levelSegsLump)
+    br2 = ConsecutiveBytearrayReader(data)
+    levelSegs = []
+    for i in range(levelSegsLump.size // 12):
+        startingVertexNumber = br2.readBytes(2, int)
+        endingVertexNumber = br2.readBytes(2, int)
+        angle = br2.readBytes(2, int)
+        lineDefNumber = br2.readBytes(2, int)
+        directionSameAsLineDef = br2.readBytes(2, int) == 1
+        offset = br2.readBytes(2, int)
+
+        levelSegs.append(Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
+    return levelSegs
