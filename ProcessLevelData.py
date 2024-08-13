@@ -1,6 +1,7 @@
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 from entites.LineDef import LineDef
 from entites.Node import Node
+from entites.Sector import Sector
 from entites.Seg import Seg
 from entites.SideDef import SideDef
 from entites.SubSector import SubSector
@@ -13,6 +14,10 @@ def findInLumpArray(arr, tagname):
     for index, element in enumerate(arr):
         if element.name == tagname:
             return index, element
+
+
+def bitAtLocation(byte: int, n: int):
+    return (byte & (2 ** n) >> n) == 1
 
 
 """
@@ -47,7 +52,7 @@ def VGA_16BIT_COLOR_MEMORY_TO_STRING(ansicode: bytes | bytearray) -> str:
         code = ansicode[i + 1]
         foreground = code & 15
         background = (code & 112) >> 4
-        isBlinking = ((code & 128) >> 7) == 1
+        isBlinking = bitAtLocation(code, 7)
         # print(f"letter: {letter} code : {code} foreground : {foreground} background : {background} isBlinking : {isBlinking}")
         if foreground != lastForeground:
             foregroundCode = CodeDict[foreground]
@@ -94,11 +99,11 @@ def THINGS(br, levelLump: list[Lump]):
         angle = br2.readBytes(2, int)
         doomType = br2.readBytes(2, int)
         flags = br2.readBytes(2, int)
-        sl12 = (flags & 1) == 1
-        sl3 = ((flags & 2) >> 1) == 1
-        sl45 = ((flags & 4) >> 2) == 1
-        deaf = ((flags & 8) >> 3) == 1
-        nsp = ((flags & 16) >> 4) == 1
+        sl12 = bitAtLocation(flags, 0)
+        sl3 = bitAtLocation(flags, 1)
+        sl45 = bitAtLocation(flags, 2)
+        deaf = bitAtLocation(flags, 3)
+        nsp = bitAtLocation(flags, 4)
         levelThings.append(Thing(x, y, angle, doomType, flags, sl12, sl3, sl45, deaf, nsp))
     return levelThings
 
@@ -121,20 +126,18 @@ def LINEDEFS(br, levelLump: list[Lump]):
         sTag = br2.readBytes(2, int)
         fSideDef = br2.readBytes(2, int)
         bSideDef = br2.readBytes(2, int)
-        blocksPM = (flags & 1) == 1
-        blocksM = ((flags & 2) >> 1) == 1
-        ts = ((flags & 4) >> 2) == 1
-        upperTextureUnpegged = ((flags & 8) >> 3) == 1
-        lowerTextureUnpegged = ((flags & 16) >> 4) == 1
-        secret = ((flags & 32) >> 5) == 1
-        blocksSound = ((flags & 64) >> 6) == 1
-        neverAutoMap = ((flags & 128) >> 7) == 1
-        alwaysAutoMap = ((flags & 256) >> 8) == 1
+        blocksPM = bitAtLocation(flags, 0)
+        blocksM = bitAtLocation(flags, 1)
+        ts = bitAtLocation(flags, 2)
+        upperTextureUnpegged = bitAtLocation(flags, 3)
+        lowerTextureUnpegged = bitAtLocation(flags, 4)
+        secret = bitAtLocation(flags, 5)
+        blocksSound = bitAtLocation(flags, 6)
+        neverAutoMap = bitAtLocation(flags, 7)
+        alwaysAutoMap = bitAtLocation(flags, 8)
         levelLineDefs.append(
             LineDef(startVertex, endVertex, flags, sType, sTag, fSideDef, bSideDef, blocksPM, blocksM, ts,
                     upperTextureUnpegged, lowerTextureUnpegged, secret, blocksSound, neverAutoMap, alwaysAutoMap))
-        print(levelLineDefs[i])
-        print()
     return levelLineDefs
 
 
@@ -157,7 +160,6 @@ def SIDEDEFS(br, levelLump: list[Lump]):
         sectorNumber = br2.readBytes(2, int)
         levelSideDefs.append(
             SideDef(x, y, upperTextureName, lowerTextureName, middleTextureName, sectorNumber))
-        print(levelSideDefs[i])
     return levelSideDefs
 
 
@@ -177,6 +179,7 @@ def VERTEXES(br, levelLump: list[Lump]):
         levelVertexes.append(np.array([x, y]))
     return levelVertexes
 
+
 """
 SEGS
 """
@@ -195,8 +198,10 @@ def SEGS(br, levelLump: list[Lump]):
         directionSameAsLineDef = br2.readBytes(2, int) == 1
         offset = br2.readBytes(2, int)
 
-        levelSegs.append(Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
+        levelSegs.append(
+            Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
     return levelSegs
+
 
 """
 SSECTORS
@@ -209,16 +214,17 @@ def SSECTORS(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelSsectors = []
     for i in range(levelSsectorsLump.size // 4):
-        segCount  = br2.readBytes(2, int)
+        segCount = br2.readBytes(2, int)
         firstSegNumber = br2.readBytes(2, int)
 
         levelSsectors.append(SubSector(segCount, firstSegNumber))
-        print(levelSsectors[i])
     return levelSsectors
+
 
 """
 NODES
 """
+
 
 def NODES(br, levelLump: list[Lump]):
     _, levelNodesLump = findInLumpArray(levelLump, "NODES")
@@ -245,5 +251,52 @@ def NODES(br, levelLump: list[Lump]):
         rightChild = br2.readBytes(2, int)
         leftChild = br2.readBytes(2, int)
 
-        levelNodes.append(Node(x, y, deltaX, deltaY, rightBoundingBoxTop, rightBoundingBoxBottom, rightBoundingBoxLeft, rightBoundingBoxRight, leftBoundingBoxTop, leftBoundingBoxBottom, leftBoundingBoxLeft, leftBoundingBoxRight, rightChild, leftChild))
+        levelNodes.append(Node(x, y, deltaX, deltaY, rightBoundingBoxTop, rightBoundingBoxBottom, rightBoundingBoxLeft,
+                               rightBoundingBoxRight, leftBoundingBoxTop, leftBoundingBoxBottom, leftBoundingBoxLeft,
+                               leftBoundingBoxRight, rightChild, leftChild))
     return levelNodes
+
+
+"""
+SECTORS
+"""
+
+
+def SECTORS(br, levelLump: list[Lump]):
+    _, levelSectorsLump = findInLumpArray(levelLump, "SECTORS")
+    data = br.readLumpData(levelSectorsLump)
+    br2 = ConsecutiveBytearrayReader(data)
+    levelSectors = []
+    for i in range(levelSectorsLump.size // 26):
+        floorHeight = br2.readBytes(2, int)
+        ceilingHeight = br2.readBytes(2, int)
+        floorTextureName = br2.readBytes(8, str).strip("\x00")
+        ceilingTextureName = br2.readBytes(8, str).strip("\x00")
+        lightLevel = br2.readBytes(2, int)
+        specialTag = br2.readBytes(2, int)
+        tagNumber = br2.readBytes(2, int)
+
+        levelSectors.append(
+            Sector(floorHeight, ceilingHeight, floorTextureName, ceilingTextureName, lightLevel, specialTag, tagNumber))
+    return levelSectors
+
+
+"""
+REJECT
+"""
+
+
+def REJECT(br, levelLump: list[Lump]):
+    _, levelRejectLump = findInLumpArray(levelLump, "REJECT")
+    data = br.readLumpData(levelRejectLump)
+    row_size = int(np.sqrt(len(data) * 8))
+    bitCount = 0
+    arr = []
+    while bitCount < levelRejectLump.size * 8:
+        byteIndex = bitCount // 8
+        bitIndex = bitCount % 8
+        arr.append(bitAtLocation(data[byteIndex], bitIndex))
+
+        bitCount += 1
+    matrix = np.array([arr[i:i + row_size] for i in range(0, len(arr), row_size)])
+    return matrix

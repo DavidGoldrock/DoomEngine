@@ -1,8 +1,8 @@
 # from CUDA_Manager import CUDA_Manager
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 import os
-
-from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES
+from PIL import Image
+from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES, SECTORS, REJECT
 from entites.LineDef import LineDef
 from entites.Thing import Thing
 from entites.Lump import Lump
@@ -50,10 +50,12 @@ if __name__ == "__main__":
     index2, level2Lump = findInLumpArray(lumps, "E1M2")
     level1Lumps = lumps[index1 + 1:index2]
     print(level1Lumps)
-    # print(THINGS(br, level1Lumps))
-    # print(LINEDEFS(br, level1Lumps))
-    # print(SIDEDEFS(br,level1Lumps))
-    # print((VERTEXES(br,level1Lumps)))
-    # print((SEGS(br,level1Lumps)))
-    # print((SSECTORS(br,level1Lumps)))
-    print((NODES(br,level1Lumps)))
+    print(f"{len(THINGS(br, level1Lumps))=}")
+    print(f"{len(LINEDEFS(br, level1Lumps))=}")
+    print(f"{len(SIDEDEFS(br,level1Lumps))=}")
+    print(f"{len(VERTEXES(br,level1Lumps))=}")
+    print(f"{len(SEGS(br,level1Lumps))=}")
+    print(f"{len(SSECTORS(br,level1Lumps))=}")
+    print(f"{len(NODES(br,level1Lumps))=}")
+    print(f"{len(SECTORS(br,level1Lumps))=}")
+    print(f"{len(REJECT(br,level1Lumps))=}")
