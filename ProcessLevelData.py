@@ -1,4 +1,5 @@
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
+from entites.BlockMap import BlockMap
 from entites.LineDef import LineDef
 from entites.Node import Node
 from entites.Sector import Sector
@@ -16,8 +17,10 @@ def findInLumpArray(arr, tagname):
             return index, element
 
 
-def bitAtLocation(byte: int, n: int):
-    return (byte & (2 ** n) >> n) == 1
+def bitAtLocation(byte: int, n: int): return (byte & (2 ** n) >> n) == 1
+
+
+def matricise(arr, row_size): return [arr[i:i + row_size] for i in range(0, len(arr), row_size)]
 
 
 """
@@ -289,7 +292,7 @@ REJECT
 def REJECT(br, levelLump: list[Lump]):
     _, levelRejectLump = findInLumpArray(levelLump, "REJECT")
     data = br.readLumpData(levelRejectLump)
-    row_size = int(np.sqrt(len(data) * 8))
+    rowSize = int(np.sqrt(len(data) * 8))
     bitCount = 0
     arr = []
     while bitCount < levelRejectLump.size * 8:
@@ -298,5 +301,53 @@ def REJECT(br, levelLump: list[Lump]):
         arr.append(bitAtLocation(data[byteIndex], bitIndex))
 
         bitCount += 1
-    matrix = np.array([arr[i:i + row_size] for i in range(0, len(arr), row_size)])
+    matrix = np.array(matricise(arr, rowSize))
     return matrix
+
+"""
+BLOCKMAP
+"""
+
+def BLOCKMAP(br, levelLump: list[Lump]):
+    _, levelBlockMapLump = findInLumpArray(levelLump, "BLOCKMAP")
+    data = br.readLumpData(levelBlockMapLump)
+    br2 = ConsecutiveBytearrayReader(data)
+
+    gridX = br2.readBytes(2, int)
+    gridY = br2.readBytes(2, int)
+    columnNumber = br2.readBytes(2, int)
+    rowNumber = br2.readBytes(2, int)
+
+    offsets = []
+
+    for i in range(columnNumber * rowNumber):
+        offsets.append(br2.readBytes(2, int) * 2)
+
+    lineDefIndexByBlock = []
+
+    for i in range(columnNumber * rowNumber):
+        offset = offsets[i]
+        br2.pointer = offset
+        lineDefIndexByBlock.append([])
+
+        lineDefIndex = br2.readBytes(2)
+        assert lineDefIndex == b"\x00\x00"
+        lineDefIndex = br2.readBytes(2)
+        while lineDefIndex != b"\xff\xff":
+            lineDefIndexByBlock[i].append(int.from_bytes(lineDefIndex, 'little'))
+            lineDefIndex = br2.readBytes(2)
+    return BlockMap(gridX, gridY, columnNumber, rowNumber, offsets, lineDefIndexByBlock)
+
+    # for i in range(levelBlockMapLump.size // 10):
+    #     x = br2.readBytes(2, int)
+    #     y = br2.readBytes(2, int)
+    #     angle = br2.readBytes(2, int)
+    #     doomType = br2.readBytes(2, int)
+    #     flags = br2.readBytes(2, int)
+    #     sl12 = bitAtLocation(flags, 0)
+    #     sl3 = bitAtLocation(flags, 1)
+    #     sl45 = bitAtLocation(flags, 2)
+    #     deaf = bitAtLocation(flags, 3)
+    #     nsp = bitAtLocation(flags, 4)
+    #     levelThings.append(Thing(x, y, angle, doomType, flags, sl12, sl3, sl45, deaf, nsp))
+    # return levelThings

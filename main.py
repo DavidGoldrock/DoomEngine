@@ -2,7 +2,8 @@
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 import os
 from PIL import Image
-from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES, SECTORS, REJECT
+from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES, SECTORS, REJECT, \
+    BLOCKMAP
 from entites.LineDef import LineDef
 from entites.Thing import Thing
 from entites.Lump import Lump
@@ -59,3 +60,4 @@ if __name__ == "__main__":
     print(f"{len(NODES(br,level1Lumps))=}")
     print(f"{len(SECTORS(br,level1Lumps))=}")
     print(f"{len(REJECT(br,level1Lumps))=}")
+    print(f"{(BLOCKMAP(br,level1Lumps))=}")
