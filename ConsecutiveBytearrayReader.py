@@ -27,7 +27,7 @@ class ConsecutiveBytearrayReader:
         name = self.readBytes(8, str).strip(b"\x00".decode())
         return Lump(filepos, size, name)
 
-    def readLumpData(self, l:Lump):
+    def readLumpData(self, l: Lump):
         pb = self.pointer
         self.pointer = l.filepos
         ret = self.readBytes(l.size)

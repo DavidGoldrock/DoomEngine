@@ -3,7 +3,7 @@ from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 import os
 from PIL import Image
 from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES, SECTORS, REJECT, \
-    BLOCKMAP
+    BLOCKMAP, convert_playpal_to_palettes, convert_doom_picture_to_png
 from entites.LineDef import LineDef
 from entites.Thing import Thing
 from entites.Lump import Lump
@@ -61,3 +61,14 @@ if __name__ == "__main__":
     print(f"{len(SECTORS(br,level1Lumps))=}")
     print(f"{len(REJECT(br,level1Lumps))=}")
     print(f"{(BLOCKMAP(br,level1Lumps))=}")
+    palettes = convert_playpal_to_palettes(br.readLumpData(findInLumpArray(lumps,"PLAYPAL")[1]))
+    convert_doom_picture_to_png(br.readLumpData(findInLumpArray(lumps,"TITLEPIC")[1]),palettes[0], "output.png")
+    # lumpSet = set()
+    # for lump in lumps:
+    #     if lump.name not in ["THINGS", "LINEDEFS", "SIDEDEFS", "VERTEXES", "SEGS", "SSECTORS", "NODES", "SECTORS", "REJECT"]:
+    #         lumpSet.add(lump.name)
+    # l = list(lumpSet)
+    # l.sort()
+    # for lump in l:
+    #     print(lump, end=", ")
+

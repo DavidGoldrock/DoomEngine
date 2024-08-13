@@ -1,3 +1,7 @@
+import struct
+
+from PIL import Image
+
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 from entites.BlockMap import BlockMap
 from entites.LineDef import LineDef
@@ -304,9 +308,11 @@ def REJECT(br, levelLump: list[Lump]):
     matrix = np.array(matricise(arr, rowSize))
     return matrix
 
+
 """
 BLOCKMAP
 """
+
 
 def BLOCKMAP(br, levelLump: list[Lump]):
     _, levelBlockMapLump = findInLumpArray(levelLump, "BLOCKMAP")
@@ -338,16 +344,67 @@ def BLOCKMAP(br, levelLump: list[Lump]):
             lineDefIndex = br2.readBytes(2)
     return BlockMap(gridX, gridY, columnNumber, rowNumber, offsets, lineDefIndexByBlock)
 
-    # for i in range(levelBlockMapLump.size // 10):
-    #     x = br2.readBytes(2, int)
-    #     y = br2.readBytes(2, int)
-    #     angle = br2.readBytes(2, int)
-    #     doomType = br2.readBytes(2, int)
-    #     flags = br2.readBytes(2, int)
-    #     sl12 = bitAtLocation(flags, 0)
-    #     sl3 = bitAtLocation(flags, 1)
-    #     sl45 = bitAtLocation(flags, 2)
-    #     deaf = bitAtLocation(flags, 3)
-    #     nsp = bitAtLocation(flags, 4)
-    #     levelThings.append(Thing(x, y, angle, doomType, flags, sl12, sl3, sl45, deaf, nsp))
-    # return levelThings
+
+def convert_playpal_to_palettes(playpal_data):
+    # Length of each palette in bytes
+    palette_size = 768
+    # Number of palettes in the lump
+    num_palettes = len(playpal_data) // palette_size
+
+    # Initialize list to hold palettes
+    palettes = []
+
+    for i in range(num_palettes):
+        palette_start_index = i * palette_size
+        palette = playpal_data[palette_start_index:palette_start_index + palette_size]
+        palettes.append(palette)
+
+    return palettes
+
+def convert_doom_picture_to_png(doom_image_data, palette_data, output_filename):
+    # Initialize the reader
+    br = ConsecutiveBytearrayReader(doom_image_data)
+
+    # Read image metadata
+    width = br.readBytes(2, int)
+    height = br.readBytes(2, int)
+    left = br.readBytes(2, int)
+    top = br.readBytes(2, int)
+
+    # Create an image with 8-bit color depth
+    image = Image.new('P', (width, height))
+
+    # Set the palette with DOOM's palette data
+    palette = [tuple(palette_data[i:i + 3]) for i in range(0, len(palette_data), 3)]
+    image.putpalette([c for color in palette for c in color] + [0] * (256 - len(palette)))
+
+    # Set the background color to cyan (index 1 in palette)
+    cyan_index = 1
+    image.paste(cyan_index, [0, 0, width, height])
+
+    # Create column array
+    column_array = [br.readBytes(4, int) for _ in range(width)]
+
+    # Read pixel data from each column
+    for i in range(width):
+        # Seek to the start of the column data
+        br.pointer = column_array[i]
+
+        while True:
+            rowstart = br.readBytes(1, int)
+            if rowstart == 255:
+                break
+
+            pixel_count = br.readBytes(1, int)
+            br.readBytes(1)  # Read and ignore the dummy value
+
+            for j in range(pixel_count):
+                pixel = br.readBytes(1, int)
+                # Write Pixel to the image (column i, row rowstart + j)
+                image.putpixel((i, rowstart + j), pixel)
+
+            # Read and ignore the dummy value
+            br.readBytes(1)
+
+    # Save the image as PNG
+    image.show()
