@@ -1,4 +1,4 @@
-#ifndef STRUCT SUB_SECTOR_H
+#ifndef SUB_SECTOR_H
 #define STRUCT SUB_SECTOR_H
 
 #include <cstdint>

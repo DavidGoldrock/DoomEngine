@@ -1,3 +1,4 @@
+#include "../headers/Thing.h"
 #include <cstdint>
 #include <iostream>
 

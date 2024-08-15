@@ -1,7 +1,8 @@
+#include "../headers/Lump.h"
 #include <cstdint>
 #include <iostream>
 
-struct Lump {
+typedef struct Lump  {
     uint16_t filepos;
     uint16_t size;
     char* name;
@@ -18,4 +19,4 @@ struct Lump {
         os << "}";
         return os;
     }
-};
+} Lump;

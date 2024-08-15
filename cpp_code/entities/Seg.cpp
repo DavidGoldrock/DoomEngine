@@ -1,3 +1,4 @@
+#include "../headers/Seg.h"
 #include <cstdint>
 #include <iostream>
 

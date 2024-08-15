@@ -1,4 +1,4 @@
-#ifndef STRUCT SEG_H
+#ifndef SEG_H
 #define STRUCT SEG_H
 
 #include <cstdint>

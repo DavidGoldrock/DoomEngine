@@ -1,5 +1,5 @@
-#ifndef STRUCT BLOCKMAP_H
-#define STRUCT BLOCKMAP_H
+#ifndef BLOCKMAP_H
+#define BLOCKMAP_H
 
 #include <cstdint>
 #include <iostream>

@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstring> // for std::memcpy
+#include "Lump.h"
 
 class ConsecutiveBytearrayReader {
 public:

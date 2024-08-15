@@ -1,3 +1,4 @@
+#include "../headers/SideDef.h"
 #include <cstdint>
 #include <iostream>
 

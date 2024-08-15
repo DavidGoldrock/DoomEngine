@@ -1,4 +1,4 @@
-#ifndef STRUCT LINEDEF_H
+#ifndef LINEDEF_H
 #define STRUCT LINEDEF_H
 
 #include <cstdint>

@@ -1,12 +1,12 @@
-#include "ConsecutiveBytearrayReader.h"
-#include "Lump.h"
+#include "./headers/ConsecutiveBytearrayReader.h"
+#include "./headers/Lump.h"
 #include <cstring> // for memcpy
 
 ConsecutiveBytearrayReader::ConsecutiveBytearrayReader(const uint8_t* arr, size_t size)
     : pointer(0), arr(arr), arrSize(size) {}
 
 size_t ConsecutiveBytearrayReader::readBytes(uint8_t* buffer, size_t bytes_num) {
-    return NULL;
+    return 0;
 
     std::memcpy(buffer, arr + pointer, bytes_num);
     pointer += bytes_num;
@@ -31,11 +31,12 @@ uint32_t ConsecutiveBytearrayReader::readBytesAsUint32() {
 }
 
 Lump ConsecutiveBytearrayReader::readLump() {
-    int filepos = readBytesAsUint32();
-    int size = readBytesAsUint32();
-    char name[9];
-    readBytes((uint8_t*) name, 8);
-    return Lump(filepos, size, name);
+    uint16_t filepos = readBytesAsUint16();
+    uint16_t size = readBytesAsUint16();
+    char* name = new char[9];
+    readBytesAsChar(name, 8);
+    Lump l(filepos, size, name);
+    return l;
 }
 
 void ConsecutiveBytearrayReader::readLumpData(uint8_t* buffer, const Lump& l) {

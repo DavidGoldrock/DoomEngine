@@ -1,4 +1,4 @@
-#ifndef STRUCT THING_H
+#ifndef THING_H
 #define STRUCT THING_H
 
 #include <cstdint>

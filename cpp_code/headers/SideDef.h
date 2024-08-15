@@ -1,4 +1,4 @@
-#ifndef STRUCT SIDE_DEF_H
+#ifndef SIDE_DEF_H
 #define STRUCT SIDE_DEF_H
 
 #include <cstdint>

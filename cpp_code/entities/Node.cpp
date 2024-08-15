@@ -1,3 +1,4 @@
+#include "../headers/Node.h"
 #include <cstdint>
 #include <iostream>
 

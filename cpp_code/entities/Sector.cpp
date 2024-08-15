@@ -1,3 +1,4 @@
+#include "../headers/Sector.h"
 #include <cstdint>
 #include <iostream>
 

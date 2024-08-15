@@ -1,3 +1,4 @@
+#include "../headers/BlockMap.h"
 #include <cstdint>
 #include <iostream>
 
