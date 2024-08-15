@@ -62,7 +62,12 @@ if __name__ == "__main__":
     print(f"{len(REJECT(br,level1Lumps))=}")
     print(f"{(BLOCKMAP(br,level1Lumps))=}")
     palettes = convert_playpal_to_palettes(br.readLumpData(findInLumpArray(lumps,"PLAYPAL")[1]))
-    convert_doom_picture_to_png(br.readLumpData(findInLumpArray(lumps,"TITLEPIC")[1]),palettes[0], "output.png")
+    index1 ,spriteStart = findInLumpArray(lumps, "S_START")
+    index2 ,spriteEND = findInLumpArray(lumps, "S_END")
+    for i in range(index1 + 1, index2):
+        convert_doom_picture_to_png(br.readLumpData(lumps[i]), palettes[0], f"./results/output{i}.png")
+    # convert_doom_picture_to_png(br.readLumpData(findInLumpArray(lumps,"TITLEPIC")[1]),palettes[0], "output.png")
+
     # lumpSet = set()
     # for lump in lumps:
     #     if lump.name not in ["THINGS", "LINEDEFS", "SIDEDEFS", "VERTEXES", "SEGS", "SSECTORS", "NODES", "SECTORS", "REJECT"]:

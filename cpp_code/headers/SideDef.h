@@ -1,0 +1,21 @@
+#ifndef STRUCT SIDE_DEF_H
+#define STRUCT SIDE_DEF_H
+
+#include <cstdint>
+#include <iostream>
+
+struct SideDef {
+    uint16_t x;
+    uint16_t y;
+    char* upperTextureName;
+    char* lowerTextureName;
+    char* middleTextureName;
+    uint16_t sectorNumber;
+
+    // Constructor
+    SideDef(uint16_t x, uint16_t y, uint16_t sectorNumber);
+
+    friend std::ostream& operator<<(std::ostream& os, const SideDef& obj);
+};
+
+#endif

@@ -106,12 +106,12 @@ def THINGS(br, levelLump: list[Lump]):
         angle = br2.readBytes(2, int)
         doomType = br2.readBytes(2, int)
         flags = br2.readBytes(2, int)
-        sl12 = bitAtLocation(flags, 0)
-        sl3 = bitAtLocation(flags, 1)
-        sl45 = bitAtLocation(flags, 2)
+        skillLevel12 = bitAtLocation(flags, 0)
+        skillLevel3 = bitAtLocation(flags, 1)
+        skillLevel45 = bitAtLocation(flags, 2)
         deaf = bitAtLocation(flags, 3)
-        nsp = bitAtLocation(flags, 4)
-        levelThings.append(Thing(x, y, angle, doomType, flags, sl12, sl3, sl45, deaf, nsp))
+        notSinglePlayer = bitAtLocation(flags, 4)
+        levelThings.append(Thing(x, y, angle, doomType, flags, skillLevel12, skillLevel3, skillLevel45, deaf, notSinglePlayer))
     return levelThings
 
 
@@ -361,6 +361,7 @@ def convert_playpal_to_palettes(playpal_data):
 
     return palettes
 
+
 def convert_doom_picture_to_png(doom_image_data, palette_data, output_filename):
     # Initialize the reader
     br = ConsecutiveBytearrayReader(doom_image_data)
@@ -407,4 +408,4 @@ def convert_doom_picture_to_png(doom_image_data, palette_data, output_filename):
             br.readBytes(1)
 
     # Save the image as PNG
-    image.show()
+    image.save(output_filename)
