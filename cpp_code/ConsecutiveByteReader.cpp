@@ -30,13 +30,16 @@ uint32_t ConsecutiveBytearrayReader::readBytesAsUint32() {
     return value;
 }
 
+Lump createLump(uint16_t filepos, uint16_t size, char* name) {
+    return Lump(filepos,size,name);
+}
+
 Lump ConsecutiveBytearrayReader::readLump() {
     uint16_t filepos = readBytesAsUint16();
     uint16_t size = readBytesAsUint16();
     char* name = new char[9];
     readBytesAsChar(name, 8);
-    Lump l(filepos, size, name);
-    return l;
+    return createLump(filepos,size,name);
 }
 
 void ConsecutiveBytearrayReader::readLumpData(uint8_t* buffer, const Lump& l) {

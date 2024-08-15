@@ -13,8 +13,9 @@ struct SideDef {
     uint16_t sectorNumber;
 
     // Constructor
-    SideDef(uint16_t x, uint16_t y, uint16_t sectorNumber);
-
+    SideDef(uint16_t x, uint16_t y, uint16_t sectorNumber)
+        : x(x), y(y), sectorNumber(sectorNumber)
+    {}
     friend std::ostream& operator<<(std::ostream& os, const SideDef& obj);
 };
 

@@ -9,7 +9,9 @@ struct SubSector {
     uint16_t firstSegNumber;
 
     // Constructor
-    SubSector(uint16_t segCount, uint16_t firstSegNumber);
+    SubSector(uint16_t segCount, uint16_t firstSegNumber)
+        : segCount(segCount), firstSegNumber(firstSegNumber)
+    {}
 
     friend std::ostream& operator<<(std::ostream& os, const SubSector& obj);
 };
