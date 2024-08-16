@@ -8,10 +8,10 @@
 struct Lump {
     uint16_t filepos;
     uint16_t size;
-    char* name;
+    std::string name;
 
     // Constructor
-    Lump(uint16_t filepos, uint16_t size, const char* name);
+    Lump(uint16_t filepos, uint16_t size, std::string name);
 
     Lump();
 

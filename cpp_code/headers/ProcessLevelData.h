@@ -5,7 +5,7 @@
 #include "Thing.h"
 #include "ConsecutiveBytearrayReader.h"
 
-int findInLumpArray(Lump* arr, size_t arrSize, char* tagname);
+int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
     
 bool bitAtLocation(size_t byte, size_t n);
 
