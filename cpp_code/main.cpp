@@ -64,13 +64,16 @@ int main() {
     std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl; 
 
     br->pointer = infotableofs;
-    Lump* lumps = (Lump*) malloc(numlumps * sizeof(Lump));
+    Lump* lumps = new Lump[numlumps];
     for(int i = 0; i < numlumps; i++) {
         lumps[i] = br->readLump();
-        std::cout << "Loaded <" << lumps[i] << ">" << std::endl;
+        std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
     }
+    std::cout << "Finished loading" << std::endl;
 
-    delete[] lumps;
+
+    std::cout << "Deleting lumps" << std::endl;
+    delete lumps;
     delete[] header;
     delete[] data;
     header = nullptr;

@@ -18,6 +18,12 @@ struct Lump {
         std::strcpy(this->name, name);
     }
 
+    Lump() {
+        this->filepos = 0;
+        this->size = 0;
+        this->name = nullptr;
+    }
+
     // Copy constructor
     Lump(const Lump& other)
     : filepos(other.filepos), size(other.size) {
@@ -31,7 +37,7 @@ struct Lump {
         if (this != &other) { // self-assignment check
             // Free existing resource
             delete[] name;
-
+            name = nullptr;
             // Copy data from other
             filepos = other.filepos;
             size = other.size;
@@ -43,7 +49,16 @@ struct Lump {
 
     // Destructor
     ~Lump() {
-        delete[] name;
+        try
+        {
+            delete[] name;
+        }
+        catch(const std::exception& e)
+        {
+            std::cerr << e.what() << '\n';
+        }
+        
+        name = nullptr;
     }
 
     friend std::ostream& operator<<(std::ostream& os, const Lump& obj) {

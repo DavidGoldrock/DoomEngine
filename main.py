@@ -27,7 +27,7 @@ def getLumpsData(br):
     lumps = []
     for i in range(numlumps):
         lumps.append(br.readLump())
-        print(f"loaded <{lumps[i].name}>")
+        print(f"loaded Lump[{i + 1}] out of [{numlumps}] <{lumps[i].name}>")
     return lumps
 
 
