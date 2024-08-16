@@ -17,38 +17,11 @@ struct Thing {
     bool notSinglePlayer;
 
     // Constructor
-    Thing(uint16_t x, uint16_t y, uint16_t angle, uint16_t doomType, uint16_t flags, bool skillLevel12, bool skillLevel3, bool skillLevel45, bool deaf, bool notSinglePlayer)
-        : x(x), y(y), angle(angle), doomType(doomType), flags(flags), skillLevel12(skillLevel12), skillLevel3(skillLevel3), skillLevel45(skillLevel45), deaf(deaf), notSinglePlayer(notSinglePlayer)
-    {}
+    Thing(uint16_t x, uint16_t y, uint16_t angle, uint16_t doomType, uint16_t flags, bool skillLevel12, bool skillLevel3, bool skillLevel45, bool deaf, bool notSinglePlayer);
 
-    Thing() {
-        this->x = 0;
-        this->y = 0;
-        this->angle = 0;
-        this->doomType = 0;
-        this->flags = 0;
-        this->skillLevel12 = false;
-        this->skillLevel3 = false;
-        this->skillLevel45 = false;
-        this->deaf = false;
-        this->notSinglePlayer = false;
-    }
+    Thing();
 
-    friend std::ostream& operator<<(std::ostream& os, const Thing& obj) {
-        os << "Thing{ ";
-        os << "x: " << obj.x << " ";
-        os << "y: " << obj.y << " ";
-        os << "angle: " << obj.angle << " ";
-        os << "doomType: " << obj.doomType << " ";
-        os << "flags: " << obj.flags << " ";
-        os << "skillLevel12: " << obj.skillLevel12 << " ";
-        os << "skillLevel3: " << obj.skillLevel3 << " ";
-        os << "skillLevel45: " << obj.skillLevel45 << " ";
-        os << "deaf: " << obj.deaf << " ";
-        os << "notSinglePlayer: " << obj.notSinglePlayer << " ";
-        os << "}";
-        return os;
-    }  
+    friend std::ostream& operator<<(std::ostream& os, const Thing& obj); 
 };
 
 #endif
