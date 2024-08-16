@@ -16,7 +16,14 @@ struct SideDef {
     SideDef(uint16_t x, uint16_t y, uint16_t sectorNumber)
         : x(x), y(y), sectorNumber(sectorNumber)
     {}
-    friend std::ostream& operator<<(std::ostream& os, const SideDef& obj);
+    friend std::ostream& operator<<(std::ostream& os, const SideDef& obj) {
+        os << "SideDef{ ";
+        os << "x: " << obj.x << " ";
+        os << "y: " << obj.y << " ";
+        os << "sectorNumber: " << obj.sectorNumber << " ";
+        os << "}";
+        return os;
+    }
 };
 
 #endif

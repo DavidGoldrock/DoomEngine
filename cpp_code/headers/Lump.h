@@ -46,7 +46,14 @@ struct Lump {
         delete[] name;
     }
 
-    friend std::ostream& operator<<(std::ostream& os, const Lump& obj);
+    friend std::ostream& operator<<(std::ostream& os, const Lump& obj) {
+        os << "Lump{ ";
+        os << "filepos: " << obj.filepos << " ";
+        os << "size: " << obj.size << " ";
+        os << "name: " << (obj.name ? obj.name : "nullptr") << " ";
+        os << "}";
+        return os;
+    }
 };
 
 #endif

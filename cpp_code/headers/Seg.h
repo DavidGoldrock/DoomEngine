@@ -17,7 +17,17 @@ struct Seg {
         : startingVertexNumber(startingVertexNumber), endingVertexNumber(endingVertexNumber), angle(angle), lineDefNumber(lineDefNumber), directionSameAsLineDef(directionSameAsLineDef), offset(offset)
     {}
 
-    friend std::ostream& operator<<(std::ostream& os, const Seg& obj);
+    friend std::ostream& operator<<(std::ostream& os, const Seg& obj) {
+        os << "Seg{ ";
+        os << "startingVertexNumber: " << obj.startingVertexNumber << " ";
+        os << "endingVertexNumber: " << obj.endingVertexNumber << " ";
+        os << "angle: " << obj.angle << " ";
+        os << "lineDefNumber: " << obj.lineDefNumber << " ";
+        os << "directionSameAsLineDef: " << obj.directionSameAsLineDef << " ";
+        os << "offset: " << obj.offset << " ";
+        os << "}";
+        return os;
+    }
 };
 
 #endif

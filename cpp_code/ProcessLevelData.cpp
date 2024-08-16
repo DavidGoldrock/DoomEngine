@@ -18,7 +18,7 @@ Thing* THINGS(ConsecutiveBytearrayReader* br, size_t arrSize, Lump* levelLumps){
     uint8_t* data = new uint8_t[levelLumps[levelThingLumpIndex].size];
     br->readLumpData(data, levelLumps[levelThingLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, levelLumps[levelThingLumpIndex].size);
-    Thing* levelThings = new Thing[levelLumps[levelThingLumpIndex].size / 10];
+    Thing* levelThings = (Thing*) malloc(sizeof(Thing) * (levelLumps[levelThingLumpIndex].size / 10));
     for (size_t i = 0; i < levelLumps[levelThingLumpIndex].size / 10; i++) {
         levelThings[i].x = br2->readBytesAsUint16();
         levelThings[i].y = br2->readBytesAsUint16();

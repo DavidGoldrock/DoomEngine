@@ -1,7 +1,7 @@
 # from CUDA_Manager import CUDA_Manager
 from ConsecutiveBytearrayReader import ConsecutiveBytearrayReader
 import os
-from PIL import Image
+# from PIL import Image
 from ProcessLevelData import THINGS, LINEDEFS, ENDOOM, SIDEDEFS, VERTEXES, SEGS, SSECTORS, NODES, SECTORS, REJECT, \
     BLOCKMAP, convert_playpal_to_palettes, convert_doom_picture_to_png
 from entites.LineDef import LineDef
@@ -19,6 +19,8 @@ def getLumpsData(br):
     # get lump directory data
     numlumps = br.readBytes(4, int)
     infotableofs = br.readBytes(4, int)
+
+    print(f"{numlumps=} {infotableofs=}")
 
     # get all lump tags
     br.pointer = infotableofs
@@ -64,8 +66,8 @@ if __name__ == "__main__":
     palettes = convert_playpal_to_palettes(br.readLumpData(findInLumpArray(lumps,"PLAYPAL")[1]))
     index1 ,spriteStart = findInLumpArray(lumps, "S_START")
     index2 ,spriteEND = findInLumpArray(lumps, "S_END")
-    for i in range(index1 + 1, index2):
-        convert_doom_picture_to_png(br.readLumpData(lumps[i]), palettes[0], f"./results/output{i}.png")
+    # for i in range(index1 + 1, index2):
+    #     convert_doom_picture_to_png(br.readLumpData(lumps[i]), palettes[0], f"./results/output{i}.png")
     # convert_doom_picture_to_png(br.readLumpData(findInLumpArray(lumps,"TITLEPIC")[1]),palettes[0], "output.png")
 
     # lumpSet = set()
