@@ -1,1 +1,1 @@
-g++ -g -o main *.cpp -Iheaders
+g++ -g -o main *.cpp ./cpp_classes/*.cpp -Iheaders
