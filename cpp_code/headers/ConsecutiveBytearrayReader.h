@@ -15,8 +15,6 @@ public:
     uint32_t readBytesAsUint32();
     Lump readLump();
     void readLumpData(uint8_t* buffer, const Lump& l);
-
-private:
     size_t pointer;
     const uint8_t* arr;
     size_t arrSize;

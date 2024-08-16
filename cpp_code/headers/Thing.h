@@ -21,6 +21,8 @@ struct Thing {
         : x(x), y(y), angle(angle), doomType(doomType), flags(flags), skillLevel12(skillLevel12), skillLevel3(skillLevel3), skillLevel45(skillLevel45), deaf(deaf), notSinglePlayer(notSinglePlayer)
     {}
 
+    Thing();
+
     friend std::ostream& operator<<(std::ostream& os, const Thing& obj);
 };
 

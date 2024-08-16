@@ -2,6 +2,11 @@
 #include <cstdint>
 #include <iostream>
 
+
+Thing::Thing() {
+    Thing(0,0,0,0,0,false,false,false,false,false);
+}
+
 std::ostream& operator<< (std::ostream& os, const Thing& obj) {
         os << "Thing{ ";
         os << "x: " << obj.x << " ";

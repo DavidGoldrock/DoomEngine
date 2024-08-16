@@ -1,9 +1,79 @@
 #include <iostream>
 #include "./headers/Lump.h"
+#include <fstream>
+#include "./headers/ConsecutiveBytearrayReader.h"
+#include "./headers/Lump.h"
+
+bool readFileToUint8Array(const std::string& filename, uint8_t*& data, size_t& size) {
+    // Open the file in binary mode at the end to get the file size
+    std::ifstream file(filename, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open the file: " << filename << std::endl;
+        return false;
+    }
+
+    // Get the size of the file
+    size = file.tellg();
+    file.seekg(0, std::ios::beg);
+
+    // Allocate memory for the data
+    data = new uint8_t[size];
+
+    // Read the file contents into the array
+    if (!file.read(reinterpret_cast<char*>(data), size)) {
+        std::cerr << "Failed to read the file: " << filename << std::endl;
+        delete[] data;
+        data = nullptr;
+        file.close();
+        return false;
+    }
+    file.close();
+    return true;
+}
 
 int main() {
-    char text[] = "hello";
-    char text2[] = "hello";
-    std::cout << Lump(3,2,text) << std::endl;
+    const std::string filename = "./resources/DOOM.wad";
+    uint8_t* data = nullptr;
+    size_t size = 0;
+    if (!readFileToUint8Array(filename, data, size)) {
+        return -1;
+    }
+
+    std::cout << "File read successfully. Size: " << size << " bytes." << std::endl;
+
+     
+    ConsecutiveBytearrayReader* br = new ConsecutiveBytearrayReader(data, size);
+    char* header = new char[5];
+
+    br->readBytesAsChar(header,4);
+    std::cout << "Header is: " << header << std::endl;
+
+    if(!(strcmp(header, "IWAD") == 0 || strcmp(header, "PWAD") == 0)) {
+        std::cout << "Header must be IWAD or PWAD. header is: " << header << std::endl;
+
+        delete[] header;
+        delete[] data;
+        header = nullptr;
+        data = nullptr;
+        return -1;
+    }
+
+    uint32_t numlumps = br->readBytesAsUint32();
+    uint32_t infotableofs = br->readBytesAsUint32();   
+
+    std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl; 
+
+    br->pointer = infotableofs;
+    Lump* lumps = (Lump*) malloc(numlumps * sizeof(Lump));
+    for(int i = 0; i < numlumps; i++) {
+        lumps[i] = br->readLump();
+        std::cout << "Loaded <" << lumps[i] << ">" << std::endl;
+    }
+
+    delete[] lumps;
+    delete[] header;
+    delete[] data;
+    header = nullptr;
+    data = nullptr;
     return 0;
 }
