@@ -3,6 +3,7 @@
 #include <fstream>
 #include "./headers/ConsecutiveBytearrayReader.h"
 #include "./headers/Lump.h"
+#include "./headers/ProcessLevelData.h"
 
 bool readFileToUint8Array(const std::string& filename, uint8_t*& data, size_t& size) {
     // Open the file in binary mode at the end to get the file size
@@ -71,6 +72,7 @@ int main() {
     }
     std::cout << "Finished loading" << std::endl;
 
+    ENDOOM(*br, lumps, numlumps);
 
     std::cout << "Deleting lumps" << std::endl;
     delete lumps;

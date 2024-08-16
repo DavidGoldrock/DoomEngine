@@ -14,64 +14,9 @@ bool bitAtLocation(size_t byte, size_t n);
 
 //ENDDOOM
 
-// CodeDict = {
-//     0: 30,
-//     1: 34,
-//     2: 32,
-//     3: 36,
-//     4: 31,
-//     5: 35,
-//     6: 33,
-//     7: 37,
-//     8: 90,
-//     9: 94,
-//     10: 92,
-//     11: 96,
-//     12: 91,
-//     13: 95,
-//     14: 93,
-//     15: 97
-// }
+std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size);
 
-
-// def VGA_16BIT_COLOR_MEMORY_TO_STRING(ansicode: bytes | bytearray) -> str:
-//     ret = ""
-//     lastForeground = -1
-//     lastBackground = -1
-//     for i in range(0, len(ansicode), 2):
-//         letter = (ansicode[i]).to_bytes(1, 'little').decode('cp437')
-//         code = ansicode[i + 1]
-//         foreground = code & 15
-//         background = (code & 112) >> 4
-//         isBlinking = bitAtLocation(code, 7)
-//         # print(f"letter: {letter} code : {code} foreground : {foreground} background : {background} isBlinking : {isBlinking}")
-//         if foreground != lastForeground:
-//             foregroundCode = CodeDict[foreground]
-//             foregroundColor = f"\033[{foregroundCode}m"
-//             ret += foregroundColor
-
-//         if background != lastBackground:
-//             backgroundCode = CodeDict[background] + 10
-//             backgroundColor = f"\033[{backgroundCode}m"
-//             ret += backgroundColor
-
-//         lastForeground = foreground
-//         lastBackground = background
-
-//         ret += letter
-//         if (i / 2 + 1) % 80 == 0:
-//             ret += f"\033[{0}m"
-//             ret += "\n"
-//             lastForeground = -1
-//             lastBackground = -1
-//     return ret
-
-
-// def ENDOOM(br, lumps):
-//     index, ENDOOM_lump = findInLumpArray(lumps, "ENDOOM")
-//     ENDOOM_text = br.readLumpData(ENDOOM_lump)
-//     ENDOOM_text_decoded = VGA_16BIT_COLOR_MEMORY_TO_STRING(ENDOOM_text)
-//     print(ENDOOM_text_decoded)
+void ENDOOM(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // THINGS

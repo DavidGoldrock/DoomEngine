@@ -21,6 +21,19 @@ struct Thing {
         : x(x), y(y), angle(angle), doomType(doomType), flags(flags), skillLevel12(skillLevel12), skillLevel3(skillLevel3), skillLevel45(skillLevel45), deaf(deaf), notSinglePlayer(notSinglePlayer)
     {}
 
+    Thing() {
+        this->x = 0;
+        this->y = 0;
+        this->angle = 0;
+        this->doomType = 0;
+        this->flags = 0;
+        this->skillLevel12 = false;
+        this->skillLevel3 = false;
+        this->skillLevel45 = false;
+        this->deaf = false;
+        this->notSinglePlayer = false;
+    }
+
     friend std::ostream& operator<<(std::ostream& os, const Thing& obj) {
         os << "Thing{ ";
         os << "x: " << obj.x << " ";
