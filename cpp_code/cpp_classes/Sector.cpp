@@ -6,13 +6,13 @@ Sector::Sector(uint16_t floorHeight, uint16_t ceilingHeight, std::string floorTe
 
 std::ostream& operator<<(std::ostream& os, const Sector& obj) {
         os << "Sector{ ";
-        os << "floorHeight: " << obj.floorHeight << " ";
+        os << "floorHeight: " << (int) obj.floorHeight << " ";
         os << "floorTextureName: " << obj.floorTextureName << " ";
         os << "ceilingTextureName: " << obj.ceilingTextureName << " ";
-        os << "ceilingHeight: " << obj.ceilingHeight << " ";
-        os << "lightLevel: " << obj.lightLevel << " ";
-        os << "specialTag: " << obj.specialTag << " ";
-        os << "tagNumber: " << obj.tagNumber << " ";
+        os << "ceilingHeight: " << (int) obj.ceilingHeight << " ";
+        os << "lightLevel: " << (int) obj.lightLevel << " ";
+        os << "specialTag: " << (int) obj.specialTag << " ";
+        os << "tagNumber: " <<(int)  obj.tagNumber << " ";
         os << "}";
         return os;
     }

@@ -29,8 +29,8 @@ Lump::~Lump() {
 
 std::ostream& operator<<(std::ostream& os, const Lump& obj) {
     os << "Lump{ ";
-    os << "filepos: " << obj.filepos << " ";
-    os << "size: " << obj.size << " ";
+    os << "filepos: " << (int) obj.filepos << " ";
+    os << "size: " << (int) obj.size << " ";
     os << "name: " << obj.name << " ";
     os << "}";
     return os;

@@ -27,6 +27,8 @@ struct LineDef {
             uint8_t fSideDef, uint8_t bSideDef, bool blocksPM, bool blocksM, bool ts, 
             bool upperTextureUnpegged, bool lowerTextureUnpegged, bool secret, bool blocksSound, 
             bool neverAutoMap, bool alwaysAutoMap);
+
+    LineDef();
     
 
     friend std::ostream& operator<<(std::ostream& os, const LineDef& obj);

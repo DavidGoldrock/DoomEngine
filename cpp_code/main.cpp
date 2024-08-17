@@ -74,7 +74,9 @@ int main() {
 
     ENDOOM(br, lumps, numlumps);
     Thing* things = THINGS(br, lumps, numlumps);
+    LineDef* lineDefs = LINEDEFS(br, lumps, numlumps);
 
+    delete[] lineDefs;
     delete[] things;
     delete lumps;
     delete[] header;

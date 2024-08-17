@@ -29,7 +29,7 @@ Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 // LINEDEFS
 
-// LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 
 // def LINEDEFS(br, levelLump: list[Lump]):

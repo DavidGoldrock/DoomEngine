@@ -5,12 +5,12 @@ Seg::Seg(uint16_t startingVertexNumber, uint16_t endingVertexNumber, uint16_t an
 
 std::ostream& operator<<(std::ostream& os, const Seg& obj) {
         os << "Seg{ ";
-        os << "startingVertexNumber: " << obj.startingVertexNumber << " ";
-        os << "endingVertexNumber: " << obj.endingVertexNumber << " ";
-        os << "angle: " << obj.angle << " ";
-        os << "lineDefNumber: " << obj.lineDefNumber << " ";
+        os << "startingVertexNumber: " << (int) obj.startingVertexNumber << " ";
+        os << "endingVertexNumber: " << (int) obj.endingVertexNumber << " ";
+        os << "angle: " << (int) obj.angle << " ";
+        os << "lineDefNumber: " << (int) obj.lineDefNumber << " ";
         os << "directionSameAsLineDef: " << obj.directionSameAsLineDef << " ";
-        os << "offset: " << obj.offset << " ";
+        os << "offset: " << (int) obj.offset << " ";
         os << "}";
         return os;
     }

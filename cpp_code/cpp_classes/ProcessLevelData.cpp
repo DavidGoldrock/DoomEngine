@@ -12,31 +12,6 @@ bool bitAtLocation(size_t byte, size_t n){
     return (byte & (2 << n) >> n) == 1;
 }
 
-Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
-    char tagname[] = "THINGS";
-    size_t levelThingLumpIndex = findInLumpArray(lumps, numlumps, tagname);
-    uint8_t* data = new uint8_t[lumps[levelThingLumpIndex].size];
-    br->readLumpData(data, lumps[levelThingLumpIndex]);
-    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelThingLumpIndex].size);
-    Thing* levelThings = new Thing[lumps[levelThingLumpIndex].size / 10];
-    for (size_t i = 0; i < lumps[levelThingLumpIndex].size / 10; i++) {
-        levelThings[i].x = br2->readBytesAsUint16();
-        levelThings[i].y = br2->readBytesAsUint16();
-        levelThings[i].angle = br2->readBytesAsUint16();
-        levelThings[i].doomType = br2->readBytesAsUint16();
-        levelThings[i].flags = br2->readBytesAsUint16();
-        levelThings[i].skillLevel12 = bitAtLocation(levelThings[i].flags, 0);
-        levelThings[i].skillLevel3 = bitAtLocation(levelThings[i].flags, 1);
-        levelThings[i].skillLevel45 = bitAtLocation(levelThings[i].flags, 2);
-        levelThings[i].deaf = bitAtLocation(levelThings[i].flags, 3);
-        levelThings[i].notSinglePlayer = bitAtLocation(levelThings[i].flags, 4);
-
-        std::cout << "Loaded Thing [" << (i+1) << "]" << " Out of [" << lumps[levelThingLumpIndex].size / 10 << "]" << levelThings[i] << std::endl;
-    }
-    delete br2;
-    return levelThings;
-}
-
 std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size)
 {   
     uint8_t CodeDict[] =  {30,34,32,36,31,35,33,37,90,94, 92, 96, 91, 95, 93, 97};
@@ -76,8 +51,6 @@ std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size)
     return ret;
 
 }
-    
-
 
 void ENDOOM(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
     int index = findInLumpArray(lumps, numlumps,"ENDOOM");
@@ -86,7 +59,61 @@ void ENDOOM(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
     std::string ENDOOM_text_decoded = VGA_16BIT_COLOR_MEMORY_TO_STRING(data, lumps[index].size);
     std::cout << ENDOOM_text_decoded << std::endl;
 }
-
-// LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, size_t arrSize, Lump* lumps) {
     
-// }
+Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
+    std::string tagname = "THINGS";
+    size_t levelThingLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelThingLumpIndex].size];
+    br->readLumpData(data, lumps[levelThingLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelThingLumpIndex].size);
+    Thing* levelThings = new Thing[lumps[levelThingLumpIndex].size / 10];
+    for (size_t i = 0; i < lumps[levelThingLumpIndex].size / 10; i++) {
+        levelThings[i].x = br2->readBytesAsUint16();
+        levelThings[i].y = br2->readBytesAsUint16();
+        levelThings[i].angle = br2->readBytesAsUint16();
+        levelThings[i].doomType = br2->readBytesAsUint16();
+        levelThings[i].flags = br2->readBytesAsUint16();
+        levelThings[i].skillLevel12 = bitAtLocation(levelThings[i].flags, 0);
+        levelThings[i].skillLevel3 = bitAtLocation(levelThings[i].flags, 1);
+        levelThings[i].skillLevel45 = bitAtLocation(levelThings[i].flags, 2);
+        levelThings[i].deaf = bitAtLocation(levelThings[i].flags, 3);
+        levelThings[i].notSinglePlayer = bitAtLocation(levelThings[i].flags, 4);
+
+        std::cout << "Loaded Thing [" << (i+1) << "]" << " Out of [" << lumps[levelThingLumpIndex].size / 10 << "]" << levelThings[i] << std::endl;
+    }
+    delete br2;
+    return levelThings;
+}
+
+LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
+    std::string tagname = "LINEDEFS";
+    size_t levelLineDefLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelLineDefLumpIndex].size];
+    br->readLumpData(data, lumps[levelLineDefLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelLineDefLumpIndex].size);
+    LineDef* levelLineDefs = new LineDef[lumps[levelLineDefLumpIndex].size / 14];
+
+    for (size_t i = 0; i < lumps[levelLineDefLumpIndex].size / 14; i++)
+    {
+        levelLineDefs[i].startVertex = br2->readBytesAsUint16();
+        levelLineDefs[i].endVertex = br2->readBytesAsUint16();
+        levelLineDefs[i].flags = br2->readBytesAsUint16();
+        levelLineDefs[i].sType = br2->readBytesAsUint16();
+        levelLineDefs[i].sTag = br2->readBytesAsUint16();
+        levelLineDefs[i].fSideDef = br2->readBytesAsUint16();
+        levelLineDefs[i].bSideDef = br2->readBytesAsUint16();
+        levelLineDefs[i].blocksPM = bitAtLocation(levelLineDefs[i].flags, 0);
+        levelLineDefs[i].blocksM = bitAtLocation(levelLineDefs[i].flags, 1);
+        levelLineDefs[i].ts = bitAtLocation(levelLineDefs[i].flags, 2);
+        levelLineDefs[i].upperTextureUnpegged = bitAtLocation(levelLineDefs[i].flags, 3);
+        levelLineDefs[i].lowerTextureUnpegged = bitAtLocation(levelLineDefs[i].flags, 4);
+        levelLineDefs[i].secret = bitAtLocation(levelLineDefs[i].flags, 5);
+        levelLineDefs[i].blocksSound = bitAtLocation(levelLineDefs[i].flags, 6);
+        levelLineDefs[i].neverAutoMap = bitAtLocation(levelLineDefs[i].flags, 7);
+        levelLineDefs[i].alwaysAutoMap = bitAtLocation(levelLineDefs[i].flags, 8);
+
+        std::cout << "Loaded LineDef [" << (i+1) << "]" << " Out of [" << lumps[levelLineDefLumpIndex].size / 10 << "]" << levelLineDefs[i] << std::endl;
+    }
+    delete br2;
+    return levelLineDefs;
+}

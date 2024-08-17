@@ -6,20 +6,20 @@ Node::Node(uint16_t x, uint16_t y, uint16_t deltaX, uint16_t deltaY, uint16_t ri
 
 std::ostream& operator<<(std::ostream& os, const Node& obj) {
         os << "Node{ ";
-        os << "x: " << obj.x << " ";
-        os << "y: " << obj.y << " ";
-        os << "deltaX: " << obj.deltaX << " ";
-        os << "deltaY: " << obj.deltaY << " ";
-        os << "rightBoundingBoxTop: " << obj.rightBoundingBoxTop << " ";
-        os << "rightBoundingBoxBottom: " << obj.rightBoundingBoxBottom << " ";
-        os << "rightBoundingBoxLeft: " << obj.rightBoundingBoxLeft << " ";
-        os << "rightBoundingBoxRight: " << obj.rightBoundingBoxRight << " ";
-        os << "leftBoundingBoxTop: " << obj.leftBoundingBoxTop << " ";
-        os << "leftBoundingBoxBottom: " << obj.leftBoundingBoxBottom << " ";
-        os << "leftBoundingBoxLeft: " << obj.leftBoundingBoxLeft << " ";
-        os << "leftBoundingBoxRight: " << obj.leftBoundingBoxRight << " ";
-        os << "rightChildIndex: " << obj.rightChildIndex << " ";
-        os << "leftChildindex: " << obj.leftChildIndex << " ";
+        os << "x: " << (int) obj.x << " ";
+        os << "y: " << (int) obj.y << " ";
+        os << "deltaX: " << (int) obj.deltaX << " ";
+        os << "deltaY: " << (int) obj.deltaY << " ";
+        os << "rightBoundingBoxTop: " << (int) obj.rightBoundingBoxTop << " ";
+        os << "rightBoundingBoxBottom: " << (int) obj.rightBoundingBoxBottom << " ";
+        os << "rightBoundingBoxLeft: " << (int) obj.rightBoundingBoxLeft << " ";
+        os << "rightBoundingBoxRight: " << (int) obj.rightBoundingBoxRight << " ";
+        os << "leftBoundingBoxTop: " << (int) obj.leftBoundingBoxTop << " ";
+        os << "leftBoundingBoxBottom: " << (int) obj.leftBoundingBoxBottom << " ";
+        os << "leftBoundingBoxLeft: " << (int) obj.leftBoundingBoxLeft << " ";
+        os << "leftBoundingBoxRight: " << (int) obj.leftBoundingBoxRight << " ";
+        os << "rightChildIndex: " << (int) obj.rightChildIndex << " ";
+        os << "leftChildindex: " << (int) obj.leftChildIndex << " ";
         os << "}";
         return os;
     }
