@@ -160,3 +160,20 @@ Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
     delete br2;
     return levelSeg;
 }
+
+SubSector* SSECTORS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
+    std::string tagname = "SSECTORS";
+    size_t levelSubSectorLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelSubSectorLumpIndex].size];
+    br->readLumpData(data, lumps[levelSubSectorLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSubSectorLumpIndex].size);
+    SubSector* levelSubSector = new SubSector[lumps[levelSubSectorLumpIndex].size / 12];
+    for (size_t i = 0; i < lumps[levelSubSectorLumpIndex].size / 12; i++) {
+        levelSubSector[i].segCount = br2->readBytesAsUint16();
+        levelSubSector[i].firstSegNumber = br2->readBytesAsUint16();
+
+        std::cout << "Loaded SubSector [" << (i+1) << "]" << " Out of [" << lumps[levelSubSectorLumpIndex].size / 10 << "]" << levelSubSector[i] << std::endl;
+    }
+    delete br2;
+    return levelSubSector;
+}

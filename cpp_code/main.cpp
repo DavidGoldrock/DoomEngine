@@ -77,6 +77,8 @@ int main() {
     LineDef* lineDefs = LINEDEFS(br, lumps, numlumps);
     SideDef* sideDefs = SIDEDEFS(br, lumps, numlumps);
     Seg* segs = SEGS(br, lumps, numlumps);
+    SubSector* subSectors = SSECTORS(br, lumps, numlumps);
+    delete[] subSectors;
     delete[] segs;
     delete[] sideDefs;
     delete[] lineDefs;
@@ -84,7 +86,5 @@ int main() {
     delete lumps;
     delete[] header;
     delete[] data;
-    header = nullptr;
-    data = nullptr;
     return 0;
 }

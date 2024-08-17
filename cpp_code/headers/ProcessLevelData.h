@@ -7,6 +7,7 @@
 #include "ConsecutiveBytearrayReader.h"
 #include "SideDef.h"
 #include "Seg.h"
+#include "SubSector.h"
 
 int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
     
@@ -41,23 +42,6 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
-// def SEGS(br, levelLump: list[Lump]):
-//     _, levelSegsLump = findInLumpArray(levelLump, "SEGS")
-//     data = br.readLumpData(levelSegsLump)
-//     br2 = ConsecutiveBytearrayReader(data)
-//     levelSegs = []
-//     for i in range(levelSegsLump.size // 12):
-//         startingVertexNumber = br2->readBytesAsUint16()
-//         endingVertexNumber = br2->readBytesAsUint16()
-//         angle = br2->readBytesAsUint16()
-//         lineDefNumber = br2->readBytesAsUint16()
-//         directionSameAsLineDef = br2->readBytesAsUint16() == 1
-//         offset = br2->readBytesAsUint16()
-
-//         levelSegs.append(
-//             Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
-//     return levelSegs
-
 
 // """
 // VERTEXES
@@ -76,22 +60,9 @@ Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 //     return levelVertexes
 
 
-// """
 // SSECTORS
-// """
 
-
-// def SSECTORS(br, levelLump: list[Lump]):
-//     _, levelSsectorsLump = findInLumpArray(levelLump, "SSECTORS")
-//     data = br.readLumpData(levelSsectorsLump)
-//     br2 = ConsecutiveBytearrayReader(data)
-//     levelSsectors = []
-//     for i in range(levelSsectorsLump.size // 4):
-//         segCount = br2->readBytesAsUint16()
-//         firstSegNumber = br2->readBytesAsUint16()
-
-//         levelSsectors.append(SubSector(segCount, firstSegNumber))
-//     return levelSsectors
+SubSector* SSECTORS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 
 // """
