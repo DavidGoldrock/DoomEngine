@@ -27,7 +27,7 @@ def getLumpsData(br):
     lumps = []
     for i in range(numlumps):
         lumps.append(br.readLump())
-        print(f"loaded Lump[{i + 1}] out of [{numlumps}] <{lumps[i].name}>")
+        input(f"loaded Lump[{i + 1}] out of [{numlumps}] <{lumps[i]}>")
     return lumps
 
 
@@ -52,16 +52,17 @@ if __name__ == "__main__":
     index1, level1Lump = findInLumpArray(lumps, "E1M1")
     index2, level2Lump = findInLumpArray(lumps, "E1M2")
     level1Lumps = lumps[index1 + 1:index2]
-    print(level1Lumps)
-    print(f"{(THINGS(br, level1Lumps))=}")
-    #print(f"{len(LINEDEFS(br, level1Lumps))=}")
-    #print(f"{len(SIDEDEFS(br,level1Lumps))=}")
-    #print(f"{len(VERTEXES(br,level1Lumps))=}")
-    #print(f"{len(SEGS(br,level1Lumps))=}")
-    #print(f"{len(SSECTORS(br,level1Lumps))=}")
-    #print(f"{len(NODES(br,level1Lumps))=}")
-    #print(f"{len(SECTORS(br,level1Lumps))=}")
-    #print(f"{len(REJECT(br,level1Lumps))=}")
+    # print(level1Lumps)
+    # print(f"{(THINGS(br, level1Lumps))=}")
+    #print(f"{(LINEDEFS(br, level1Lumps))=}")
+    # text = '\n'.join([str(s) for s in SIDEDEFS(br,level1Lumps)])
+    # print(f"{text}")
+    #print(f"{(VERTEXES(br,level1Lumps))=}")
+    #print(f"{(SEGS(br,level1Lumps))=}")
+    #print(f"{(SSECTORS(br,level1Lumps))=}")
+    #print(f"{(NODES(br,level1Lumps))=}")
+    #print(f"{(SECTORS(br,level1Lumps))=}")
+    #print(f"{(REJECT(br,level1Lumps))=}")
     #print(f"{(BLOCKMAP(br,level1Lumps))=}")
     #palettes = convert_playpal_to_palettes(br.readLumpData(findInLumpArray(lumps,"PLAYPAL")[1]))
     #index1 ,spriteStart = findInLumpArray(lumps, "S_START")

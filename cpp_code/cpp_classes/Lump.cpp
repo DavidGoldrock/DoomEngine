@@ -1,6 +1,6 @@
 #include "../headers/Lump.h"
 
-Lump::Lump(uint16_t filepos, uint16_t size, std::string name) : filepos(filepos), size(size) {
+Lump::Lump(uint32_t filepos, uint32_t size, std::string name) : filepos(filepos), size(size) {
     this->name = name;
 }
 

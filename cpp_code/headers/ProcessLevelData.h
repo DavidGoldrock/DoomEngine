@@ -5,6 +5,7 @@
 #include "Thing.h"
 #include "LineDef.h"
 #include "ConsecutiveBytearrayReader.h"
+#include "SideDef.h"
 
 int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
     
@@ -31,39 +32,9 @@ Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
-
-// def LINEDEFS(br, levelLump: list[Lump]):
-//     _, levelLineDefLump = findInLumpArray(levelLump, "LINEDEFS")
-//     data = br.readLumpData(levelLineDefLump)
-//     br2 = ConsecutiveBytearrayReader(data)
-//     levelLineDefs = []
-//     for i in range(levelLineDefLump.size // 14):
-//         startVertex = br2.readBytesAsUint16()
-//         endVertex = br2.readBytesAsUint16()
-//         flags = br2.readBytesAsUint16()
-//         sType = br2.readBytesAsUint16()
-//         sTag = br2.readBytesAsUint16()
-//         fSideDef = br2.readBytesAsUint16()
-//         bSideDef = br2.readBytesAsUint16()
-//         blocksPM = bitAtLocation(flags, 0)
-//         blocksM = bitAtLocation(flags, 1)
-//         ts = bitAtLocation(flags, 2)
-//         upperTextureUnpegged = bitAtLocation(flags, 3)
-//         lowerTextureUnpegged = bitAtLocation(flags, 4)
-//         secret = bitAtLocation(flags, 5)
-//         blocksSound = bitAtLocation(flags, 6)
-//         neverAutoMap = bitAtLocation(flags, 7)
-//         alwaysAutoMap = bitAtLocation(flags, 8)
-//         levelLineDefs.append(
-//             LineDef(startVertex, endVertex, flags, sType, sTag, fSideDef, bSideDef, blocksPM, blocksM, ts,
-//                     upperTextureUnpegged, lowerTextureUnpegged, secret, blocksSound, neverAutoMap, alwaysAutoMap))
-//     return levelLineDefs
-
-
-// """
 // SIDEDEFS
-// """
 
+SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 // def SIDEDEFS(br, levelLump: list[Lump]):
 //     _, levelSideDefLump = findInLumpArray(levelLump, "SIDEDEFS")

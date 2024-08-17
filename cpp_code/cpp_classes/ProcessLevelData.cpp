@@ -112,8 +112,34 @@ LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) 
         levelLineDefs[i].neverAutoMap = bitAtLocation(levelLineDefs[i].flags, 7);
         levelLineDefs[i].alwaysAutoMap = bitAtLocation(levelLineDefs[i].flags, 8);
 
-        std::cout << "Loaded LineDef [" << (i+1) << "]" << " Out of [" << lumps[levelLineDefLumpIndex].size / 10 << "]" << levelLineDefs[i] << std::endl;
+        //std::cout << "Loaded LineDef [" << (i+1) << "]" << " Out of [" << lumps[levelLineDefLumpIndex].size / 10 << "]" << levelLineDefs[i] << std::endl;
     }
     delete br2;
     return levelLineDefs;
+}
+
+SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
+    std::string tagname = "SIDEDEFS";
+    size_t levelSideDefLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelSideDefLumpIndex].size];
+    uint8_t* data2 = new uint8_t[30];
+    br->readLumpData(data, lumps[levelSideDefLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSideDefLumpIndex].size);
+    SideDef* levelSideDefs = new SideDef[lumps[levelSideDefLumpIndex].size / 30];
+    char buffer[9];
+    for (size_t i = 0; i < lumps[levelSideDefLumpIndex].size / 30; i++) {
+        levelSideDefs[i].x = br2->readBytesAsUint16();
+        levelSideDefs[i].y = br2->readBytesAsUint16();
+        br2->readBytesAsChar(buffer, 8);
+        levelSideDefs[i].upperTextureName = std::string(buffer);
+        br2->readBytesAsChar(buffer, 8);
+        levelSideDefs[i].lowerTextureName = std::string(buffer);
+        br2->readBytesAsChar(buffer, 8);
+        levelSideDefs[i].middleTextureName = std::string(buffer);
+        levelSideDefs[i].sectorNumber = br2->readBytesAsUint16();
+
+        std::cout << "Loaded SideDef [" << (i+1) << "]" << " Out of [" << lumps[levelSideDefLumpIndex].size / 10 << "]" << levelSideDefs[i] << std::endl;
+    }
+    delete br2;
+    return levelSideDefs;
 }

@@ -70,12 +70,14 @@ int main() {
         lumps[i] = br->readLump();
         std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
     }
-    std::cout << "Finished loading" << std::endl;
+    std::cout << "Finished loading Lumps" << std::endl;
 
     ENDOOM(br, lumps, numlumps);
     Thing* things = THINGS(br, lumps, numlumps);
     LineDef* lineDefs = LINEDEFS(br, lumps, numlumps);
+    SideDef* sideDefs = SIDEDEFS(br, lumps, numlumps);
 
+    delete[] sideDefs;
     delete[] lineDefs;
     delete[] things;
     delete lumps;

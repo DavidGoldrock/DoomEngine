@@ -6,12 +6,12 @@
 #include <cstring> // for std::strlen and std::strcpy
 
 struct Lump {
-    uint16_t filepos;
-    uint16_t size;
+    uint32_t filepos;
+    uint32_t size;
     std::string name;
 
     // Constructor
-    Lump(uint16_t filepos, uint16_t size, std::string name);
+    Lump(uint32_t filepos, uint32_t size, std::string name);
 
     Lump();
 

@@ -14,6 +14,7 @@ struct SideDef {
 
     // Constructor
     SideDef(uint16_t x, uint16_t y, uint16_t sectorNumber, std::string upperTextureName, std::string lowerTextureName, std::string middleTextureName);
+    SideDef();
 
     friend std::ostream& operator<<(std::ostream& os, const SideDef& obj);
 };
