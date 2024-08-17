@@ -11,6 +11,7 @@ public:
 
     size_t readBytes(uint8_t* buffer, size_t num);
     void readBytesAsChar(char* buffer, size_t num);
+    std::string readBytesAsStr(size_t num);
     uint16_t readBytesAsUint16();
     uint32_t readBytesAsUint32();
     Lump readLump();

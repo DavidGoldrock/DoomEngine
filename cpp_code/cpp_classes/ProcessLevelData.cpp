@@ -126,16 +126,12 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
     br->readLumpData(data, lumps[levelSideDefLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSideDefLumpIndex].size);
     SideDef* levelSideDefs = new SideDef[lumps[levelSideDefLumpIndex].size / 30];
-    char buffer[9];
     for (size_t i = 0; i < lumps[levelSideDefLumpIndex].size / 30; i++) {
         levelSideDefs[i].x = br2->readBytesAsUint16();
         levelSideDefs[i].y = br2->readBytesAsUint16();
-        br2->readBytesAsChar(buffer, 8);
-        levelSideDefs[i].upperTextureName = std::string(buffer);
-        br2->readBytesAsChar(buffer, 8);
-        levelSideDefs[i].lowerTextureName = std::string(buffer);
-        br2->readBytesAsChar(buffer, 8);
-        levelSideDefs[i].middleTextureName = std::string(buffer);
+        levelSideDefs[i].upperTextureName = br2->readBytesAsStr(8);
+        levelSideDefs[i].lowerTextureName = br2->readBytesAsStr(8);
+        levelSideDefs[i].middleTextureName = br2->readBytesAsStr(8);
         levelSideDefs[i].sectorNumber = br2->readBytesAsUint16();
 
         std::cout << "Loaded SideDef [" << (i+1) << "]" << " Out of [" << lumps[levelSideDefLumpIndex].size / 10 << "]" << levelSideDefs[i] << std::endl;

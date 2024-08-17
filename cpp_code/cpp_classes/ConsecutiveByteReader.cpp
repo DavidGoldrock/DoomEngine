@@ -11,9 +11,16 @@ size_t ConsecutiveBytearrayReader::readBytes(uint8_t* buffer, size_t bytes_num) 
     return bytes_num;
 }
 
+
 void ConsecutiveBytearrayReader::readBytesAsChar(char* buffer, size_t num) {
     readBytes(reinterpret_cast<uint8_t*>(buffer), num);
     buffer[num] = '\0';
+}
+
+std::string ConsecutiveBytearrayReader::readBytesAsStr(size_t num) {
+    char buffer[num + 1];
+    readBytesAsChar(buffer, num);
+    return std::string(buffer);
 }
 
 uint16_t ConsecutiveBytearrayReader::readBytesAsUint16() {
