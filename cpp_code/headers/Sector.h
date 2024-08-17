@@ -1,5 +1,5 @@
 #ifndef SECTOR_H
-#define STRUCT SECTOR_H
+#define SECTOR_H
 
 #include <cstdint>
 #include <iostream>

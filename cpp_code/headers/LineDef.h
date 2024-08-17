@@ -1,5 +1,5 @@
 #ifndef LINEDEF_H
-#define STRUCT LINEDEF_H
+#define LINEDEF_H
 
 #include <cstdint>
 #include <iostream>

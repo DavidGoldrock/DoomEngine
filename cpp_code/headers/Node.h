@@ -1,5 +1,5 @@
 #ifndef NODE_H
-#define STRUCT NODE_H
+#define NODE_H
 
 #include <cstdint>
 #include <iostream>

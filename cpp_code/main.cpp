@@ -72,9 +72,10 @@ int main() {
     }
     std::cout << "Finished loading" << std::endl;
 
-    ENDOOM(*br, lumps, numlumps);
+    ENDOOM(br, lumps, numlumps);
+    Thing* things = THINGS(br, lumps, numlumps);
 
-    std::cout << "Deleting lumps" << std::endl;
+    delete[] things;
     delete lumps;
     delete[] header;
     delete[] data;

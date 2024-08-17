@@ -12,14 +12,14 @@ bool bitAtLocation(size_t byte, size_t n){
     return (byte & (2 << n) >> n) == 1;
 }
 
-Thing* THINGS(ConsecutiveBytearrayReader* br, size_t arrSize, Lump* levelLumps){
+Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
     char tagname[] = "THINGS";
-    size_t levelThingLumpIndex = findInLumpArray(levelLumps, arrSize, tagname);
-    uint8_t* data = new uint8_t[levelLumps[levelThingLumpIndex].size];
-    br->readLumpData(data, levelLumps[levelThingLumpIndex]);
-    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, levelLumps[levelThingLumpIndex].size);
-    Thing* levelThings = new Thing[levelLumps[levelThingLumpIndex].size / 10];
-    for (size_t i = 0; i < levelLumps[levelThingLumpIndex].size / 10; i++) {
+    size_t levelThingLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelThingLumpIndex].size];
+    br->readLumpData(data, lumps[levelThingLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelThingLumpIndex].size);
+    Thing* levelThings = new Thing[lumps[levelThingLumpIndex].size / 10];
+    for (size_t i = 0; i < lumps[levelThingLumpIndex].size / 10; i++) {
         levelThings[i].x = br2->readBytesAsUint16();
         levelThings[i].y = br2->readBytesAsUint16();
         levelThings[i].angle = br2->readBytesAsUint16();
@@ -30,6 +30,8 @@ Thing* THINGS(ConsecutiveBytearrayReader* br, size_t arrSize, Lump* levelLumps){
         levelThings[i].skillLevel45 = bitAtLocation(levelThings[i].flags, 2);
         levelThings[i].deaf = bitAtLocation(levelThings[i].flags, 3);
         levelThings[i].notSinglePlayer = bitAtLocation(levelThings[i].flags, 4);
+
+        std::cout << "Loaded Thing [" << (i+1) << "]" << " Out of [" << lumps[levelThingLumpIndex].size / 10 << "]" << levelThings[i] << std::endl;
     }
     delete br2;
     return levelThings;
@@ -77,10 +79,14 @@ std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size)
     
 
 
-void ENDOOM(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
+void ENDOOM(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
     int index = findInLumpArray(lumps, numlumps,"ENDOOM");
     uint8_t data[lumps[index].size];
-    br.readLumpData(data, lumps[index]);
+    br->readLumpData(data, lumps[index]);
     std::string ENDOOM_text_decoded = VGA_16BIT_COLOR_MEMORY_TO_STRING(data, lumps[index].size);
     std::cout << ENDOOM_text_decoded << std::endl;
 }
+
+// LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, size_t arrSize, Lump* lumps) {
+    
+// }

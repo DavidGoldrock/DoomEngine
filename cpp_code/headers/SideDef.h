@@ -1,5 +1,5 @@
 #ifndef SIDE_DEF_H
-#define STRUCT SIDE_DEF_H
+#define SIDE_DEF_H
 
 #include <cstdint>
 #include <iostream>

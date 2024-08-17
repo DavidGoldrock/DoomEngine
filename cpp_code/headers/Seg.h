@@ -1,5 +1,5 @@
 #ifndef SEG_H
-#define STRUCT SEG_H
+#define SEG_H
 
 #include <cstdint>
 #include <iostream>

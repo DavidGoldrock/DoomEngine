@@ -1,5 +1,5 @@
 #ifndef SUB_SECTOR_H
-#define STRUCT SUB_SECTOR_H
+#define SUB_SECTOR_H
 
 #include <cstdint>
 #include <iostream>

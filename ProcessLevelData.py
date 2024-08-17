@@ -101,11 +101,11 @@ def THINGS(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelThings = []
     for i in range(levelThingLump.size // 10):
-        x = br2.readBytesAsUint16()
-        y = br2.readBytesAsUint16()
-        angle = br2.readBytesAsUint16()
-        doomType = br2.readBytesAsUint16()
-        flags = br2.readBytesAsUint16()
+        x = br2.readBytes(2, int)
+        y = br2.readBytes(2, int)
+        angle = br2.readBytes(2, int)
+        doomType = br2.readBytes(2, int)
+        flags = br2.readBytes(2, int)
         skillLevel12 = bitAtLocation(flags, 0)
         skillLevel3 = bitAtLocation(flags, 1)
         skillLevel45 = bitAtLocation(flags, 2)
@@ -126,13 +126,13 @@ def LINEDEFS(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelLineDefs = []
     for i in range(levelLineDefLump.size // 14):
-        startVertex = br2.readBytesAsUint16()
-        endVertex = br2.readBytesAsUint16()
-        flags = br2.readBytesAsUint16()
-        sType = br2.readBytesAsUint16()
-        sTag = br2.readBytesAsUint16()
-        fSideDef = br2.readBytesAsUint16()
-        bSideDef = br2.readBytesAsUint16()
+        startVertex = br2.readBytes(2, int)
+        endVertex = br2.readBytes(2, int)
+        flags = br2.readBytes(2, int)
+        sType = br2.readBytes(2, int)
+        sTag = br2.readBytes(2, int)
+        fSideDef = br2.readBytes(2, int)
+        bSideDef = br2.readBytes(2, int)
         blocksPM = bitAtLocation(flags, 0)
         blocksM = bitAtLocation(flags, 1)
         ts = bitAtLocation(flags, 2)
@@ -159,12 +159,12 @@ def SIDEDEFS(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelSideDefs = []
     for i in range(levelSideDefLump.size // 30):
-        x = br2.readBytesAsUint16()
-        y = br2.readBytesAsUint16()
+        x = br2.readBytes(2, int)
+        y = br2.readBytes(2, int)
         upperTextureName = br2.readBytes(8, str).strip("\x00")
         lowerTextureName = br2.readBytes(8, str).strip("\x00")
         middleTextureName = br2.readBytes(8, str).strip("\x00")
-        sectorNumber = br2.readBytesAsUint16()
+        sectorNumber = br2.readBytes(2, int)
         levelSideDefs.append(
             SideDef(x, y, upperTextureName, lowerTextureName, middleTextureName, sectorNumber))
     return levelSideDefs
@@ -181,8 +181,8 @@ def VERTEXES(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelVertexes = []
     for i in range(levelVertexsLump.size // 4):
-        x = br2.readBytesAsUint16()
-        y = br2.readBytesAsUint16()
+        x = br2.readBytes(2, int)
+        y = br2.readBytes(2, int)
         levelVertexes.append(np.array([x, y]))
     return levelVertexes
 
@@ -198,12 +198,12 @@ def SEGS(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelSegs = []
     for i in range(levelSegsLump.size // 12):
-        startingVertexNumber = br2.readBytesAsUint16()
-        endingVertexNumber = br2.readBytesAsUint16()
-        angle = br2.readBytesAsUint16()
-        lineDefNumber = br2.readBytesAsUint16()
-        directionSameAsLineDef = br2.readBytesAsUint16() == 1
-        offset = br2.readBytesAsUint16()
+        startingVertexNumber = br2.readBytes(2, int)
+        endingVertexNumber = br2.readBytes(2, int)
+        angle = br2.readBytes(2, int)
+        lineDefNumber = br2.readBytes(2, int)
+        directionSameAsLineDef = br2.readBytes(2, int) == 1
+        offset = br2.readBytes(2, int)
 
         levelSegs.append(
             Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
@@ -221,8 +221,8 @@ def SSECTORS(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelSsectors = []
     for i in range(levelSsectorsLump.size // 4):
-        segCount = br2.readBytesAsUint16()
-        firstSegNumber = br2.readBytesAsUint16()
+        segCount = br2.readBytes(2, int)
+        firstSegNumber = br2.readBytes(2, int)
 
         levelSsectors.append(SubSector(segCount, firstSegNumber))
     return levelSsectors
@@ -239,24 +239,24 @@ def NODES(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelNodes = []
     for i in range(levelNodesLump.size // 28):
-        x = br2.readBytesAsUint16()
-        y = br2.readBytesAsUint16()
+        x = br2.readBytes(2, int)
+        y = br2.readBytes(2, int)
 
-        deltaX = br2.readBytesAsUint16()
-        deltaY = br2.readBytesAsUint16()
+        deltaX = br2.readBytes(2, int)
+        deltaY = br2.readBytes(2, int)
 
-        rightBoundingBoxTop = br2.readBytesAsUint16()
-        rightBoundingBoxBottom = br2.readBytesAsUint16()
-        rightBoundingBoxLeft = br2.readBytesAsUint16()
-        rightBoundingBoxRight = br2.readBytesAsUint16()
+        rightBoundingBoxTop = br2.readBytes(2, int)
+        rightBoundingBoxBottom = br2.readBytes(2, int)
+        rightBoundingBoxLeft = br2.readBytes(2, int)
+        rightBoundingBoxRight = br2.readBytes(2, int)
 
-        leftBoundingBoxTop = br2.readBytesAsUint16()
-        leftBoundingBoxBottom = br2.readBytesAsUint16()
-        leftBoundingBoxLeft = br2.readBytesAsUint16()
-        leftBoundingBoxRight = br2.readBytesAsUint16()
+        leftBoundingBoxTop = br2.readBytes(2, int)
+        leftBoundingBoxBottom = br2.readBytes(2, int)
+        leftBoundingBoxLeft = br2.readBytes(2, int)
+        leftBoundingBoxRight = br2.readBytes(2, int)
 
-        rightChild = br2.readBytesAsUint16()
-        leftChild = br2.readBytesAsUint16()
+        rightChild = br2.readBytes(2, int)
+        leftChild = br2.readBytes(2, int)
 
         levelNodes.append(Node(x, y, deltaX, deltaY, rightBoundingBoxTop, rightBoundingBoxBottom, rightBoundingBoxLeft,
                                rightBoundingBoxRight, leftBoundingBoxTop, leftBoundingBoxBottom, leftBoundingBoxLeft,
@@ -275,13 +275,13 @@ def SECTORS(br, levelLump: list[Lump]):
     br2 = ConsecutiveBytearrayReader(data)
     levelSectors = []
     for i in range(levelSectorsLump.size // 26):
-        floorHeight = br2.readBytesAsUint16()
-        ceilingHeight = br2.readBytesAsUint16()
+        floorHeight = br2.readBytes(2, int)
+        ceilingHeight = br2.readBytes(2, int)
         floorTextureName = br2.readBytes(8, str).strip("\x00")
         ceilingTextureName = br2.readBytes(8, str).strip("\x00")
-        lightLevel = br2.readBytesAsUint16()
-        specialTag = br2.readBytesAsUint16()
-        tagNumber = br2.readBytesAsUint16()
+        lightLevel = br2.readBytes(2, int)
+        specialTag = br2.readBytes(2, int)
+        tagNumber = br2.readBytes(2, int)
 
         levelSectors.append(
             Sector(floorHeight, ceilingHeight, floorTextureName, ceilingTextureName, lightLevel, specialTag, tagNumber))
@@ -319,15 +319,15 @@ def BLOCKMAP(br, levelLump: list[Lump]):
     data = br.readLumpData(levelBlockMapLump)
     br2 = ConsecutiveBytearrayReader(data)
 
-    gridX = br2.readBytesAsUint16()
-    gridY = br2.readBytesAsUint16()
-    columnNumber = br2.readBytesAsUint16()
-    rowNumber = br2.readBytesAsUint16()
+    gridX = br2.readBytes(2, int)
+    gridY = br2.readBytes(2, int)
+    columnNumber = br2.readBytes(2, int)
+    rowNumber = br2.readBytes(2, int)
 
     offsets = []
 
     for i in range(columnNumber * rowNumber):
-        offsets.append(br2.readBytesAsUint16() * 2)
+        offsets.append(br2.readBytes(2, int) * 2)
 
     lineDefIndexByBlock = []
 
@@ -367,10 +367,10 @@ def convert_doom_picture_to_png(doom_image_data, palette_data, output_filename):
     br = ConsecutiveBytearrayReader(doom_image_data)
 
     # Read image metadata
-    width = br.readBytesAsUint16()
-    height = br.readBytesAsUint16()
-    left = br.readBytesAsUint16()
-    top = br.readBytesAsUint16()
+    width = br.readBytes(2, int)
+    height = br.readBytes(2, int)
+    left = br.readBytes(2, int)
+    top = br.readBytes(2, int)
 
     # Create an image with 8-bit color depth
     image = Image.new('P', (width, height))

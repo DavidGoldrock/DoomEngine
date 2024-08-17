@@ -1,5 +1,5 @@
 #ifndef THING_H
-#define STRUCT THING_H
+#define THING_H
 
 #include <cstdint>
 #include <iostream>

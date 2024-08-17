@@ -3,6 +3,7 @@
 #include <iostream>
 #include "Lump.h"
 #include "Thing.h"
+#include "LineDef.h"
 #include "ConsecutiveBytearrayReader.h"
 
 int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
@@ -16,19 +17,19 @@ bool bitAtLocation(size_t byte, size_t n);
 
 std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size);
 
-void ENDOOM(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+void ENDOOM(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 
 // THINGS
 
 
-Thing* THINGS(ConsecutiveBytearrayReader* br, size_t arrSize, Lump* levelLumps);
+Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 
 
-// """
 // LINEDEFS
-// """
+
+// LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 
 // def LINEDEFS(br, levelLump: list[Lump]):
