@@ -3,6 +3,10 @@ Seg::Seg(uint16_t startingVertexNumber, uint16_t endingVertexNumber, uint16_t an
         : startingVertexNumber(startingVertexNumber), endingVertexNumber(endingVertexNumber), angle(angle), lineDefNumber(lineDefNumber), directionSameAsLineDef(directionSameAsLineDef), offset(offset)
     {}
 
+Seg::Seg()
+        : startingVertexNumber(0), endingVertexNumber(0), angle(0), lineDefNumber(0), directionSameAsLineDef(false), offset(0)
+    {}
+
 std::ostream& operator<<(std::ostream& os, const Seg& obj) {
         os << "Seg{ ";
         os << "startingVertexNumber: " << (int) obj.startingVertexNumber << " ";

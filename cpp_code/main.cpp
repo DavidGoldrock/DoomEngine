@@ -76,7 +76,8 @@ int main() {
     Thing* things = THINGS(br, lumps, numlumps);
     LineDef* lineDefs = LINEDEFS(br, lumps, numlumps);
     SideDef* sideDefs = SIDEDEFS(br, lumps, numlumps);
-
+    Seg* segs = SEGS(br, lumps, numlumps);
+    delete[] segs;
     delete[] sideDefs;
     delete[] lineDefs;
     delete[] things;

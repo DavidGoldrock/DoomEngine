@@ -6,6 +6,7 @@
 #include "LineDef.h"
 #include "ConsecutiveBytearrayReader.h"
 #include "SideDef.h"
+#include "Seg.h"
 
 int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
     
@@ -36,21 +37,26 @@ LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
-// def SIDEDEFS(br, levelLump: list[Lump]):
-//     _, levelSideDefLump = findInLumpArray(levelLump, "SIDEDEFS")
-//     data = br.readLumpData(levelSideDefLump)
+// SEGS
+
+Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+
+// def SEGS(br, levelLump: list[Lump]):
+//     _, levelSegsLump = findInLumpArray(levelLump, "SEGS")
+//     data = br.readLumpData(levelSegsLump)
 //     br2 = ConsecutiveBytearrayReader(data)
-//     levelSideDefs = []
-//     for i in range(levelSideDefLump.size // 30):
-//         x = br2.readBytesAsUint16()
-//         y = br2.readBytesAsUint16()
-//         upperTextureName = br2.readBytes(8, str).strip("\x00")
-//         lowerTextureName = br2.readBytes(8, str).strip("\x00")
-//         middleTextureName = br2.readBytes(8, str).strip("\x00")
-//         sectorNumber = br2.readBytesAsUint16()
-//         levelSideDefs.append(
-//             SideDef(x, y, upperTextureName, lowerTextureName, middleTextureName, sectorNumber))
-//     return levelSideDefs
+//     levelSegs = []
+//     for i in range(levelSegsLump.size // 12):
+//         startingVertexNumber = br2->readBytesAsUint16()
+//         endingVertexNumber = br2->readBytesAsUint16()
+//         angle = br2->readBytesAsUint16()
+//         lineDefNumber = br2->readBytesAsUint16()
+//         directionSameAsLineDef = br2->readBytesAsUint16() == 1
+//         offset = br2->readBytesAsUint16()
+
+//         levelSegs.append(
+//             Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
+//     return levelSegs
 
 
 // """
@@ -64,33 +70,10 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 //     br2 = ConsecutiveBytearrayReader(data)
 //     levelVertexes = []
 //     for i in range(levelVertexsLump.size // 4):
-//         x = br2.readBytesAsUint16()
-//         y = br2.readBytesAsUint16()
+//         x = br2->readBytesAsUint16()
+//         y = br2->readBytesAsUint16()
 //         levelVertexes.append(np.array([x, y]))
 //     return levelVertexes
-
-
-// """
-// SEGS
-// """
-
-
-// def SEGS(br, levelLump: list[Lump]):
-//     _, levelSegsLump = findInLumpArray(levelLump, "SEGS")
-//     data = br.readLumpData(levelSegsLump)
-//     br2 = ConsecutiveBytearrayReader(data)
-//     levelSegs = []
-//     for i in range(levelSegsLump.size // 12):
-//         startingVertexNumber = br2.readBytesAsUint16()
-//         endingVertexNumber = br2.readBytesAsUint16()
-//         angle = br2.readBytesAsUint16()
-//         lineDefNumber = br2.readBytesAsUint16()
-//         directionSameAsLineDef = br2.readBytesAsUint16() == 1
-//         offset = br2.readBytesAsUint16()
-
-//         levelSegs.append(
-//             Seg(startingVertexNumber, endingVertexNumber, angle, lineDefNumber, directionSameAsLineDef, offset))
-//     return levelSegs
 
 
 // """
@@ -104,8 +87,8 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 //     br2 = ConsecutiveBytearrayReader(data)
 //     levelSsectors = []
 //     for i in range(levelSsectorsLump.size // 4):
-//         segCount = br2.readBytesAsUint16()
-//         firstSegNumber = br2.readBytesAsUint16()
+//         segCount = br2->readBytesAsUint16()
+//         firstSegNumber = br2->readBytesAsUint16()
 
 //         levelSsectors.append(SubSector(segCount, firstSegNumber))
 //     return levelSsectors
@@ -122,24 +105,24 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 //     br2 = ConsecutiveBytearrayReader(data)
 //     levelNodes = []
 //     for i in range(levelNodesLump.size // 28):
-//         x = br2.readBytesAsUint16()
-//         y = br2.readBytesAsUint16()
+//         x = br2->readBytesAsUint16()
+//         y = br2->readBytesAsUint16()
 
-//         deltaX = br2.readBytesAsUint16()
-//         deltaY = br2.readBytesAsUint16()
+//         deltaX = br2->readBytesAsUint16()
+//         deltaY = br2->readBytesAsUint16()
 
-//         rightBoundingBoxTop = br2.readBytesAsUint16()
-//         rightBoundingBoxBottom = br2.readBytesAsUint16()
-//         rightBoundingBoxLeft = br2.readBytesAsUint16()
-//         rightBoundingBoxRight = br2.readBytesAsUint16()
+//         rightBoundingBoxTop = br2->readBytesAsUint16()
+//         rightBoundingBoxBottom = br2->readBytesAsUint16()
+//         rightBoundingBoxLeft = br2->readBytesAsUint16()
+//         rightBoundingBoxRight = br2->readBytesAsUint16()
 
-//         leftBoundingBoxTop = br2.readBytesAsUint16()
-//         leftBoundingBoxBottom = br2.readBytesAsUint16()
-//         leftBoundingBoxLeft = br2.readBytesAsUint16()
-//         leftBoundingBoxRight = br2.readBytesAsUint16()
+//         leftBoundingBoxTop = br2->readBytesAsUint16()
+//         leftBoundingBoxBottom = br2->readBytesAsUint16()
+//         leftBoundingBoxLeft = br2->readBytesAsUint16()
+//         leftBoundingBoxRight = br2->readBytesAsUint16()
 
-//         rightChild = br2.readBytesAsUint16()
-//         leftChild = br2.readBytesAsUint16()
+//         rightChild = br2->readBytesAsUint16()
+//         leftChild = br2->readBytesAsUint16()
 
 //         levelNodes.append(Node(x, y, deltaX, deltaY, rightBoundingBoxTop, rightBoundingBoxBottom, rightBoundingBoxLeft,
 //                                rightBoundingBoxRight, leftBoundingBoxTop, leftBoundingBoxBottom, leftBoundingBoxLeft,
@@ -158,13 +141,13 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 //     br2 = ConsecutiveBytearrayReader(data)
 //     levelSectors = []
 //     for i in range(levelSectorsLump.size // 26):
-//         floorHeight = br2.readBytesAsUint16()
-//         ceilingHeight = br2.readBytesAsUint16()
-//         floorTextureName = br2.readBytes(8, str).strip("\x00")
-//         ceilingTextureName = br2.readBytes(8, str).strip("\x00")
-//         lightLevel = br2.readBytesAsUint16()
-//         specialTag = br2.readBytesAsUint16()
-//         tagNumber = br2.readBytesAsUint16()
+//         floorHeight = br2->readBytesAsUint16()
+//         ceilingHeight = br2->readBytesAsUint16()
+//         floorTextureName = br2->readBytes(8, str).strip("\x00")
+//         ceilingTextureName = br2->readBytes(8, str).strip("\x00")
+//         lightLevel = br2->readBytesAsUint16()
+//         specialTag = br2->readBytesAsUint16()
+//         tagNumber = br2->readBytesAsUint16()
 
 //         levelSectors.append(
 //             Sector(floorHeight, ceilingHeight, floorTextureName, ceilingTextureName, lightLevel, specialTag, tagNumber))
@@ -202,29 +185,29 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 //     data = br.readLumpData(levelBlockMapLump)
 //     br2 = ConsecutiveBytearrayReader(data)
 
-//     gridX = br2.readBytesAsUint16()
-//     gridY = br2.readBytesAsUint16()
-//     columnNumber = br2.readBytesAsUint16()
-//     rowNumber = br2.readBytesAsUint16()
+//     gridX = br2->readBytesAsUint16()
+//     gridY = br2->readBytesAsUint16()
+//     columnNumber = br2->readBytesAsUint16()
+//     rowNumber = br2->readBytesAsUint16()
 
 //     offsets = []
 
 //     for i in range(columnNumber * rowNumber):
-//         offsets.append(br2.readBytesAsUint16() * 2)
+//         offsets.append(br2->readBytesAsUint16() * 2)
 
 //     lineDefIndexByBlock = []
 
 //     for i in range(columnNumber * rowNumber):
 //         offset = offsets[i]
-//         br2.pointer = offset
+//         br2->pointer = offset
 //         lineDefIndexByBlock.append([])
 
-//         lineDefIndex = br2.readBytes(2)
+//         lineDefIndex = br2->readBytes(2)
 //         assert lineDefIndex == b"\x00\x00"
-//         lineDefIndex = br2.readBytes(2)
+//         lineDefIndex = br2->readBytes(2)
 //         while lineDefIndex != b"\xff\xff":
 //             lineDefIndexByBlock[i].append(int.from_bytes(lineDefIndex, 'little'))
-//             lineDefIndex = br2.readBytes(2)
+//             lineDefIndex = br2->readBytes(2)
 //     return BlockMap(gridX, gridY, columnNumber, rowNumber, offsets, lineDefIndexByBlock)
 
 

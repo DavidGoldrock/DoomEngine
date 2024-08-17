@@ -122,7 +122,6 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
     std::string tagname = "SIDEDEFS";
     size_t levelSideDefLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelSideDefLumpIndex].size];
-    uint8_t* data2 = new uint8_t[30];
     br->readLumpData(data, lumps[levelSideDefLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSideDefLumpIndex].size);
     SideDef* levelSideDefs = new SideDef[lumps[levelSideDefLumpIndex].size / 30];
@@ -138,4 +137,26 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
     }
     delete br2;
     return levelSideDefs;
+}
+
+
+Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
+    std::string tagname = "SEGS";
+    size_t levelSegLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelSegLumpIndex].size];
+    br->readLumpData(data, lumps[levelSegLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSegLumpIndex].size);
+    Seg* levelSeg = new Seg[lumps[levelSegLumpIndex].size / 12];
+    for (size_t i = 0; i < lumps[levelSegLumpIndex].size / 12; i++) {
+        levelSeg[i].startingVertexNumber = br2->readBytesAsUint16();
+        levelSeg[i].endingVertexNumber = br2->readBytesAsUint16();
+        levelSeg[i].angle = br2->readBytesAsUint16();
+        levelSeg[i].lineDefNumber = br2->readBytesAsUint16();
+        levelSeg[i].directionSameAsLineDef = br2->readBytesAsUint16();
+        levelSeg[i].offset = br2->readBytesAsUint16();
+
+        std::cout << "Loaded Seg [" << (i+1) << "]" << " Out of [" << lumps[levelSegLumpIndex].size / 10 << "]" << levelSeg[i] << std::endl;
+    }
+    delete br2;
+    return levelSeg;
 }
