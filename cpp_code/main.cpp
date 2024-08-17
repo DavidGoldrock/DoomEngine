@@ -78,6 +78,8 @@ int main() {
     SideDef* sideDefs = SIDEDEFS(br, lumps, numlumps);
     Seg* segs = SEGS(br, lumps, numlumps);
     SubSector* subSectors = SSECTORS(br, lumps, numlumps);
+    Node* nodes = NODES(br, lumps, numlumps);
+    delete[] nodes;
     delete[] subSectors;
     delete[] segs;
     delete[] sideDefs;

@@ -4,6 +4,10 @@ Node::Node(uint16_t x, uint16_t y, uint16_t deltaX, uint16_t deltaY, uint16_t ri
         : x(x), y(y), deltaX(deltaX), deltaY(deltaY), rightBoundingBoxTop(rightBoundingBoxTop), rightBoundingBoxBottom(rightBoundingBoxBottom), rightBoundingBoxLeft(rightBoundingBoxLeft), rightBoundingBoxRight(rightBoundingBoxRight), leftBoundingBoxTop(leftBoundingBoxTop), leftBoundingBoxBottom(leftBoundingBoxBottom), leftBoundingBoxLeft(leftBoundingBoxLeft), leftBoundingBoxRight(leftBoundingBoxRight), rightChildIndex(rightChildIndex), leftChildIndex(leftChildIndex)
     {}
 
+Node::Node()
+        : x(0), y(0), deltaX(0), deltaY(0), rightBoundingBoxTop(0), rightBoundingBoxBottom(0), rightBoundingBoxLeft(0), rightBoundingBoxRight(0), leftBoundingBoxTop(0), leftBoundingBoxBottom(0), leftBoundingBoxLeft(0), leftBoundingBoxRight(0), rightChildIndex(0), leftChildIndex(0)
+    {}
+
 std::ostream& operator<<(std::ostream& os, const Node& obj) {
         os << "Node{ ";
         os << "x: " << (int) obj.x << " ";

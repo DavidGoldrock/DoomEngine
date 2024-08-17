@@ -8,6 +8,7 @@
 #include "SideDef.h"
 #include "Seg.h"
 #include "SubSector.h"
+#include "Node.h"
 
 int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
     
@@ -65,10 +66,9 @@ Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 SubSector* SSECTORS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 
-// """
 // NODES
-// """
 
+Node* NODES(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 // def NODES(br, levelLump: list[Lump]):
 //     _, levelNodesLump = findInLumpArray(levelLump, "NODES")

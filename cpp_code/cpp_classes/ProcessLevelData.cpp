@@ -177,3 +177,32 @@ SubSector* SSECTORS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps
     delete br2;
     return levelSubSector;
 }
+
+Node* NODES(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
+std::string tagname = "NODES";
+    size_t levelNodeLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelNodeLumpIndex].size];
+    br->readLumpData(data, lumps[levelNodeLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelNodeLumpIndex].size);
+    Node* levelNode = new Node[lumps[levelNodeLumpIndex].size / 12];
+    for (size_t i = 0; i < lumps[levelNodeLumpIndex].size / 12; i++) {
+        levelNode[i].x = br2->readBytesAsUint16();
+        levelNode[i].y = br2->readBytesAsUint16();
+        levelNode[i].deltaX = br2->readBytesAsUint16();
+        levelNode[i].deltaY = br2->readBytesAsUint16();
+        levelNode[i].rightBoundingBoxTop = br2->readBytesAsUint16();
+        levelNode[i].rightBoundingBoxBottom = br2->readBytesAsUint16();
+        levelNode[i].rightBoundingBoxLeft = br2->readBytesAsUint16();
+        levelNode[i].rightBoundingBoxRight = br2->readBytesAsUint16();
+        levelNode[i].leftBoundingBoxTop = br2->readBytesAsUint16();
+        levelNode[i].leftBoundingBoxBottom = br2->readBytesAsUint16();
+        levelNode[i].leftBoundingBoxLeft = br2->readBytesAsUint16();
+        levelNode[i].leftBoundingBoxRight = br2->readBytesAsUint16();
+        levelNode[i].rightChildIndex = br2->readBytesAsUint16();
+        levelNode[i].leftChildIndex = br2->readBytesAsUint16();
+
+        std::cout << "Loaded Node [" << (i+1) << "]" << " Out of [" << lumps[levelNodeLumpIndex].size / 10 << "]" << levelNode[i] << std::endl;
+    }
+    delete br2;
+    return levelNode;
+}
