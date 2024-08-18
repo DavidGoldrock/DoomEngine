@@ -74,7 +74,7 @@ Node* NODES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 // SECTORS
 
-// Sector* SECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+Sector* SECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // def SECTORS(br, levelLump: list[Lump]):

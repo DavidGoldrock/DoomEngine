@@ -179,13 +179,13 @@ SubSector* SSECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps
 }
 
 Node* NODES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
-std::string tagname = "NODES";
+    std::string tagname = "NODES";
     size_t levelNodeLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelNodeLumpIndex].size];
     br.readLumpData(data, lumps[levelNodeLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelNodeLumpIndex].size);
-    Node* levelNode = new Node[lumps[levelNodeLumpIndex].size / 12];
-    for (size_t i = 0; i < lumps[levelNodeLumpIndex].size / 12; i++) {
+    Node* levelNode = new Node[lumps[levelNodeLumpIndex].size / 28];
+    for (size_t i = 0; i < lumps[levelNodeLumpIndex].size / 28; i++) {
         levelNode[i].x = br2->readBytesAsUint16();
         levelNode[i].y = br2->readBytesAsUint16();
         levelNode[i].deltaX = br2->readBytesAsUint16();
@@ -205,4 +205,26 @@ std::string tagname = "NODES";
     }
     delete br2;
     return levelNode;
+}
+
+Sector* SECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
+    std::string tagname = "SECTORS";
+    size_t levelSectorLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelSectorLumpIndex].size];
+    br.readLumpData(data, lumps[levelSectorLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSectorLumpIndex].size);
+    Sector* levelSector = new Sector[lumps[levelSectorLumpIndex].size / 26];
+    for (size_t i = 0; i < lumps[levelSectorLumpIndex].size / 26; i++) {
+        levelSector[i].floorHeight = br2->readBytesAsUint16();
+        levelSector[i].ceilingHeight = br2->readBytesAsUint16();
+        levelSector[i].floorTextureName = br2->readBytesAsStr(8);
+        levelSector[i].ceilingTextureName = br2->readBytesAsStr(8);
+        levelSector[i].lightLevel = br2->readBytesAsUint16();
+        levelSector[i].specialTag = br2->readBytesAsUint16();
+        levelSector[i].tagNumber = br2->readBytesAsUint16();
+
+        std::cout << "Loaded Sector [" << (i+1) << "]" << " Out of [" << lumps[levelSectorLumpIndex].size / 10 << "]" << levelSector[i] << std::endl;
+    }
+    delete br2;
+    return levelSector;
 }

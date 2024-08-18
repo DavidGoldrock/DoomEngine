@@ -79,6 +79,8 @@ int main() {
     Seg* segs = SEGS(*br, lumps, numlumps);
     SubSector* subSectors = SSECTORS(*br, lumps, numlumps);
     Node* nodes = NODES(*br, lumps, numlumps);
+    Sector* sectors = SECTORS(*br, lumps, numlumps);
+    delete[] sectors;
     delete[] nodes;
     delete[] subSectors;
     delete[] segs;

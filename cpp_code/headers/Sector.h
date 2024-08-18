@@ -15,6 +15,7 @@ struct Sector {
 
     // Constructor
     Sector(uint16_t floorHeight, uint16_t ceilingHeight, std::string floorTextureName, std::string ceilingTextureName, uint16_t lightLevel, uint16_t specialTag, uint16_t tagNumber);
+    Sector();
 
     friend std::ostream& operator<<(std::ostream& os, const Sector& obj);
 };

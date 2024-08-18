@@ -27,7 +27,7 @@ def getLumpsData(br):
     lumps = []
     for i in range(numlumps):
         lumps.append(br.readLump())
-        input(f"loaded Lump[{i + 1}] out of [{numlumps}] <{lumps[i]}>")
+        print(f"loaded Lump[{i + 1}] out of [{numlumps}] <{lumps[i]}>")
     return lumps
 
 
@@ -55,12 +55,13 @@ if __name__ == "__main__":
     # print(level1Lumps)
     # print(f"{(THINGS(br, level1Lumps))=}")
     #print(f"{(LINEDEFS(br, level1Lumps))=}")
-    # text = '\n'.join([str(s) for s in SIDEDEFS(br,level1Lumps)])
-    # print(f"{text}")
+    # print(f"{SIDEDEFS(br,level1Lumps)=}")
     #print(f"{(VERTEXES(br,level1Lumps))=}")
     #print(f"{(SEGS(br,level1Lumps))=}")
     #print(f"{(SSECTORS(br,level1Lumps))=}")
     #print(f"{(NODES(br,level1Lumps))=}")
+    text = '\n'.join([str(s) for s in SECTORS(br,level1Lumps)])
+    print(text)
     #print(f"{(SECTORS(br,level1Lumps))=}")
     #print(f"{(REJECT(br,level1Lumps))=}")
     #print(f"{(BLOCKMAP(br,level1Lumps))=}")

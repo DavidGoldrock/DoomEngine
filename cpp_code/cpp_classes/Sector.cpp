@@ -4,6 +4,10 @@ Sector::Sector(uint16_t floorHeight, uint16_t ceilingHeight, std::string floorTe
         : floorHeight(floorHeight), ceilingHeight(ceilingHeight), floorTextureName(floorTextureName), ceilingTextureName(ceilingTextureName), lightLevel(lightLevel), specialTag(specialTag), tagNumber(tagNumber)
     {}
 
+Sector::Sector()
+        : floorHeight(0), ceilingHeight(0), floorTextureName(""), ceilingTextureName(""), lightLevel(0), specialTag(0), tagNumber(0)
+    {}
+
 std::ostream& operator<<(std::ostream& os, const Sector& obj) {
         os << "Sector{ ";
         os << "floorHeight: " << (int) obj.floorHeight << " ";
