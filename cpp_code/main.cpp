@@ -72,13 +72,13 @@ int main() {
     }
     std::cout << "Finished loading Lumps" << std::endl;
 
-    ENDOOM(br, lumps, numlumps);
-    Thing* things = THINGS(br, lumps, numlumps);
-    LineDef* lineDefs = LINEDEFS(br, lumps, numlumps);
-    SideDef* sideDefs = SIDEDEFS(br, lumps, numlumps);
-    Seg* segs = SEGS(br, lumps, numlumps);
-    SubSector* subSectors = SSECTORS(br, lumps, numlumps);
-    Node* nodes = NODES(br, lumps, numlumps);
+    ENDOOM(*br, lumps, numlumps);
+    Thing* things = THINGS(*br, lumps, numlumps);
+    LineDef* lineDefs = LINEDEFS(*br, lumps, numlumps);
+    SideDef* sideDefs = SIDEDEFS(*br, lumps, numlumps);
+    Seg* segs = SEGS(*br, lumps, numlumps);
+    SubSector* subSectors = SSECTORS(*br, lumps, numlumps);
+    Node* nodes = NODES(*br, lumps, numlumps);
     delete[] nodes;
     delete[] subSectors;
     delete[] segs;

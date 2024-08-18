@@ -52,19 +52,19 @@ std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size)
 
 }
 
-void ENDOOM(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
+void ENDOOM(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
     int index = findInLumpArray(lumps, numlumps,"ENDOOM");
     uint8_t data[lumps[index].size];
-    br->readLumpData(data, lumps[index]);
+    br.readLumpData(data, lumps[index]);
     std::string ENDOOM_text_decoded = VGA_16BIT_COLOR_MEMORY_TO_STRING(data, lumps[index].size);
     std::cout << ENDOOM_text_decoded << std::endl;
 }
     
-Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
+Thing* THINGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps){
     std::string tagname = "THINGS";
     size_t levelThingLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelThingLumpIndex].size];
-    br->readLumpData(data, lumps[levelThingLumpIndex]);
+    br.readLumpData(data, lumps[levelThingLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelThingLumpIndex].size);
     Thing* levelThings = new Thing[lumps[levelThingLumpIndex].size / 10];
     for (size_t i = 0; i < lumps[levelThingLumpIndex].size / 10; i++) {
@@ -85,11 +85,11 @@ Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
     return levelThings;
 }
 
-LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
+LineDef* LINEDEFS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
     std::string tagname = "LINEDEFS";
     size_t levelLineDefLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelLineDefLumpIndex].size];
-    br->readLumpData(data, lumps[levelLineDefLumpIndex]);
+    br.readLumpData(data, lumps[levelLineDefLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelLineDefLumpIndex].size);
     LineDef* levelLineDefs = new LineDef[lumps[levelLineDefLumpIndex].size / 14];
 
@@ -118,11 +118,11 @@ LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) 
     return levelLineDefs;
 }
 
-SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
+SideDef* SIDEDEFS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps){
     std::string tagname = "SIDEDEFS";
     size_t levelSideDefLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelSideDefLumpIndex].size];
-    br->readLumpData(data, lumps[levelSideDefLumpIndex]);
+    br.readLumpData(data, lumps[levelSideDefLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSideDefLumpIndex].size);
     SideDef* levelSideDefs = new SideDef[lumps[levelSideDefLumpIndex].size / 30];
     for (size_t i = 0; i < lumps[levelSideDefLumpIndex].size / 30; i++) {
@@ -140,11 +140,11 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
 }
 
 
-Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
+Seg* SEGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps){
     std::string tagname = "SEGS";
     size_t levelSegLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelSegLumpIndex].size];
-    br->readLumpData(data, lumps[levelSegLumpIndex]);
+    br.readLumpData(data, lumps[levelSegLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSegLumpIndex].size);
     Seg* levelSeg = new Seg[lumps[levelSegLumpIndex].size / 12];
     for (size_t i = 0; i < lumps[levelSegLumpIndex].size / 12; i++) {
@@ -161,11 +161,11 @@ Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps){
     return levelSeg;
 }
 
-SubSector* SSECTORS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
+SubSector* SSECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
     std::string tagname = "SSECTORS";
     size_t levelSubSectorLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelSubSectorLumpIndex].size];
-    br->readLumpData(data, lumps[levelSubSectorLumpIndex]);
+    br.readLumpData(data, lumps[levelSubSectorLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelSubSectorLumpIndex].size);
     SubSector* levelSubSector = new SubSector[lumps[levelSubSectorLumpIndex].size / 12];
     for (size_t i = 0; i < lumps[levelSubSectorLumpIndex].size / 12; i++) {
@@ -178,11 +178,11 @@ SubSector* SSECTORS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps
     return levelSubSector;
 }
 
-Node* NODES(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps) {
+Node* NODES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
 std::string tagname = "NODES";
     size_t levelNodeLumpIndex = findInLumpArray(lumps, numlumps, tagname);
     uint8_t* data = new uint8_t[lumps[levelNodeLumpIndex].size];
-    br->readLumpData(data, lumps[levelNodeLumpIndex]);
+    br.readLumpData(data, lumps[levelNodeLumpIndex]);
     ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelNodeLumpIndex].size);
     Node* levelNode = new Node[lumps[levelNodeLumpIndex].size / 12];
     for (size_t i = 0; i < lumps[levelNodeLumpIndex].size / 12; i++) {

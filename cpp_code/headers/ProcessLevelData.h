@@ -9,6 +9,7 @@
 #include "Seg.h"
 #include "SubSector.h"
 #include "Node.h"
+#include "Sector.h"
 
 int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
     
@@ -21,27 +22,27 @@ bool bitAtLocation(size_t byte, size_t n);
 
 std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size);
 
-void ENDOOM(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+void ENDOOM(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // THINGS
 
 
-Thing* THINGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+Thing* THINGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 
 // LINEDEFS
 
-LineDef* LINEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+LineDef* LINEDEFS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 // SIDEDEFS
 
-SideDef* SIDEDEFS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+SideDef* SIDEDEFS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 // SEGS
 
-Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+Seg* SEGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // """
@@ -63,47 +64,17 @@ Seg* SEGS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
 
 // SSECTORS
 
-SubSector* SSECTORS(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
+SubSector* SSECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // NODES
 
-Node* NODES(ConsecutiveBytearrayReader* br, Lump* lumps, size_t numlumps);
-
-// def NODES(br, levelLump: list[Lump]):
-//     _, levelNodesLump = findInLumpArray(levelLump, "NODES")
-//     data = br.readLumpData(levelNodesLump)
-//     br2 = ConsecutiveBytearrayReader(data)
-//     levelNodes = []
-//     for i in range(levelNodesLump.size // 28):
-//         x = br2->readBytesAsUint16()
-//         y = br2->readBytesAsUint16()
-
-//         deltaX = br2->readBytesAsUint16()
-//         deltaY = br2->readBytesAsUint16()
-
-//         rightBoundingBoxTop = br2->readBytesAsUint16()
-//         rightBoundingBoxBottom = br2->readBytesAsUint16()
-//         rightBoundingBoxLeft = br2->readBytesAsUint16()
-//         rightBoundingBoxRight = br2->readBytesAsUint16()
-
-//         leftBoundingBoxTop = br2->readBytesAsUint16()
-//         leftBoundingBoxBottom = br2->readBytesAsUint16()
-//         leftBoundingBoxLeft = br2->readBytesAsUint16()
-//         leftBoundingBoxRight = br2->readBytesAsUint16()
-
-//         rightChild = br2->readBytesAsUint16()
-//         leftChild = br2->readBytesAsUint16()
-
-//         levelNodes.append(Node(x, y, deltaX, deltaY, rightBoundingBoxTop, rightBoundingBoxBottom, rightBoundingBoxLeft,
-//                                rightBoundingBoxRight, leftBoundingBoxTop, leftBoundingBoxBottom, leftBoundingBoxLeft,
-//                                leftBoundingBoxRight, rightChild, leftChild))
-//     return levelNodes
+Node* NODES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
-// """
 // SECTORS
-// """
+
+// Sector* SECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // def SECTORS(br, levelLump: list[Lump]):
