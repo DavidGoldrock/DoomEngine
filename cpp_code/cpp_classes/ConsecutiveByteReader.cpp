@@ -38,10 +38,9 @@ uint32_t ConsecutiveBytearrayReader::readBytesAsUint32() {
 Lump ConsecutiveBytearrayReader::readLump() {
     uint32_t filepos = readBytesAsUint32();
     uint32_t size = readBytesAsUint32();
-    char* name = new char[9];
+    char name[9];
     readBytesAsChar(name, 8);
     Lump l(filepos,size,std::string(name));
-    delete name;
     return l;
 }
 
