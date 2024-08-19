@@ -3,6 +3,7 @@
 #include <fstream>
 #include "./headers/ConsecutiveBytearrayReader.h"
 #include "./headers/Lump.h"
+#include "./headers/Vec2.h"
 #include "./headers/ProcessLevelData.h"
 
 bool readFileToUint8Array(const std::string& filename, uint8_t*& data, size_t& size) {
@@ -80,6 +81,8 @@ int main() {
     SubSector* subSectors = SSECTORS(*br, lumps, numlumps);
     Node* nodes = NODES(*br, lumps, numlumps);
     Sector* sectors = SECTORS(*br, lumps, numlumps);
+    Vec2* vertexes = VERTEXES(*br, lumps, numlumps);
+    delete[] vertexes;
     delete[] sectors;
     delete[] nodes;
     delete[] subSectors;
@@ -87,7 +90,7 @@ int main() {
     delete[] sideDefs;
     delete[] lineDefs;
     delete[] things;
-    delete lumps;
+    delete[] lumps;
     delete[] header;
     delete[] data;
     return 0;

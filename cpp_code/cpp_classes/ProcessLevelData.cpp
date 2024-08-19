@@ -228,3 +228,20 @@ Sector* SECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
     delete br2;
     return levelSector;
 }
+
+Vec2* VERTEXES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps) {
+    std::string tagname = "VERTEXES";
+    size_t levelVertexLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    uint8_t* data = new uint8_t[lumps[levelVertexLumpIndex].size];
+    br.readLumpData(data, lumps[levelVertexLumpIndex]);
+    ConsecutiveBytearrayReader* br2 = new ConsecutiveBytearrayReader(data, lumps[levelVertexLumpIndex].size);
+    Vec2* levelVertex = new Vec2[lumps[levelVertexLumpIndex].size / 26];
+    for (size_t i = 0; i < lumps[levelVertexLumpIndex].size / 26; i++) {
+        levelVertex[i].x = br2->readBytesAsUint16();
+        levelVertex[i].y = br2->readBytesAsUint16();
+
+        std::cout << "Loaded Vertex [" << (i+1) << "]" << " Out of [" << lumps[levelVertexLumpIndex].size / 10 << "]" << levelVertex[i] << std::endl;
+    }
+    delete br2;
+    return levelVertex;
+}

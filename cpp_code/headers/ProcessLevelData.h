@@ -10,6 +10,7 @@
 #include "SubSector.h"
 #include "Node.h"
 #include "Sector.h"
+#include "Vec2.h"
 
 int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
     
@@ -45,9 +46,9 @@ SideDef* SIDEDEFS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 Seg* SEGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
-// """
 // VERTEXES
-// """
+
+Vec2* VERTEXES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // def VERTEXES(br, levelLump: list[Lump]):
@@ -75,25 +76,6 @@ Node* NODES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 // SECTORS
 
 Sector* SECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
-
-
-// def SECTORS(br, levelLump: list[Lump]):
-//     _, levelSectorsLump = findInLumpArray(levelLump, "SECTORS")
-//     data = br.readLumpData(levelSectorsLump)
-//     br2 = ConsecutiveBytearrayReader(data)
-//     levelSectors = []
-//     for i in range(levelSectorsLump.size // 26):
-//         floorHeight = br2->readBytesAsUint16()
-//         ceilingHeight = br2->readBytesAsUint16()
-//         floorTextureName = br2->readBytes(8, str).strip("\x00")
-//         ceilingTextureName = br2->readBytes(8, str).strip("\x00")
-//         lightLevel = br2->readBytesAsUint16()
-//         specialTag = br2->readBytesAsUint16()
-//         tagNumber = br2->readBytesAsUint16()
-
-//         levelSectors.append(
-//             Sector(floorHeight, ceilingHeight, floorTextureName, ceilingTextureName, lightLevel, specialTag, tagNumber))
-//     return levelSectors
 
 
 // """
