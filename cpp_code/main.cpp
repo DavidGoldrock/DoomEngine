@@ -45,7 +45,7 @@ int main() {
 
      
     ConsecutiveBytearrayReader* br = new ConsecutiveBytearrayReader(data, size);
-    char* header = new char[5];
+    char header[5];
 
     br->readBytesAsChar(header,4);
     std::cout << "Header is: " << header << std::endl;
@@ -53,9 +53,7 @@ int main() {
     if(!(strcmp(header, "IWAD") == 0 || strcmp(header, "PWAD") == 0)) {
         std::cout << "Header must be IWAD or PWAD. header is: " << header << std::endl;
 
-        delete[] header;
         delete[] data;
-        header = nullptr;
         data = nullptr;
         return -1;
     }
@@ -91,7 +89,6 @@ int main() {
     delete[] lineDefs;
     delete[] things;
     delete[] lumps;
-    delete[] header;
     delete[] data;
     return 0;
 }
