@@ -1,8 +1,6 @@
 #include "../headers/ProcessLevelData.h"
 #include "../headers/UtilFunctions.h"
 
-#define debugPrint 
-
 /**
  * @fileByteReaderief gets from a DOS screen format using ansi codes and implied \n to colored text running in CMD
  * 

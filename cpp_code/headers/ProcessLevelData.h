@@ -67,22 +67,6 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, st
 std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
-// def REJECT(fileByteReader, levelLump: list[Lump]):
-//     _, levelRejectLump = findInLumpArray(levelLump, "REJECT")
-//     data = fileByteReader.readLumpData(levelRejectLump)
-//     rowSize = int(np.sqrt(len(data) * 8))
-//     bitCount = 0
-//     arr = []
-//     while bitCount < levelRejectLump.size * 8:
-//         byteIndex = bitCount // 8
-//         bitIndex = bitCount % 8
-//         arr.append(bitAtLocation(data[byteIndex], bitIndex))
-
-//         bitCount += 1
-//     matrix = np.array(matricise(arr, rowSize))
-//     return matrix
-
-
 // """
 // BLOCKMAP
 // """
