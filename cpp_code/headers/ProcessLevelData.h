@@ -11,12 +11,7 @@
 #include "Node.h"
 #include "Sector.h"
 #include "Vec2.h"
-
-int findInLumpArray(std::shared_ptr<Lump[]> arr, size_t arrSize, std::string tagname);
-    
-bool bitAtLocation(size_t source, size_t n);
-
-
+#include "Reject.h"
 
 
 //ENDDOOM
@@ -50,18 +45,6 @@ std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& fileByteReader, std::sha
 std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
-// def VERTEXES(fileByteReader, levelLump: list[Lump]):
-//     _, levelVertexsLump = findInLumpArray(levelLump, "VERTEXES")
-//     data = fileByteReader.readLumpData(levelVertexsLump)
-//     lumpDataByteReader = ConsecutiveBytearrayReader(data)
-//     levelVertexes = []
-//     for i in range(levelVertexsLump.size // 4):
-//         x = lumpDataByteReader->readBytesAsUint16()
-//         y = lumpDataByteReader->readBytesAsUint16()
-//         levelVertexes.append(np.array([x, y]))
-//     return levelVertexes
-
-
 // SSECTORS
 
 std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
@@ -80,6 +63,8 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, st
 // """
 // REJECT
 // """
+
+std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // def REJECT(fileByteReader, levelLump: list[Lump]):

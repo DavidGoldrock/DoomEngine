@@ -7,6 +7,8 @@
 #include "./headers/Vec2.h"
 #include "./headers/ProcessLevelData.h"
 
+#define debugPrint 
+
 /**
  * @brief gets the contents of the file into a smart pointer of uint8
  * 
@@ -87,6 +89,11 @@ int main() {
 
     // The end message of the file. written in ANSI compatible syntax
     std::string endoom = ENDOOM(*fileByteReader, lumps, numlumps);
+
+     std::cout << endoom << std::endl;
+    #ifdef debugPrint
+        std::cin.get();
+    #endif
     // Every "thing" object (monster, weapon, key etc.)
     std::shared_ptr<Thing[]> things = THINGS(*fileByteReader, lumps, numlumps);
 
@@ -98,6 +105,6 @@ int main() {
     std::shared_ptr<Node[]> nodes = NODES(*fileByteReader, lumps, numlumps);
     std::shared_ptr<Sector[]> sectors = SECTORS(*fileByteReader, lumps, numlumps);
     std::shared_ptr<Vec2[]> vertexes = VERTEXES(*fileByteReader, lumps, numlumps);
-    std::cout << endoom << std::endl;
+    std::shared_ptr<Reject> reject = REJECT(*fileByteReader, lumps, numlumps);
     return 0;
 }
