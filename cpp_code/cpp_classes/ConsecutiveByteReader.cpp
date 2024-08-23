@@ -36,6 +36,12 @@ std::string ConsecutiveBytearrayReader::readBytesAsStr(size_t num) {
     return std::string(buffer);
 }
 
+uint8_t ConsecutiveBytearrayReader::readBytesAsUint8() {
+    uint8_t value;
+    readBytes(&value, sizeof(value));
+    return value;
+}
+
 uint16_t ConsecutiveBytearrayReader::readBytesAsUint16() {
     uint16_t value;
     readBytes(reinterpret_cast<uint8_t*>(&value), sizeof(value));

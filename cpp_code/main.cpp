@@ -73,5 +73,6 @@ int main() {
     std::shared_ptr<Vec2[]> vertexes = VERTEXES(*fileByteReader, lumps, numlumps);
     std::shared_ptr<Reject> reject = REJECT(*fileByteReader, lumps, numlumps);
     std::shared_ptr<BlockMap> blockmap = BLOCKMAP(*fileByteReader, lumps, numlumps);
+    std::shared_ptr<PlayPal> playpal = Pallete(*fileByteReader, lumps, numlumps);
     return 0;
 }

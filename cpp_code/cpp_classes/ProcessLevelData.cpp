@@ -1,5 +1,6 @@
 #include "../headers/ProcessLevelData.h"
 #include "../headers/UtilFunctions.h"
+#include <PlayPal.h>
 
 /**
  * @fileByteReaderief gets from a DOS screen format using ansi codes and implied \n to colored text running in CMD
@@ -424,4 +425,36 @@ std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, s
     #endif
 
     return blockMapPointer;
+}
+
+std::shared_ptr<PlayPal> Pallete(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps) {
+    // Lump tagName
+    std::string tagname = "PLAYPAL";
+    // Lump index
+    size_t levelPalleteLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelPalleteLumpIndex].size);
+    fileByteReader.readLumpData(data.get(), lumps[levelPalleteLumpIndex]);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelPalleteLumpIndex].size);
+    // Create array
+    std::shared_ptr<RGB[]> levelPalleteData = std::make_shared<RGB[]>(lumps[levelPalleteLumpIndex].size / 3);
+    // Read using format
+    for (size_t i = 0; i < lumps[levelPalleteLumpIndex].size / 3; i++) {
+        levelPalleteData[i].r = lumpDataByteReader->readBytesAsUint8();
+        levelPalleteData[i].g = lumpDataByteReader->readBytesAsUint8();
+        levelPalleteData[i].b = lumpDataByteReader->readBytesAsUint8();
+
+        // Print if debugPrint is on
+        #ifdef debugPrint
+            std::cout << "Loaded RGB Value [" << (i+1) << "]" << " Out of [" << lumps[levelPalleteLumpIndex].size / 3 << "]" << levelPalleteData[i] << std::endl;
+        #endif
+    }
+
+    std::shared_ptr<PlayPal> returnValue = std::make_shared<PlayPal>(levelPalleteData);
+
+    #ifdef debugPrint
+        std::cout << "Loaded PlayPal " << *returnValue << std::endl;
+        std::cin.get();
+    #endif
+    return returnValue;
 }

@@ -18,4 +18,4 @@ std::ostream& operator<<(std::ostream& os, const SideDef& obj) {
     os << "sectorNumber: " << (int) obj.sectorNumber << " ";
     os << "}";
     return os;
-}
+} 

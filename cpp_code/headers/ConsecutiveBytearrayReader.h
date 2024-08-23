@@ -25,6 +25,9 @@ public:
     // wrapper to read into a returned string
     std::string readBytesAsStr(size_t num);
 
+    // wrapper to read 2 bytes as little endian uint8
+    uint8_t readBytesAsUint8();
+
     // wrapper to read 2 bytes as little endian uint16
     uint16_t readBytesAsUint16();
 

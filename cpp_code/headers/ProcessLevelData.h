@@ -13,6 +13,8 @@
 #include "Vec2.h"
 #include "Reject.h"
 #include "BlockMap.h"
+#include "RGB.h"
+#include "PlayPal.h"
 
 
 //ENDDOOM
@@ -74,36 +76,7 @@ std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::
 
 std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
-
-// def BLOCKMAP(fileByteReader, levelLump: list[Lump]):
-//     _, levelBlockMapLump = findInLumpArray(levelLump, "BLOCKMAP")
-//     data = fileByteReader.readLumpData(levelBlockMapLump)
-//     lumpDataByteReader = ConsecutiveBytearrayReader(data)
-
-//     gridX = lumpDataByteReader->readBytesAsUint16()
-//     gridY = lumpDataByteReader->readBytesAsUint16()
-//     columnNumber = lumpDataByteReader->readBytesAsUint16()
-//     rowNumber = lumpDataByteReader->readBytesAsUint16()
-
-//     offsets = []
-
-//     for i in range(columnNumber * rowNumber):
-//         offsets.append(lumpDataByteReader->readBytesAsUint16() * 2)
-
-//     lineDefIndexByBlock = []
-
-//     for i in range(columnNumber * rowNumber):
-//         offset = offsets[i]
-//         lumpDataByteReader->pointer = offset
-//         lineDefIndexByBlock.append([])
-
-//         lineDefIndex = lumpDataByteReader->readBytes(2)
-//         assert lineDefIndex == b"\x00\x00"
-//         lineDefIndex = lumpDataByteReader->readBytes(2)
-//         while lineDefIndex != b"\xff\xff":
-//             lineDefIndexByBlock[i].append(int.from_bytes(lineDefIndex, 'little'))
-//             lineDefIndex = lumpDataByteReader->readBytes(2)
-//     return BlockMap(gridX, gridY, columnNumber, rowNumber, offsets, lineDefIndexByBlock)
+std::shared_ptr<PlayPal> Pallete(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // def convert_playpal_to_palettes(playpal_data):
