@@ -1,1 +1,1 @@
-g++ -g -o main *.cpp ./cpp_classes/*.cpp -Iheaders
+g++ -std=c++23 -g -o main *.cpp ./cpp_classes/*.cpp -Iheaders

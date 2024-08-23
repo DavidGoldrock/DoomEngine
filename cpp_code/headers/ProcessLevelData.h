@@ -29,8 +29,7 @@ void ENDOOM(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 // THINGS
 
 
-Thing* THINGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
-
+std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 
 // LINEDEFS

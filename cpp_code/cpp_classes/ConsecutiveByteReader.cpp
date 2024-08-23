@@ -2,11 +2,11 @@
 #include "../headers/Lump.h"
 #include <cstring> // for memcpy
 
-ConsecutiveBytearrayReader::ConsecutiveBytearrayReader(const uint8_t* arr, size_t size)
+ConsecutiveBytearrayReader::ConsecutiveBytearrayReader(std::shared_ptr<uint8_t[]> arr, size_t size)
     : pointer(0), arr(arr), arrSize(size) {}
 
 size_t ConsecutiveBytearrayReader::readBytes(uint8_t* buffer, size_t bytes_num) {
-    std::memcpy(buffer, arr + pointer, bytes_num);
+    std::memcpy(buffer, arr.get() + pointer, bytes_num);
     pointer += bytes_num;
     return bytes_num;
 }

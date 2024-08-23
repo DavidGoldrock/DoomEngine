@@ -1,17 +1,21 @@
 #include <iostream>
 #include "./headers/Lump.h"
 #include <fstream>
+#include <memory>
 #include "./headers/ConsecutiveBytearrayReader.h"
 #include "./headers/Lump.h"
 #include "./headers/Vec2.h"
 #include "./headers/ProcessLevelData.h"
 
-bool readFileToUint8Array(const std::string& filename, uint8_t*& data, size_t& size) {
+std::shared_ptr<uint8_t[]> readFileToUint8Array(const std::string& filename, size_t& size) {
     // Open the file in binary mode at the end to get the file size
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
         std::cerr << "Failed to open the file: " << filename << std::endl;
-        return false;
+        std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(0);
+        data.reset();
+        size = 0;
+        return data;
     }
 
     // Get the size of the file
@@ -19,32 +23,32 @@ bool readFileToUint8Array(const std::string& filename, uint8_t*& data, size_t& s
     file.seekg(0, std::ios::beg);
 
     // Allocate memory for the data
-    data = new uint8_t[size];
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(size);
+
 
     // Read the file contents into the array
-    if (!file.read(reinterpret_cast<char*>(data), size)) {
+    if (!file.read(reinterpret_cast<char*>(data.get()), size)) {
         std::cerr << "Failed to read the file: " << filename << std::endl;
-        delete[] data;
-        data = nullptr;
+        data.reset();
         file.close();
-        return false;
+        return data;
     }
     file.close();
-    return true;
+    return data;
 }
 
 int main() {
     const std::string filename = "./resources/DOOM.wad";
-    uint8_t* data = nullptr;
     size_t size = 0;
-    if (!readFileToUint8Array(filename, data, size)) {
+    std::shared_ptr<uint8_t[]> data = readFileToUint8Array(filename, size);
+    if (size ==0) {
         return -1;
     }
 
     std::cout << "File read successfully. Size: " << size << " bytes." << std::endl;
 
      
-    ConsecutiveBytearrayReader* br = new ConsecutiveBytearrayReader(data, size);
+    std::unique_ptr<ConsecutiveBytearrayReader> br = std::make_unique<ConsecutiveBytearrayReader>(data, size);
     char header[5];
 
     br->readBytesAsChar(header,4);
@@ -52,9 +56,6 @@ int main() {
 
     if(!(strcmp(header, "IWAD") == 0 || strcmp(header, "PWAD") == 0)) {
         std::cout << "Header must be IWAD or PWAD. header is: " << header << std::endl;
-
-        delete[] data;
-        data = nullptr;
         return -1;
     }
 
@@ -70,9 +71,8 @@ int main() {
         std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
     }
     std::cout << "Finished loading Lumps" << std::endl;
-
     ENDOOM(*br, lumps, numlumps);
-    Thing* things = THINGS(*br, lumps, numlumps);
+    std::shared_ptr<Thing[]> things = THINGS(*br, lumps, numlumps);
     LineDef* lineDefs = LINEDEFS(*br, lumps, numlumps);
     SideDef* sideDefs = SIDEDEFS(*br, lumps, numlumps);
     Seg* segs = SEGS(*br, lumps, numlumps);
@@ -87,8 +87,6 @@ int main() {
     delete[] segs;
     delete[] sideDefs;
     delete[] lineDefs;
-    delete[] things;
     delete[] lumps;
-    delete[] data;
     return 0;
 }
