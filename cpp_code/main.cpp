@@ -12,10 +12,8 @@ std::shared_ptr<uint8_t[]> readFileToUint8Array(const std::string& filename, siz
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
     if (!file.is_open()) {
         std::cerr << "Failed to open the file: " << filename << std::endl;
-        std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(0);
-        data.reset();
         size = 0;
-        return data;
+        return nullptr;
     }
 
     // Get the size of the file
@@ -23,25 +21,24 @@ std::shared_ptr<uint8_t[]> readFileToUint8Array(const std::string& filename, siz
     file.seekg(0, std::ios::beg);
 
     // Allocate memory for the data
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(size);
-
+    std::shared_ptr<uint8_t[]> data(new uint8_t[size], std::default_delete<uint8_t[]>());
 
     // Read the file contents into the array
     if (!file.read(reinterpret_cast<char*>(data.get()), size)) {
         std::cerr << "Failed to read the file: " << filename << std::endl;
-        data.reset();
-        file.close();
-        return data;
+        size = 0;
+        return nullptr;
     }
-    file.close();
+
     return data;
 }
+
 
 int main() {
     const std::string filename = "./resources/DOOM.wad";
     size_t size = 0;
     std::shared_ptr<uint8_t[]> data = readFileToUint8Array(filename, size);
-    if (size ==0) {
+    if (size == 0 or data == nullptr) {
         return -1;
     }
 
