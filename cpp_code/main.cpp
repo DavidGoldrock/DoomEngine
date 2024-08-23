@@ -65,28 +65,20 @@ int main() {
     std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl; 
 
     br->pointer = infotableofs;
-    Lump* lumps = new Lump[numlumps];
+    std::shared_ptr<Lump[]> lumps = std::make_shared<Lump[]>(numlumps);
     for(int i = 0; i < numlumps; i++) {
         lumps[i] = br->readLump();
         std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
     }
     std::cout << "Finished loading Lumps" << std::endl;
-    ENDOOM(*br, lumps, numlumps);
+    std::cout << ENDOOM(*br, lumps, numlumps) << std::endl;
     std::shared_ptr<Thing[]> things = THINGS(*br, lumps, numlumps);
-    LineDef* lineDefs = LINEDEFS(*br, lumps, numlumps);
-    SideDef* sideDefs = SIDEDEFS(*br, lumps, numlumps);
-    Seg* segs = SEGS(*br, lumps, numlumps);
-    SubSector* subSectors = SSECTORS(*br, lumps, numlumps);
-    Node* nodes = NODES(*br, lumps, numlumps);
-    Sector* sectors = SECTORS(*br, lumps, numlumps);
-    Vec2* vertexes = VERTEXES(*br, lumps, numlumps);
-    delete[] vertexes;
-    delete[] sectors;
-    delete[] nodes;
-    delete[] subSectors;
-    delete[] segs;
-    delete[] sideDefs;
-    delete[] lineDefs;
-    delete[] lumps;
+    std::shared_ptr<LineDef[]> lineDefs = LINEDEFS(*br, lumps, numlumps);
+    std::shared_ptr<SideDef[]> sideDefs = SIDEDEFS(*br, lumps, numlumps);
+    std::shared_ptr<Seg[]> segs = SEGS(*br, lumps, numlumps);
+    std::shared_ptr<SubSector[]> subSectors = SSECTORS(*br, lumps, numlumps);
+    std::shared_ptr<Node[]> nodes = NODES(*br, lumps, numlumps);
+    std::shared_ptr<Sector[]> sectors = SECTORS(*br, lumps, numlumps);
+    std::shared_ptr<Vec2[]> vertexes = VERTEXES(*br, lumps, numlumps);
     return 0;
 }

@@ -1,5 +1,6 @@
 #include <cstdint>
 #include <cstring>
+#include <memory>
 #include <iostream>
 #include "Lump.h"
 #include "Thing.h"
@@ -12,7 +13,7 @@
 #include "Sector.h"
 #include "Vec2.h"
 
-int findInLumpArray(Lump* arr, size_t arrSize, std::string tagname);
+int findInLumpArray(std::shared_ptr<Lump[]> arr, size_t arrSize, std::string tagname);
     
 bool bitAtLocation(size_t byte, size_t n);
 
@@ -23,31 +24,31 @@ bool bitAtLocation(size_t byte, size_t n);
 
 std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size);
 
-void ENDOOM(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::string ENDOOM(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // THINGS
 
 
-std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // LINEDEFS
 
-LineDef* LINEDEFS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 // SIDEDEFS
 
-SideDef* SIDEDEFS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 // SEGS
 
-Seg* SEGS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // VERTEXES
 
-Vec2* VERTEXES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // def VERTEXES(br, levelLump: list[Lump]):
@@ -64,17 +65,17 @@ Vec2* VERTEXES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
 
 // SSECTORS
 
-SubSector* SSECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // NODES
 
-Node* NODES(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // SECTORS
 
-Sector* SECTORS(ConsecutiveBytearrayReader& br, Lump* lumps, size_t numlumps);
+std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // """
