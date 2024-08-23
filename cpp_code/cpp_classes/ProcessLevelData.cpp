@@ -373,3 +373,55 @@ std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::
 
     return rejectPointer;
 }
+
+std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps) {
+    // Lump tagName
+    std::string tagname = "BLOCKMAP";
+    size_t levelBlockMapLumpIndex = findInLumpArray(lumps, numlumps, tagname);
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelBlockMapLumpIndex].size);
+    fileByteReader.readLumpData(data.get(), lumps[levelBlockMapLumpIndex]);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelBlockMapLumpIndex].size);
+    uint16_t gridX = lumpDataByteReader->readBytesAsUint16();
+    uint16_t gridY = lumpDataByteReader->readBytesAsUint16();
+    uint16_t columnNumber = lumpDataByteReader->readBytesAsUint16();
+    uint16_t rowNumber = lumpDataByteReader->readBytesAsUint16();
+    size_t offsets[rowNumber * columnNumber];
+
+    for (size_t i = 0; i < rowNumber * columnNumber; i++)
+    {
+        offsets[i] = lumpDataByteReader->readBytesAsUint16() * 2;
+    }
+
+    std::shared_ptr<std::vector<uint16_t>[]> blocklists = std::make_shared<std::vector<uint16_t>[]>(rowNumber * columnNumber);
+
+    uint8_t temp;
+
+    for (size_t i = 0; i < rowNumber * columnNumber; i++)
+    {
+        lumpDataByteReader->pointer = offsets[i];
+
+        temp = lumpDataByteReader->readBytesAsUint16();
+
+        // First is always 0
+        if (temp != 0) {
+            std::cerr << "BLOCKLIST FAULTY" << std::endl;
+        }
+
+        // Add until value is -1
+        temp = lumpDataByteReader->readBytesAsUint16();
+        while(temp != 255) {
+            blocklists[i].push_back(temp);
+            temp = lumpDataByteReader->readBytesAsUint16();
+        }
+
+    }
+
+    std::shared_ptr<BlockMap> blockMapPointer = std::make_shared<BlockMap>(gridX, gridY,columnNumber,rowNumber, blocklists);
+    #ifdef debugPrint
+        std::cout << "Loaded BlockMap map " << *blockMapPointer << std::endl;
+        std::cin.get();
+    #endif
+
+    return blockMapPointer;
+}

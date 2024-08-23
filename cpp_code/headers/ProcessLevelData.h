@@ -12,6 +12,7 @@
 #include "Sector.h"
 #include "Vec2.h"
 #include "Reject.h"
+#include "BlockMap.h"
 
 
 //ENDDOOM
@@ -70,6 +71,8 @@ std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::
 // """
 // BLOCKMAP
 // """
+
+std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // def BLOCKMAP(fileByteReader, levelLump: list[Lump]):
