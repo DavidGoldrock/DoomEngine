@@ -1,6 +1,5 @@
 #include <cstdint>
 #include <cstring>
-#include <memory>
 #include <iostream>
 #include "Lump.h"
 #include "Thing.h"
@@ -15,7 +14,7 @@
 
 int findInLumpArray(std::shared_ptr<Lump[]> arr, size_t arrSize, std::string tagname);
     
-bool bitAtLocation(size_t byte, size_t n);
+bool bitAtLocation(size_t source, size_t n);
 
 
 
@@ -24,58 +23,58 @@ bool bitAtLocation(size_t byte, size_t n);
 
 std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size);
 
-std::string ENDOOM(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::string ENDOOM(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // THINGS
 
 
-std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // LINEDEFS
 
-std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 // SIDEDEFS
 
-std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 // SEGS
 
-std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // VERTEXES
 
-std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
-// def VERTEXES(br, levelLump: list[Lump]):
+// def VERTEXES(fileByteReader, levelLump: list[Lump]):
 //     _, levelVertexsLump = findInLumpArray(levelLump, "VERTEXES")
-//     data = br.readLumpData(levelVertexsLump)
-//     br2 = ConsecutiveBytearrayReader(data)
+//     data = fileByteReader.readLumpData(levelVertexsLump)
+//     lumpDataByteReader = ConsecutiveBytearrayReader(data)
 //     levelVertexes = []
 //     for i in range(levelVertexsLump.size // 4):
-//         x = br2->readBytesAsUint16()
-//         y = br2->readBytesAsUint16()
+//         x = lumpDataByteReader->readBytesAsUint16()
+//         y = lumpDataByteReader->readBytesAsUint16()
 //         levelVertexes.append(np.array([x, y]))
 //     return levelVertexes
 
 
 // SSECTORS
 
-std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // NODES
 
-std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // SECTORS
 
-std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& br, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
 
 // """
@@ -83,9 +82,9 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& br, std::shared_pt
 // """
 
 
-// def REJECT(br, levelLump: list[Lump]):
+// def REJECT(fileByteReader, levelLump: list[Lump]):
 //     _, levelRejectLump = findInLumpArray(levelLump, "REJECT")
-//     data = br.readLumpData(levelRejectLump)
+//     data = fileByteReader.readLumpData(levelRejectLump)
 //     rowSize = int(np.sqrt(len(data) * 8))
 //     bitCount = 0
 //     arr = []
@@ -104,34 +103,34 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& br, std::shared_pt
 // """
 
 
-// def BLOCKMAP(br, levelLump: list[Lump]):
+// def BLOCKMAP(fileByteReader, levelLump: list[Lump]):
 //     _, levelBlockMapLump = findInLumpArray(levelLump, "BLOCKMAP")
-//     data = br.readLumpData(levelBlockMapLump)
-//     br2 = ConsecutiveBytearrayReader(data)
+//     data = fileByteReader.readLumpData(levelBlockMapLump)
+//     lumpDataByteReader = ConsecutiveBytearrayReader(data)
 
-//     gridX = br2->readBytesAsUint16()
-//     gridY = br2->readBytesAsUint16()
-//     columnNumber = br2->readBytesAsUint16()
-//     rowNumber = br2->readBytesAsUint16()
+//     gridX = lumpDataByteReader->readBytesAsUint16()
+//     gridY = lumpDataByteReader->readBytesAsUint16()
+//     columnNumber = lumpDataByteReader->readBytesAsUint16()
+//     rowNumber = lumpDataByteReader->readBytesAsUint16()
 
 //     offsets = []
 
 //     for i in range(columnNumber * rowNumber):
-//         offsets.append(br2->readBytesAsUint16() * 2)
+//         offsets.append(lumpDataByteReader->readBytesAsUint16() * 2)
 
 //     lineDefIndexByBlock = []
 
 //     for i in range(columnNumber * rowNumber):
 //         offset = offsets[i]
-//         br2->pointer = offset
+//         lumpDataByteReader->pointer = offset
 //         lineDefIndexByBlock.append([])
 
-//         lineDefIndex = br2->readBytes(2)
+//         lineDefIndex = lumpDataByteReader->readBytes(2)
 //         assert lineDefIndex == b"\x00\x00"
-//         lineDefIndex = br2->readBytes(2)
+//         lineDefIndex = lumpDataByteReader->readBytes(2)
 //         while lineDefIndex != b"\xff\xff":
 //             lineDefIndexByBlock[i].append(int.from_bytes(lineDefIndex, 'little'))
-//             lineDefIndex = br2->readBytes(2)
+//             lineDefIndex = lumpDataByteReader->readBytes(2)
 //     return BlockMap(gridX, gridY, columnNumber, rowNumber, offsets, lineDefIndexByBlock)
 
 
@@ -154,13 +153,13 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& br, std::shared_pt
 
 // def convert_doom_picture_to_png(doom_image_data, palette_data, output_filename):
 //     # Initialize the reader
-//     br = ConsecutiveBytearrayReader(doom_image_data)
+//     fileByteReader = ConsecutiveBytearrayReader(doom_image_data)
 
 //     # Read image metadata
-//     width = br.readBytesAsUint16()
-//     height = br.readBytesAsUint16()
-//     left = br.readBytesAsUint16()
-//     top = br.readBytesAsUint16()
+//     width = fileByteReader.readBytesAsUint16()
+//     height = fileByteReader.readBytesAsUint16()
+//     left = fileByteReader.readBytesAsUint16()
+//     top = fileByteReader.readBytesAsUint16()
 
 //     # Create an image with 8-bit color depth
 //     image = Image.new('P', (width, height))
@@ -174,28 +173,28 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& br, std::shared_pt
 //     image.paste(cyan_index, [0, 0, width, height])
 
 //     # Create column array
-//     column_array = [br.readBytes(4, int) for _ in range(width)]
+//     column_array = [fileByteReader.readBytes(4, int) for _ in range(width)]
 
 //     # Read pixel data from each column
 //     for i in range(width):
 //         # Seek to the start of the column data
-//         br.pointer = column_array[i]
+//         fileByteReader.pointer = column_array[i]
 
 //         while True:
-//             rowstart = br.readBytes(1, int)
+//             rowstart = fileByteReader.readBytes(1, int)
 //             if rowstart == 255:
-//                 break
+//                 fileByteReadereak
 
-//             pixel_count = br.readBytes(1, int)
-//             br.readBytes(1)  # Read and ignore the dummy value
+//             pixel_count = fileByteReader.readBytes(1, int)
+//             fileByteReader.readBytes(1)  # Read and ignore the dummy value
 
 //             for j in range(pixel_count):
-//                 pixel = br.readBytes(1, int)
+//                 pixel = fileByteReader.readBytes(1, int)
 //                 # Write Pixel to the image (column i, row rowstart + j)
 //                 image.putpixel((i, rowstart + j), pixel)
 
 //             # Read and ignore the dummy value
-//             br.readBytes(1)
+//             fileByteReader.readBytes(1)
 
 //     # Save the image as PNG
 //     image.save(output_filename)
