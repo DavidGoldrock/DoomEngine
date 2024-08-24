@@ -34,6 +34,15 @@ public:
     // wrapper to read 2 bytes as little endian uint32
     uint32_t readBytesAsUint32();
 
+    // wrapper to read 2 bytes as little endian uint8
+    int8_t readBytesAsInt8();
+
+    // wrapper to read 2 bytes as little endian int16
+    int16_t readBytesAsInt16();
+
+    // wrapper to read 2 bytes as little endian int32
+    int32_t readBytesAsInt32();
+
     // wrapper to read a lump description
     Lump readLump();
 

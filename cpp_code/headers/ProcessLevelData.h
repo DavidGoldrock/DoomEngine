@@ -15,6 +15,7 @@
 #include "BlockMap.h"
 #include "RGB.h"
 #include "PlayPal.h"
+#include "DoomPicture.h"
 
 
 //ENDDOOM
@@ -76,8 +77,11 @@ std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::
 
 std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
-std::shared_ptr<PlayPal> Pallete(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
+std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps);
 
+std::shared_ptr<DoomPicture> PICTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t numlumps);
+
+void writeBMP(std::string &filename, DoomPicture &picture, PlayPal &playpal, uint8_t paletteIndex);
 
 // def convert_playpal_to_palettes(playpal_data):
 //     # Length of each palette in bytes

@@ -41,7 +41,10 @@ int main() {
     // Offset to the infotables, the place where the lumps descriptions are found
     uint32_t infotableofs = fileByteReader->readBytesAsUint32();   
 
-    std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl; 
+    #ifdef debugPrint
+        std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl; 
+        std::cin.get();
+    #endif
 
     // Go to the infotables
     fileByteReader->pointer = infotableofs;
@@ -49,9 +52,15 @@ int main() {
     std::shared_ptr<Lump[]> lumps = std::make_shared<Lump[]>(numlumps);
     for(int i = 0; i < numlumps; i++) {
         lumps[i] = fileByteReader->readLump();
-        std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
+        #ifdef debugPrint
+            std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
+        #endif
     }
-    std::cout << "Finished loading Lumps" << std::endl;
+
+    #ifdef debugPrint
+        std::cout << "Finished loading Lumps" << std::endl;
+        std::cin.get();
+    #endif
 
     // The end message of the file. written in ANSI compatible syntax
     std::string endoom = ENDOOM(*fileByteReader, lumps, numlumps);
@@ -73,6 +82,11 @@ int main() {
     std::shared_ptr<Vec2[]> vertexes = VERTEXES(*fileByteReader, lumps, numlumps);
     std::shared_ptr<Reject> reject = REJECT(*fileByteReader, lumps, numlumps);
     std::shared_ptr<BlockMap> blockmap = BLOCKMAP(*fileByteReader, lumps, numlumps);
-    std::shared_ptr<PlayPal> playpal = Pallete(*fileByteReader, lumps, numlumps);
+    std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, lumps, numlumps);
+    size_t titlePicIndex = findInLumpArray(lumps, numlumps, "TITLEPIC");
+    std::shared_ptr<DoomPicture> titlePic = PICTURE(*fileByteReader, lumps[titlePicIndex], numlumps);
+    std::string fileName2 = "Output.bmp";
+    std::cout << titlePic << std::endl;
+    writeBMP(fileName2 , *titlePic, *playpal, 0);
     return 0;
 }

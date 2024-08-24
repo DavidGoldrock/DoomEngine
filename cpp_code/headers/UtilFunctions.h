@@ -7,7 +7,7 @@
 #include "../headers/Lump.h"
 
 #ifndef debugPrint
-    #define debugPrint 
+    // #define debugPrint 
 #endif
 
 bool bitAtLocation(size_t source, size_t n);

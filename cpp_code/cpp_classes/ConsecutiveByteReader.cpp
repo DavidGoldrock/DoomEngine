@@ -54,6 +54,24 @@ uint32_t ConsecutiveBytearrayReader::readBytesAsUint32() {
     return value;
 }
 
+int8_t ConsecutiveBytearrayReader::readBytesAsInt8() {
+    int8_t value;
+    readBytes(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+    return value;
+}
+
+int16_t ConsecutiveBytearrayReader::readBytesAsInt16() {
+    int16_t value;
+    readBytes(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+    return value;
+}
+
+int32_t ConsecutiveBytearrayReader::readBytesAsInt32() {
+    int32_t value;
+    readBytes(reinterpret_cast<uint8_t*>(&value), sizeof(value));
+    return value;
+}
+
 Lump ConsecutiveBytearrayReader::readLump() {
     // Read the filePos, size and name, and pass them into the lump
     uint32_t filepos = readBytesAsUint32();

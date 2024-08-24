@@ -1,6 +1,9 @@
 #include "../headers/ProcessLevelData.h"
 #include "../headers/UtilFunctions.h"
 #include <PlayPal.h>
+#include <fstream>
+#include <vector>
+#include <cstring>
 
 /**
  * @fileByteReaderief gets from a DOS screen format using ansi codes and implied \n to colored text running in CMD
@@ -427,7 +430,7 @@ std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, s
     return blockMapPointer;
 }
 
-std::shared_ptr<PlayPal> Pallete(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps) {
+std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t numlumps) {
     // Lump tagName
     std::string tagname = "PLAYPAL";
     // Lump index
@@ -457,4 +460,125 @@ std::shared_ptr<PlayPal> Pallete(ConsecutiveBytearrayReader& fileByteReader, std
         std::cin.get();
     #endif
     return returnValue;
+}
+
+std::shared_ptr<DoomPicture> PICTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t numlumps) {
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
+    uint16_t width = lumpDataByteReader->readBytesAsUint16();
+    uint16_t height = lumpDataByteReader->readBytesAsUint16();
+    int16_t leftOffset = lumpDataByteReader->readBytesAsInt16();
+    int16_t topOffset = lumpDataByteReader->readBytesAsInt16();
+
+    size_t offsets[width];
+
+    for (size_t i = 0; i < width; i++)
+    {
+        offsets[i] = lumpDataByteReader->readBytesAsUint32();
+    }
+
+    std::shared_ptr<uint8_t[]> pixels = std::make_shared<uint8_t[]>(width * height);
+    std::shared_ptr<DoomPicture> pic = std::make_shared<DoomPicture>(width, height, leftOffset, topOffset, pixels);
+    
+    uint8_t rowstart;
+    uint8_t pixel;
+    uint8_t pixel_count;
+
+    for (size_t i = 0; i < width; i++)
+    {
+        // Seek to the start of the column data
+    lumpDataByteReader->pointer = offsets[i];
+    rowstart = lumpDataByteReader->readBytesAsUint8();
+        while(rowstart != 255) {    
+            if (rowstart == 255) {
+                break;
+            }
+
+            pixel_count = lumpDataByteReader->readBytesAsUint8();
+            lumpDataByteReader->pointer++;  // Read and ignore the dummy value
+
+            for (size_t j = 0; j < pixel_count; j++) {
+                pixel = lumpDataByteReader->readBytesAsUint8();
+                // Write Pixel to the image (column i, row rowstart + j)
+                pic->pixels[i + (rowstart + j) * width] = pixel;
+            }
+
+            // Read and ignore the dummy value
+            lumpDataByteReader->pointer++;
+            rowstart = lumpDataByteReader->readBytesAsUint8();
+        }
+    }
+    
+
+
+    #ifdef debugPrint
+        std::cout << "Loaded Picture " << *pic << std::endl;
+        std::cin.get();
+    #endif
+
+    return pic;
+}
+
+void writeBMP(std::string &filename, DoomPicture &picture, PlayPal &playpal, uint8_t palleteIndex) {
+    // BMP Header
+    const int fileHeaderSize = 14;
+    const int infoHeaderSize = 40;
+    const int width = picture.width;
+    const int height = picture.height;
+    const int paddingSize = (4 - (width * 3) % 4) % 4;  // BMP rows are aligned to 4-byte boundaries
+    const int fileSize = fileHeaderSize + infoHeaderSize + (width * 3 + paddingSize) * height;
+
+    unsigned char fileHeader[fileHeaderSize] = {
+        'B', 'M',             // Signature
+        0, 0, 0, 0,           // Image file size in bytes
+        0, 0, 0, 0,           // Reserved
+        fileHeaderSize + infoHeaderSize, 0, 0, 0  // Start of pixel array
+    };
+
+    unsigned char infoHeader[infoHeaderSize] = {
+        infoHeaderSize, 0, 0, 0,  // Header size
+        0, 0, 0, 0,               // Image width
+        0, 0, 0, 0,               // Image height
+        1, 0,                     // Number of color planes
+        24, 0,                    // Bits per pixel
+        0, 0, 0, 0,               // Compression (0 = none)
+        0, 0, 0, 0,               // Image size (can be 0 for uncompressed)
+        0, 0, 0, 0,               // Horizontal resolution (pixels per meter, not important)
+        0, 0, 0, 0,               // Vertical resolution (pixels per meter, not important)
+        0, 0, 0, 0,                // Number of colors in palette
+        0, 0, 0, 0                // Important colors (0 = all)
+    };
+
+    // Fill file size
+    fileHeader[2] = static_cast<unsigned char>(fileSize);
+    fileHeader[3] = static_cast<unsigned char>(fileSize >> 8);
+    fileHeader[4] = static_cast<unsigned char>(fileSize >> 16);
+    fileHeader[5] = static_cast<unsigned char>(fileSize >> 24);
+
+    // Fill width and height
+    infoHeader[4] = static_cast<unsigned char>(width);
+    infoHeader[5] = static_cast<unsigned char>(width >> 8);
+    infoHeader[6] = static_cast<unsigned char>(width >> 16);
+    infoHeader[7] = static_cast<unsigned char>(width >> 24);
+    infoHeader[8] = static_cast<unsigned char>(height);
+    infoHeader[9] = static_cast<unsigned char>(height >> 8);
+    infoHeader[10] = static_cast<unsigned char>(height >> 16);
+    infoHeader[11] = static_cast<unsigned char>(height >> 24);
+
+    // Write headers
+    std::ofstream file(filename, std::ios::out | std::ios::binary);
+    file.write(reinterpret_cast<char*>(fileHeader), fileHeaderSize);
+    file.write(reinterpret_cast<char*>(infoHeader), infoHeaderSize);
+    RGB color;
+    // Write the image buffer to the BMP file
+    for (int y = height - 1; y >= 0; --y) {  // BMP files store pixels from bottom to top
+        for (int x = 0; x < width; ++x) {
+            color = playpal.getPallette(palleteIndex)[picture.pixels[y * width + x]];
+            file.put(color.b).put(color.g).put(color.r);
+        }
+        file.write("\0\0\0", paddingSize);  // Add padding
+    }
+
+    file.close();
 }
