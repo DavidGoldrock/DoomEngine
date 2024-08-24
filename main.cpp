@@ -7,6 +7,7 @@
 #include "./headers/ProcessLevelData.h"
 #include "./headers/UtilFunctions.h"
 #include "LevelData.h"
+#include "WADHeader.h"
 
 
 std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
@@ -83,6 +84,47 @@ std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader& fileByt
     return std::make_shared<LevelData>(things, lumps[levelThingLumpIndex].size / 10, lineDefs, lumps[levelLineDefLumpIndex].size / 14, sideDefs, lumps[levelSideDefLumpIndex].size / 30, segs, lumps[levelSegLumpIndex].size / 12, subSectors, lumps[levelSubSectorLumpIndex].size / 4, nodes, lumps[levelNodeLumpIndex].size / 28, sectors, lumps[levelSectorLumpIndex].size / 26, vertexes, lumps[levelVertexLumpIndex].size / 4, reject, blockmap);
 }
 
+std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader& fileByteReader, size_t numlumps) {
+    // array of all Lump descriptions in the file
+    std::shared_ptr<Lump[]> lumps = std::make_shared<Lump[]>(numlumps);
+    for(int i = 0; i < numlumps; i++) {
+        lumps[i] = fileByteReader.readLump();
+        #ifdef debugPrint
+            std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
+        #endif
+    }
+
+    #ifdef debugPrint
+        std::cout << "Finished loading Lumps" << std::endl;
+        std::cin.get();
+    #endif
+
+    return lumps;
+}
+
+std::shared_ptr<WADHeader> GenerateWADHeader(ConsecutiveBytearrayReader& fileByteReader) {
+    // File header found in the begginning of the file, should be IWAD or PWAD
+    std::string header = fileByteReader.readBytesAsStr(4);
+    std::cout << "Header is: " << header << std::endl;
+
+    if(!(header == "IWAD" || header == "PWAD")) {
+        std::cout << "Header must be IWAD or PWAD. header is: " << header << std::endl;
+        return nullptr;
+    }
+
+    // Number of LUMP objects in the file 
+    uint32_t numlumps = fileByteReader.readBytesAsUint32();
+    // Offset to the infotables, the place where the lumps descriptions are found
+    uint32_t infotableofs = fileByteReader.readBytesAsUint32();   
+
+    #ifdef debugPrint
+        std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl; 
+        std::cin.get();
+    #endif
+
+    return std::make_shared<WADHeader>(header,numlumps,infotableofs);
+}
+
 int main() {
     // The name of the wad. might be picked from directory or something in the future
     const std::string filename = "./resources/DOOM.wad";
@@ -99,60 +141,31 @@ int main() {
 
     // a consecutive byte reader for the file, used by various functions 
     std::unique_ptr<ConsecutiveBytearrayReader> fileByteReader = std::make_unique<ConsecutiveBytearrayReader>(fileData, fileSize);
-    // File header found in the begginning of the file, should be IWAD or PWAD
-    char header[5];
-
-    fileByteReader->readBytesAsChar(header,4);
-    std::cout << "Header is: " << header << std::endl;
-
-    if(!(strcmp(header, "IWAD") == 0 || strcmp(header, "PWAD") == 0)) {
-        std::cout << "Header must be IWAD or PWAD. header is: " << header << std::endl;
-        return -1;
-    }
-
-    // Number of LUMP objects in the file 
-    uint32_t numlumps = fileByteReader->readBytesAsUint32();
-    // Offset to the infotables, the place where the lumps descriptions are found
-    uint32_t infotableofs = fileByteReader->readBytesAsUint32();   
-
-    #ifdef debugPrint
-        std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl; 
-        std::cin.get();
-    #endif
 
     // Go to the infotables
-    fileByteReader->pointer = infotableofs;
-    // array of all Lump descriptions in the file
-    std::shared_ptr<Lump[]> lumps = std::make_shared<Lump[]>(numlumps);
-    for(int i = 0; i < numlumps; i++) {
-        lumps[i] = fileByteReader->readLump();
-        #ifdef debugPrint
-            std::cout << "Loaded Lump[" << (i+1) << "] out of ["<< (numlumps) << "] <" << lumps[i] << ">" << std::endl;
-        #endif
-    }
 
-    #ifdef debugPrint
-        std::cout << "Finished loading Lumps" << std::endl;
-        std::cin.get();
-    #endif
+    auto wadHeader = GenerateWADHeader(*fileByteReader);
+
+    fileByteReader->pointer = wadHeader->infotableofs;
+    auto lumps = GenerateLumps(*fileByteReader, wadHeader->numlumps);
 
     // The end message of the file. written in ANSI compatible syntax
 
     // Lump tagName
     std::string tagname = "ENDOOM";
     // Lump index
-    size_t levelEndoomLumpIndex = findInLumpArray(lumps, 0, numlumps, tagname);
+    size_t levelEndoomLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
 
-    std::string endoom = ENDOOM(*fileByteReader, lumps[levelEndoomLumpIndex], 0, numlumps);
+    std::string endoom = ENDOOM(*fileByteReader, lumps[levelEndoomLumpIndex], 0, wadHeader->numlumps);
 
     // Lump tagName
     tagname = "PLAYPAL";
     // Lump index
-    size_t levelPalleteLumpIndex = findInLumpArray(lumps, 0, numlumps, tagname);
+    size_t levelPalleteLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
 
-    std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, lumps[levelPalleteLumpIndex], 0, numlumps);
+    std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, lumps[levelPalleteLumpIndex], 0, wadHeader->numlumps);
 
-    // size_t titlePicIndex = findInLumpArray(lumps, 0, numlumps, "TITLEPIC");
+    // size_t titlePicIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, "TITLEPIC");
     // std::shared_ptr<DoomPicture> titlePic = PICTURE(*fileByteReader, lumps[titlePicIndex]);
 
     // const std::string folder = "./results/";
@@ -162,8 +175,8 @@ int main() {
     // writeBMP(outputFileName , *titlePic, *playpal, 0);
 
 
-    // size_t spriteStartIndex = findInLumpArray(lumps, 0, numlumps, "S_START");
-    // size_t spriteEndIndex = findInLumpArray(lumps, 0, numlumps, "S_END");
+    // size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, "S_START");
+    // size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, "S_END");
 
     // std::shared_ptr<DoomPicture> pic;
 
@@ -180,8 +193,8 @@ int main() {
         std::cin.get();
     #endif
 
-    size_t level1Map1Index = findInLumpArray(lumps, 0, numlumps, "E1M1");
-    size_t level1Map2Index = findInLumpArray(lumps, 0, numlumps, "E1M2");
+    size_t level1Map1Index = findInLumpArray(lumps, 0, wadHeader->numlumps, "E1M1");
+    size_t level1Map2Index = findInLumpArray(lumps, 0, wadHeader->numlumps, "E1M2");
     auto level1 = GenerateLevelData(*fileByteReader, lumps, level1Map1Index, level1Map2Index);
     std::cout << *level1 << std::endl;
     return 0;
