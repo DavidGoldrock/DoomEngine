@@ -9,8 +9,8 @@ bool bitAtLocation(size_t source, size_t n) {
     return (source & (1 << n)) != 0;
 }
 
-size_t findInLumpArray(std::shared_ptr<Lump[]> arr, size_t arrSize, std::string tagname){
-    for(size_t i = 0; i < arrSize; i ++) {
+size_t findInLumpArray(std::shared_ptr<Lump[]> arr, size_t from , size_t to, std::string tagname){
+    for(size_t i = from; i < to; i ++) {
         if (arr[i].name == tagname)
             return i;
     }
