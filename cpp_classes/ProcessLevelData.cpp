@@ -75,11 +75,10 @@ std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size)
  * @param numlumps the number of lumps in the file
  * @return the ENDOOM message in the correct format
  */
-std::string ENDOOM(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    size_t index = findInLumpArray(lumps, from, to,"ENDOOM");
-    uint8_t data[lumps[index].size];
-    fileByteReader.readLumpData(data, lumps[index]);
-    return VGA_16BIT_COLOR_MEMORY_TO_STRING(data, lumps[index].size);
+std::string ENDOOM(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
+    uint8_t data[lump.size];
+    fileByteReader.readLumpData(data, lump);
+    return VGA_16BIT_COLOR_MEMORY_TO_STRING(data, lump.size);
 }
 
 /* 
@@ -90,19 +89,15 @@ std::string ENDOOM(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<L
  * The data of each object is read in its regular format
 */
 
-std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to){
-    // Lump tagName
-    std::string tagname = "THINGS";
-    // Lump index
-    size_t levelThingLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to){
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelThingLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelThingLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelThingLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<Thing[]> levelThings = std::make_shared<Thing[]>(lumps[levelThingLumpIndex].size / 10);
+    std::shared_ptr<Thing[]> levelThings = std::make_shared<Thing[]>(lump.size / 10);
     // Read using format
-    for (size_t i = 0; i < lumps[levelThingLumpIndex].size / 10; i++) {
+    for (size_t i = 0; i < lump.size / 10; i++) {
         levelThings[i].x = lumpDataByteReader->readBytesAsUint16();
         levelThings[i].y = lumpDataByteReader->readBytesAsUint16();
         levelThings[i].angle = lumpDataByteReader->readBytesAsUint16();
@@ -116,7 +111,7 @@ std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& fileByteReader, std:
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded Thing [" << (i+1) << "]" << " Out of [" << lumps[levelThingLumpIndex].size / 10 << "]" << levelThings[i] << std::endl;
+            std::cout << "Loaded Thing [" << (i+1) << "]" << " Out of [" << lump.size / 10 << "]" << levelThings[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -125,20 +120,16 @@ std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& fileByteReader, std:
     return levelThings;
 }
 
-std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
-    std::string tagname = "LINEDEFS";
-    // Lump index
-    size_t levelLineDefLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelLineDefLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelLineDefLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelLineDefLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<LineDef[]> levelLineDefs = std::make_shared<LineDef[]>(lumps[levelLineDefLumpIndex].size / 14);
+    std::shared_ptr<LineDef[]> levelLineDefs = std::make_shared<LineDef[]>(lump.size / 14);
     // Read using format
 
-    for (size_t i = 0; i < lumps[levelLineDefLumpIndex].size / 14; i++)
+    for (size_t i = 0; i < lump.size / 14; i++)
     {
         levelLineDefs[i].startVertex = lumpDataByteReader->readBytesAsUint16();
         levelLineDefs[i].endVertex = lumpDataByteReader->readBytesAsUint16();
@@ -159,7 +150,7 @@ std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& fileByteReader, 
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded LineDef [" << (i+1) << "]" << " Out of [" << lumps[levelLineDefLumpIndex].size / 14 << "]" << levelLineDefs[i] << std::endl;
+            std::cout << "Loaded LineDef [" << (i+1) << "]" << " Out of [" << lump.size / 14 << "]" << levelLineDefs[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -168,19 +159,15 @@ std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& fileByteReader, 
     return levelLineDefs;
 }
 
-std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to){
-    // Lump tagName
-    std::string tagname = "SIDEDEFS";
-    // Lump index
-    size_t levelSideDefLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to){
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelSideDefLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelSideDefLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelSideDefLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<SideDef[]> levelSideDefs = std::make_shared<SideDef[]>(lumps[levelSideDefLumpIndex].size / 30);
+    std::shared_ptr<SideDef[]> levelSideDefs = std::make_shared<SideDef[]>(lump.size / 30);
     // Read using format
-    for (size_t i = 0; i < lumps[levelSideDefLumpIndex].size / 30; i++) {
+    for (size_t i = 0; i < lump.size / 30; i++) {
         levelSideDefs[i].x = lumpDataByteReader->readBytesAsUint16();
         levelSideDefs[i].y = lumpDataByteReader->readBytesAsUint16();
         levelSideDefs[i].upperTextureName = lumpDataByteReader->readBytesAsStr(8);
@@ -190,7 +177,7 @@ std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& fileByteReader, 
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded SideDef [" << (i+1) << "]" << " Out of [" << lumps[levelSideDefLumpIndex].size / 30 << "]" << levelSideDefs[i] << std::endl;
+            std::cout << "Loaded SideDef [" << (i+1) << "]" << " Out of [" << lump.size / 30 << "]" << levelSideDefs[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -200,19 +187,15 @@ std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& fileByteReader, 
 }
 
 
-std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to){
-    // Lump tagName
-    std::string tagname = "SEGS";
-    // Lump index
-    size_t levelSegLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to){
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelSegLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelSegLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelSegLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<Seg[]> levelSeg = std::make_shared<Seg[]>(lumps[levelSegLumpIndex].size / 12);
+    std::shared_ptr<Seg[]> levelSeg = std::make_shared<Seg[]>(lump.size / 12);
     // Read using format
-    for (size_t i = 0; i < lumps[levelSegLumpIndex].size / 12; i++) {
+    for (size_t i = 0; i < lump.size / 12; i++) {
         levelSeg[i].startingVertexNumber = lumpDataByteReader->readBytesAsUint16();
         levelSeg[i].endingVertexNumber = lumpDataByteReader->readBytesAsUint16();
         levelSeg[i].angle = lumpDataByteReader->readBytesAsUint16();
@@ -222,7 +205,7 @@ std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& fileByteReader, std::sha
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded Seg [" << (i+1) << "]" << " Out of [" << lumps[levelSegLumpIndex].size / 12 << "]" << levelSeg[i] << std::endl;
+            std::cout << "Loaded Seg [" << (i+1) << "]" << " Out of [" << lump.size / 12 << "]" << levelSeg[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -231,25 +214,22 @@ std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& fileByteReader, std::sha
     return levelSeg;
 }
 
-std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
-    std::string tagname = "SSECTORS";
-    // Lump index
-    size_t levelSubSectorLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
+
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelSubSectorLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelSubSectorLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelSubSectorLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<SubSector[]> levelSubSector = std::make_shared<SubSector[]>(lumps[levelSubSectorLumpIndex].size / 4);
+    std::shared_ptr<SubSector[]> levelSubSector = std::make_shared<SubSector[]>(lump.size / 4);
     // Read using format
-    for (size_t i = 0; i < lumps[levelSubSectorLumpIndex].size / 4; i++) {
+    for (size_t i = 0; i < lump.size / 4; i++) {
         levelSubSector[i].segCount = lumpDataByteReader->readBytesAsUint16();
         levelSubSector[i].firstSegNumber = lumpDataByteReader->readBytesAsUint16();
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded SubSector [" << (i+1) << "]" << " Out of [" << lumps[levelSubSectorLumpIndex].size / 4 << "]" << levelSubSector[i] << std::endl;
+            std::cout << "Loaded SubSector [" << (i+1) << "]" << " Out of [" << lump.size / 4 << "]" << levelSubSector[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -258,19 +238,15 @@ std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& fileByteReader
     return levelSubSector;
 }
 
-std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
-    std::string tagname = "NODES";
-    // Lump index
-    size_t levelNodeLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelNodeLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelNodeLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelNodeLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<Node[]> levelNode = std::make_shared<Node[]>(lumps[levelNodeLumpIndex].size / 28);
+    std::shared_ptr<Node[]> levelNode = std::make_shared<Node[]>(lump.size / 28);
     // Read using format
-    for (size_t i = 0; i < lumps[levelNodeLumpIndex].size / 28; i++) {
+    for (size_t i = 0; i < lump.size / 28; i++) {
         levelNode[i].x = lumpDataByteReader->readBytesAsUint16();
         levelNode[i].y = lumpDataByteReader->readBytesAsUint16();
         levelNode[i].deltaX = lumpDataByteReader->readBytesAsUint16();
@@ -288,7 +264,7 @@ std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& fileByteReader, std::s
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded Node [" << (i+1) << "]" << " Out of [" << lumps[levelNodeLumpIndex].size / 28 << "]" << levelNode[i] << std::endl;
+            std::cout << "Loaded Node [" << (i+1) << "]" << " Out of [" << lump.size / 28 << "]" << levelNode[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -297,19 +273,15 @@ std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& fileByteReader, std::s
     return levelNode;
 }
 
-std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
-    std::string tagname = "SECTORS";
-    // Lump index
-    size_t levelSectorLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelSectorLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelSectorLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelSectorLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<Sector[]> levelSector = std::make_shared<Sector[]>(lumps[levelSectorLumpIndex].size / 26);
+    std::shared_ptr<Sector[]> levelSector = std::make_shared<Sector[]>(lump.size / 26);
     // Read using format
-    for (size_t i = 0; i < lumps[levelSectorLumpIndex].size / 26; i++) {
+    for (size_t i = 0; i < lump.size / 26; i++) {
         levelSector[i].floorHeight = lumpDataByteReader->readBytesAsUint16();
         levelSector[i].ceilingHeight = lumpDataByteReader->readBytesAsUint16();
         levelSector[i].floorTextureName = lumpDataByteReader->readBytesAsStr(8);
@@ -320,7 +292,7 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, st
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded Sector [" << (i+1) << "]" << " Out of [" << lumps[levelSectorLumpIndex].size / 26 << "]" << levelSector[i] << std::endl;
+            std::cout << "Loaded Sector [" << (i+1) << "]" << " Out of [" << lump.size / 26 << "]" << levelSector[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -329,25 +301,21 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, st
     return levelSector;
 }
 
-std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
-    std::string tagname = "VERTEXES";
-    // Lump index
-    size_t levelVertexLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelVertexLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelVertexLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelVertexLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<Vec2[]> levelVertex = std::make_shared<Vec2[]>(lumps[levelVertexLumpIndex].size / 4);
+    std::shared_ptr<Vec2[]> levelVertex = std::make_shared<Vec2[]>(lump.size / 4);
     // Read using format
-    for (size_t i = 0; i < lumps[levelVertexLumpIndex].size / 4; i++) {
+    for (size_t i = 0; i < lump.size / 4; i++) {
         levelVertex[i].x = lumpDataByteReader->readBytesAsUint16();
         levelVertex[i].y = lumpDataByteReader->readBytesAsUint16();
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded Vertex [" << (i+1) << "]" << " Out of [" << lumps[levelVertexLumpIndex].size / 4 << "]" << levelVertex[i] << std::endl;
+            std::cout << "Loaded Vertex [" << (i+1) << "]" << " Out of [" << lump.size / 4 << "]" << levelVertex[i] << std::endl;
         #endif
     }
     #ifdef debugPrint
@@ -356,19 +324,11 @@ std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& fileByteReader, std
     return levelVertex;
 }
 
-std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Sector Lump tagname
-    std::string tagname = "SECTORS";
-    // Sector Lump index
-    size_t levelSectorLumpIndex = findInLumpArray(lumps, from, to, tagname);
-    // Reject Lump tagName
-    tagname = "REJECT";
-    // Reject Lump index
-    size_t levelRejectLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t sectorAmmount, size_t from, size_t to) {
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelRejectLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelRejectLumpIndex]);
-    std::shared_ptr<Reject> rejectPointer = std::make_shared<Reject>(data , lumps[levelSectorLumpIndex].size / 26);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::shared_ptr<Reject> rejectPointer = std::make_shared<Reject>(data , sectorAmmount);
 
     #ifdef debugPrint
         std::cout << "Loaded Reject map " << *rejectPointer << std::endl;
@@ -378,14 +338,11 @@ std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, std::
     return rejectPointer;
 }
 
-std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
-    std::string tagname = "BLOCKMAP";
-    size_t levelBlockMapLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelBlockMapLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelBlockMapLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelBlockMapLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     uint16_t gridX = lumpDataByteReader->readBytesAsUint16();
     uint16_t gridY = lumpDataByteReader->readBytesAsUint16();
     uint16_t columnNumber = lumpDataByteReader->readBytesAsUint16();
@@ -430,26 +387,22 @@ std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, s
     return blockMapPointer;
 }
 
-std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
-    std::string tagname = "PLAYPAL";
-    // Lump index
-    size_t levelPalleteLumpIndex = findInLumpArray(lumps, from, to, tagname);
+std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
     // Read data to byteReader
-    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lumps[levelPalleteLumpIndex].size);
-    fileByteReader.readLumpData(data.get(), lumps[levelPalleteLumpIndex]);
-    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lumps[levelPalleteLumpIndex].size);
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<RGB[]> levelPalleteData = std::make_shared<RGB[]>(lumps[levelPalleteLumpIndex].size / 3);
+    std::shared_ptr<RGB[]> levelPalleteData = std::make_shared<RGB[]>(lump.size / 3);
     // Read using format
-    for (size_t i = 0; i < lumps[levelPalleteLumpIndex].size / 3; i++) {
+    for (size_t i = 0; i < lump.size / 3; i++) {
         levelPalleteData[i].r = lumpDataByteReader->readBytesAsUint8();
         levelPalleteData[i].g = lumpDataByteReader->readBytesAsUint8();
         levelPalleteData[i].b = lumpDataByteReader->readBytesAsUint8();
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded RGB Value [" << (i+1) << "]" << " Out of [" << lumps[levelPalleteLumpIndex].size / 3 << "]" << levelPalleteData[i] << std::endl;
+            std::cout << "Loaded RGB Value [" << (i+1) << "]" << " Out of [" << lump.size / 3 << "]" << levelPalleteData[i] << std::endl;
         #endif
     }
 

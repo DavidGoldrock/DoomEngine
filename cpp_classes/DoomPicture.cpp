@@ -12,7 +12,7 @@ std::ostream &operator<<(std::ostream &os, const DoomPicture &obj) {
     for (size_t i = 0; i < obj.width; i++) {
         for (size_t j = 0; j < obj.height; j++)
         {
-            os << " " << obj.pixels[i + j * obj.width];
+            os << " " << (int) obj.pixels[i + j * obj.width];
         }
         os  << std::endl;
     }
