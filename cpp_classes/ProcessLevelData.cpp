@@ -535,3 +535,27 @@ void writeBMP(std::string &filename, DoomPicture &picture, PlayPal &playpal, uin
 
     file.close();
 }
+
+std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
+
+    size_t entryNum = lumpDataByteReader->readBytesAsInt32();
+
+    // Create array
+    std::shared_ptr<std::string[]> pnames = std::make_shared<std::string[]>(entryNum);
+    // Read using format
+    for (size_t i = 0; i <entryNum; i++) {
+        pnames[i] = lumpDataByteReader->readBytesAsStr(8);
+        // Print if debugPrint is on
+        #ifdef debugPrint
+            std::cout << "Loaded std::string [" << (i+1) << "]" << " Out of [" << entryNum << "]" << pnames[i] << std::endl;
+        #endif
+    }
+    #ifdef debugPrint
+        std::cin.get();
+    #endif
+    return pnames;
+}

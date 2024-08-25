@@ -90,3 +90,9 @@ std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, Lum
 std::shared_ptr<DoomPicture> PICTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump);
 
 void writeBMP(std::string &filename, DoomPicture &picture, PlayPal &playpal, uint8_t paletteIndex);
+
+// """
+// PNAMES
+//
+
+std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to);

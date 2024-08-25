@@ -11,59 +11,44 @@
 
 
 std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader& fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to) {
-    // Lump tagName
     std::string tagname = "THINGS";
-    // Lump index
+
     size_t levelThingLumpIndex = findInLumpArray(lumps, from, to, tagname);
     std::shared_ptr<Thing[]> things = THINGS(fileByteReader, lumps[levelThingLumpIndex], from, to);
 
     // When I understand them I will comment them lol.
 
-    // Lump tagName
     tagname = "LINEDEFS";
-    // Lump index
     size_t levelLineDefLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<LineDef[]> lineDefs = LINEDEFS(fileByteReader, lumps[levelLineDefLumpIndex], from, to);
 
-    // Lump tagName
     tagname = "SIDEDEFS";
-    // Lump index
     size_t levelSideDefLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<SideDef[]> sideDefs = SIDEDEFS(fileByteReader, lumps[levelSideDefLumpIndex], from, to);
 
-    // Lump tagName
     tagname = "SEGS";
-    // Lump index
     size_t levelSegLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<Seg[]> segs = SEGS(fileByteReader, lumps[levelSegLumpIndex], from, to);
 
-    // Lump tagName
     tagname = "SSECTORS";
-    // Lump index
     size_t levelSubSectorLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<SubSector[]> subSectors = SSECTORS(fileByteReader, lumps[levelSubSectorLumpIndex], from, to);
 
-    // Lump tagName
     tagname = "NODES";
-    // Lump index
     size_t levelNodeLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<Node[]> nodes = NODES(fileByteReader, lumps[levelNodeLumpIndex], from, to);
 
-    // Lump tagName
     tagname = "SECTORS";
-    // Lump index
     size_t levelSectorLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<Sector[]> sectors = SECTORS(fileByteReader, lumps[levelSectorLumpIndex], from, to);
 
-    // Lump tagName
     tagname = "VERTEXES";
-    // Lump index
     size_t levelVertexLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<Vec2[]> vertexes = VERTEXES(fileByteReader, lumps[levelVertexLumpIndex], from, to);
@@ -75,7 +60,6 @@ std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader& fileByt
 
     std::shared_ptr<Reject> reject = REJECT(fileByteReader, lumps[levelRejectLumpIndex], lumps[levelSectorLumpIndex].size / 26, from, to);
 
-    // Lump tagName
     tagname = "BLOCKMAP";
     size_t levelBlockMapLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
@@ -100,6 +84,30 @@ std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader& fileByteReader
     #endif
 
     return lumps;
+}
+
+void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadHeader, std::shared_ptr<Lump[]> lumps, PlayPal& playpal) {
+    size_t titlePicIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "TITLEPIC");
+    std::shared_ptr<DoomPicture> titlePic = PICTURE(fileByteReader, lumps[titlePicIndex]);
+
+    const std::string folder = "./results/";
+
+    std::string outputFileName = folder + lumps[titlePicIndex].name +  ".bmp";
+
+    writeBMP(outputFileName , *titlePic, playpal, 0);
+
+
+    size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_START");
+    size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_END");
+
+    std::shared_ptr<DoomPicture> pic;
+
+    for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
+    {
+        pic = PICTURE(fileByteReader, lumps[picIndex]);
+        outputFileName = folder + lumps[picIndex].name +  ".bmp";
+        writeBMP(outputFileName , *pic, playpal, 0);
+    }
 }
 
 std::shared_ptr<WADHeader> GenerateWADHeader(ConsecutiveBytearrayReader& fileByteReader) {
@@ -151,42 +159,19 @@ int main() {
 
     // The end message of the file. written in ANSI compatible syntax
 
-    // Lump tagName
     std::string tagname = "ENDOOM";
-    // Lump index
-    size_t levelEndoomLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
+    size_t endoomLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
 
-    std::string endoom = ENDOOM(*fileByteReader, lumps[levelEndoomLumpIndex], 0, wadHeader->numlumps);
+    std::string endoom = ENDOOM(*fileByteReader, lumps[endoomLumpIndex], 0, wadHeader->numlumps);
 
-    // Lump tagName
     tagname = "PLAYPAL";
-    // Lump index
-    size_t levelPalleteLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
+    size_t palleteLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
+    std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, lumps[palleteLumpIndex], 0, wadHeader->numlumps);
 
-    std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, lumps[levelPalleteLumpIndex], 0, wadHeader->numlumps);
-
-    // size_t titlePicIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, "TITLEPIC");
-    // std::shared_ptr<DoomPicture> titlePic = PICTURE(*fileByteReader, lumps[titlePicIndex]);
-
-    // const std::string folder = "./results/";
-
-    // std::string outputFileName = folder + lumps[titlePicIndex].name +  ".bmp";
-
-    // writeBMP(outputFileName , *titlePic, *playpal, 0);
-
-
-    // size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, "S_START");
-    // size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, "S_END");
-
-    // std::shared_ptr<DoomPicture> pic;
-
-    // for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
-    // {
-    //     pic = PICTURE(*fileByteReader, lumps[picIndex]);
-    //     outputFileName = folder + lumps[picIndex].name +  ".bmp";
-    //     writeBMP(outputFileName , *pic, *playpal, 0);
-    // }
-    
+    tagname = "PNAMES";
+    size_t pnamesLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
+    std::shared_ptr<std::string[]> pnames = PNAMES(*fileByteReader, lumps[pnamesLumpIndex], 0, wadHeader->numlumps);
+    size_t pnameAmmount = (lumps[pnamesLumpIndex].size - 4) / 8;
 
     std::cout << endoom << std::endl;
     #ifdef debugPrint
@@ -194,8 +179,7 @@ int main() {
     #endif
 
     size_t level1Map1Index = findInLumpArray(lumps, 0, wadHeader->numlumps, "E1M1");
-    size_t level1Map2Index = findInLumpArray(lumps, 0, wadHeader->numlumps, "E1M2");
-    auto level1 = GenerateLevelData(*fileByteReader, lumps, level1Map1Index, level1Map2Index);
+    auto level1 = GenerateLevelData(*fileByteReader, lumps, level1Map1Index, level1Map1Index + 11);
     std::cout << *level1 << std::endl;
     return 0;
 }
