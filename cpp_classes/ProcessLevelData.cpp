@@ -33,9 +33,9 @@ std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t* ansicode, size_t size)
         // Get code
         uint8_t code = ansicode[i + 1];
         // First 4 bits: foreground color code
-        uint8_t foreground = code & 15;
+        uint8_t foreground = code & 0b00001111;
         // 3 bytes after that: background color code
-        uint8_t background = (code & 112) >> 4;
+        uint8_t background = (code & 0b01110000) >> 4;
         // Final bit: should text blink (unimplemented)
         bool isBlinking = bitAtLocation(code, 7);
 
