@@ -2,10 +2,10 @@
 
 static uint16_t palleteDepth = 256;
 
-PlayPal::PlayPal(std::shared_ptr<RGB[]> rawRGBs): rawRGBs(rawRGBs) {}
+PlayPal::PlayPal(std::shared_ptr<uint8_t[]> rawRGBs): rawRGBs(rawRGBs) {}
 
-RGB* PlayPal::getPallette(uint8_t index) {
-    return rawRGBs.get() + (palleteDepth * index);
+uint8_t* PlayPal::getPallette(uint8_t index) {
+    return rawRGBs.get() + (palleteDepth * index) * 3;
 }
 
 std::ostream &operator<<(std::ostream &os, const PlayPal &obj) { 

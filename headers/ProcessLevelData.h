@@ -13,7 +13,6 @@
 #include "Vec2.h"
 #include "Reject.h"
 #include "BlockMap.h"
-#include "RGB.h"
 #include "PlayPal.h"
 #include "DoomPicture.h"
 
@@ -87,9 +86,9 @@ std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, Lum
 // Pictures
 // """
 
-std::shared_ptr<DoomPicture> PICTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump);
+std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump);
 
-void writeBMP(std::string &filename, DoomPicture &picture, PlayPal &playpal, uint8_t paletteIndex);
+void writeBMP(std::string &filename, DoomSprite &picture, PlayPal &playpal, uint8_t paletteIndex);
 
 // """
 // PNAMES

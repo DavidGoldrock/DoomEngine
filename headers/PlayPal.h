@@ -4,16 +4,15 @@
 #include <cstdint>
 #include <iostream>
 #include <memory>
-#include "RGB.h"
 
 struct PlayPal
 {
-    std::shared_ptr<RGB[]> rawRGBs;
+    std::shared_ptr<uint8_t[]> rawRGBs;
 
     // Constructor
-    PlayPal(std::shared_ptr<RGB[]> rawRGBs);
+    PlayPal(std::shared_ptr<uint8_t[]> rawRGBs);
 
-    RGB* getPallette(uint8_t index);
+    uint8_t* getPallette(uint8_t index);
     
     friend std::ostream &operator<<(std::ostream &os, const PlayPal &obj);
 };

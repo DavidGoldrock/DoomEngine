@@ -1,9 +1,12 @@
-#include "../headers/ProcessLevelData.h"
 #include "../headers/UtilFunctions.h"
+#include "../headers/ProcessLevelData.h"
 #include <PlayPal.h>
 #include <fstream>
 #include <vector>
 #include <cstring>
+#include <cstdint>
+#include <cstring>
+#include <iostream>
 
 /**
  * @fileByteReaderief gets from a DOS screen format using ansi codes and implied \n to colored text running in CMD
@@ -393,16 +396,16 @@ std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, Lum
     fileByteReader.readLumpData(data.get(), lump);
     std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
     // Create array
-    std::shared_ptr<RGB[]> levelPalleteData = std::make_shared<RGB[]>(lump.size / 3);
+    std::shared_ptr<uint8_t[]> levelPalleteData = std::make_shared<uint8_t[]>(lump.size);
     // Read using format
-    for (size_t i = 0; i < lump.size / 3; i++) {
-        levelPalleteData[i].r = lumpDataByteReader->readBytesAsUint8();
-        levelPalleteData[i].g = lumpDataByteReader->readBytesAsUint8();
-        levelPalleteData[i].b = lumpDataByteReader->readBytesAsUint8();
+    for (size_t i = 0; i < lump.size; i+=3) {
+        levelPalleteData[i] = lumpDataByteReader->readBytesAsUint8();
+        levelPalleteData[i + 1] = lumpDataByteReader->readBytesAsUint8();
+        levelPalleteData[i + 2] = lumpDataByteReader->readBytesAsUint8();
 
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded RGB Value [" << (i+1) << "]" << " Out of [" << lump.size / 3 << "]" << levelPalleteData[i] << std::endl;
+            std::cout << "Loaded RGB Value [" << ((i / 3)+1) << "]" << " Out of [" << lump.size / 3 << "]" << levelPalleteData[i] << std::endl;
         #endif
     }
 
@@ -415,7 +418,7 @@ std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, Lum
     return returnValue;
 }
 
-std::shared_ptr<DoomPicture> PICTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump) {
+std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump) {
     std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
     fileByteReader.readLumpData(data.get(), lump);
     std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
@@ -432,7 +435,7 @@ std::shared_ptr<DoomPicture> PICTURE(ConsecutiveBytearrayReader& fileByteReader,
     }
 
     std::shared_ptr<uint8_t[]> pixels = std::make_shared<uint8_t[]>(width * height);
-    std::shared_ptr<DoomPicture> pic = std::make_shared<DoomPicture>(width, height, leftOffset, topOffset, pixels);
+    std::shared_ptr<DoomSprite> pic = std::make_shared<DoomSprite>(width, height, leftOffset, topOffset, pixels);
     
     uint8_t rowstart;
     uint8_t pixel;
@@ -473,7 +476,7 @@ std::shared_ptr<DoomPicture> PICTURE(ConsecutiveBytearrayReader& fileByteReader,
     return pic;
 }
 
-void writeBMP(std::string &filename, DoomPicture &picture, PlayPal &playpal, uint8_t palleteIndex) {
+void writeBMP(std::string &filename, DoomSprite &picture, PlayPal &playpal, uint8_t palleteIndex) {
     // BMP Header
     const int fileHeaderSize = 14;
     const int infoHeaderSize = 40;
@@ -523,12 +526,14 @@ void writeBMP(std::string &filename, DoomPicture &picture, PlayPal &playpal, uin
     std::ofstream file(filename, std::ios::out | std::ios::binary);
     file.write(reinterpret_cast<char*>(fileHeader), fileHeaderSize);
     file.write(reinterpret_cast<char*>(infoHeader), infoHeaderSize);
-    RGB color;
+    uint8_t* color;
     // Write the image buffer to the BMP file
     for (int y = height - 1; y >= 0; --y) {  // BMP files store pixels from bottom to top
         for (int x = 0; x < width; ++x) {
-            color = playpal.getPallette(palleteIndex)[picture.pixels[y * width + x]];
-            file.put(color.b).put(color.g).put(color.r);
+            // Get the pointer to the part of the pallette corrisponsing to the correct color
+            // You go to the correct pallette, and then to the right part of it, then * 3 for the size of color
+            color = &(playpal.getPallette(palleteIndex)[picture.pixels[y * width + x] * 3]);
+            file.put(color[2]).put(color[1]).put(color[0]);
         }
         file.write("\0\0\0", paddingSize);  // Add padding
     }

@@ -6,7 +6,7 @@
 #include "./headers/Vec2.h"
 #include "./headers/ProcessLevelData.h"
 #include "./headers/UtilFunctions.h"
-#include "LevelData.h"
+#include "./headers/LevelData.h"
 #include "WADHeader.h"
 
 
@@ -88,7 +88,7 @@ std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader& fileByteReader
 
 void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadHeader, std::shared_ptr<Lump[]> lumps, PlayPal& playpal) {
     size_t titlePicIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "TITLEPIC");
-    std::shared_ptr<DoomPicture> titlePic = PICTURE(fileByteReader, lumps[titlePicIndex]);
+    std::shared_ptr<DoomSprite> titlePic = SPRITE(fileByteReader, lumps[titlePicIndex]);
 
     const std::string folder = "./results/";
 
@@ -100,11 +100,11 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_START");
     size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_END");
 
-    std::shared_ptr<DoomPicture> pic;
+    std::shared_ptr<DoomSprite> pic;
 
     for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
     {
-        pic = PICTURE(fileByteReader, lumps[picIndex]);
+        pic = SPRITE(fileByteReader, lumps[picIndex]);
         outputFileName = folder + lumps[picIndex].name +  ".bmp";
         writeBMP(outputFileName , *pic, playpal, 0);
     }
@@ -177,6 +177,8 @@ int main() {
     #ifdef debugPrint
         std::cin.get();
     #endif
+
+    SaveAllPictures(*fileByteReader, *wadHeader, lumps, *playpal);
 
     size_t level1Map1Index = findInLumpArray(lumps, 0, wadHeader->numlumps, "E1M1");
     auto level1 = GenerateLevelData(*fileByteReader, lumps, level1Map1Index, level1Map1Index + 11);
