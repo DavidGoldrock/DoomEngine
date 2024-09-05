@@ -117,9 +117,7 @@ std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader& fileByteReader, Lump
             std::cout << "Loaded Thing [" << (i+1) << "]" << " Out of [" << lump.size / 10 << "]" << levelThings[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelThings;
 }
 
@@ -156,9 +154,7 @@ std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader& fileByteReader, 
             std::cout << "Loaded LineDef [" << (i+1) << "]" << " Out of [" << lump.size / 14 << "]" << levelLineDefs[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelLineDefs;
 }
 
@@ -183,9 +179,7 @@ std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader& fileByteReader, 
             std::cout << "Loaded SideDef [" << (i+1) << "]" << " Out of [" << lump.size / 30 << "]" << levelSideDefs[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelSideDefs;
 }
 
@@ -211,9 +205,7 @@ std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader& fileByteReader, Lump& lu
             std::cout << "Loaded Seg [" << (i+1) << "]" << " Out of [" << lump.size / 12 << "]" << levelSeg[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelSeg;
 }
 
@@ -235,9 +227,7 @@ std::shared_ptr<SubSector[]> SSECTORS(ConsecutiveBytearrayReader& fileByteReader
             std::cout << "Loaded SubSector [" << (i+1) << "]" << " Out of [" << lump.size / 4 << "]" << levelSubSector[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelSubSector;
 }
 
@@ -270,9 +260,7 @@ std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader& fileByteReader, Lump& 
             std::cout << "Loaded Node [" << (i+1) << "]" << " Out of [" << lump.size / 28 << "]" << levelNode[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelNode;
 }
 
@@ -298,9 +286,7 @@ std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader& fileByteReader, Lu
             std::cout << "Loaded Sector [" << (i+1) << "]" << " Out of [" << lump.size / 26 << "]" << levelSector[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelSector;
 }
 
@@ -321,9 +307,7 @@ std::shared_ptr<Vec2[]> VERTEXES(ConsecutiveBytearrayReader& fileByteReader, Lum
             std::cout << "Loaded Vertex [" << (i+1) << "]" << " Out of [" << lump.size / 4 << "]" << levelVertex[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return levelVertex;
 }
 
@@ -335,7 +319,7 @@ std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader& fileByteReader, Lump&
 
     #ifdef debugPrint
         std::cout << "Loaded Reject map " << *rejectPointer << std::endl;
-        std::cin.get();
+        
     #endif
 
     return rejectPointer;
@@ -384,7 +368,7 @@ std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader& fileByteReader, L
     std::shared_ptr<BlockMap> blockMapPointer = std::make_shared<BlockMap>(gridX, gridY,columnNumber,rowNumber, blocklists);
     #ifdef debugPrint
         std::cout << "Loaded BlockMap map " << *blockMapPointer << std::endl;
-        std::cin.get();
+        
     #endif
 
     return blockMapPointer;
@@ -413,7 +397,7 @@ std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, Lum
 
     #ifdef debugPrint
         std::cout << "Loaded PlayPal " << *returnValue << std::endl;
-        std::cin.get();
+        
     #endif
     return returnValue;
 }
@@ -470,7 +454,6 @@ std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader& fileByteReader, L
 
     #ifdef debugPrint
         std::cout << "Loaded Picture " << *pic << std::endl;
-        std::cin.get();
     #endif
 
     return pic;
@@ -559,8 +542,6 @@ std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader& fileByteReader
             std::cout << "Loaded std::string [" << (i+1) << "]" << " Out of [" << entryNum << "]" << pnames[i] << std::endl;
         #endif
     }
-    #ifdef debugPrint
-        std::cin.get();
-    #endif
+    
     return pnames;
 }

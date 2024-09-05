@@ -64,7 +64,9 @@ std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader& fileByt
     size_t levelBlockMapLumpIndex = findInLumpArray(lumps, from, to, tagname);
 
     std::shared_ptr<BlockMap> blockmap = BLOCKMAP(fileByteReader, lumps[levelBlockMapLumpIndex], from, to);
-
+    #ifdef debugPrint
+        std::cin.get();
+    #endif
     return std::make_shared<LevelData>(things, lumps[levelThingLumpIndex].size / 10, lineDefs, lumps[levelLineDefLumpIndex].size / 14, sideDefs, lumps[levelSideDefLumpIndex].size / 30, segs, lumps[levelSegLumpIndex].size / 12, subSectors, lumps[levelSubSectorLumpIndex].size / 4, nodes, lumps[levelNodeLumpIndex].size / 28, sectors, lumps[levelSectorLumpIndex].size / 26, vertexes, lumps[levelVertexLumpIndex].size / 4, reject, blockmap);
 }
 
@@ -133,6 +135,58 @@ std::shared_ptr<WADHeader> GenerateWADHeader(ConsecutiveBytearrayReader& fileByt
     return std::make_shared<WADHeader>(header,numlumps,infotableofs);
 }
 
+ std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadHeader, std::shared_ptr<Lump[]> lumps) {
+    auto levels = std::make_shared<std::vector<std::shared_ptr<LevelData>>>(); 
+    size_t level1Map1Index;
+    // Name of level lump
+    char mapname[] = {'M', 'A', 'P', '0', '0', 0};
+
+    // First pass, if the name is in the MAPXX format
+    for (size_t i = 0; i < 32; i++)
+    {
+        // str(i)
+        mapname[3] = '0' + (i / 10);
+        mapname[4] = '0' + (i % 10);
+
+        level1Map1Index = findInLumpArray(lumps, 0, wadHeader.numlumps, mapname);
+
+        if (level1Map1Index != -1) {
+            #ifdef debugPrint
+                std::cout << mapname << std::endl;
+                std::cin.get();
+            #endif
+
+            levels->push_back(GenerateLevelData(fileByteReader, lumps, level1Map1Index, level1Map1Index + 11));
+        }
+    }
+
+    mapname[0] = 'E';
+    mapname[1] = '0';
+    mapname[2] = 'M';
+    mapname[3] = '0';
+    mapname[4] = 0;
+
+    for (size_t i = 1; i < 9; i++)
+    {
+        // Increase level's index
+        mapname[1]++;
+        for (size_t j = 1; j < 9; j++)
+        {
+            mapname[3]++;
+            level1Map1Index = findInLumpArray(lumps, 0, wadHeader.numlumps, mapname);
+            if (level1Map1Index != -1) {
+                #ifdef debugPrint
+                    std::cout << mapname << std::endl;
+                    std::cin.get();
+                #endif
+
+                levels->push_back(GenerateLevelData(fileByteReader, lumps, level1Map1Index, level1Map1Index + 11));
+            }
+        }
+    }
+    return levels;
+}
+
 int main() {
     // The name of the wad. might be picked from directory or something in the future
     const std::string filename = "./resources/DOOM.wad";
@@ -179,9 +233,15 @@ int main() {
     #endif
 
     SaveAllPictures(*fileByteReader, *wadHeader, lumps, *playpal);
-
-    size_t level1Map1Index = findInLumpArray(lumps, 0, wadHeader->numlumps, "E1M1");
-    auto level1 = GenerateLevelData(*fileByteReader, lumps, level1Map1Index, level1Map1Index + 11);
-    std::cout << *level1 << std::endl;
+    
+    auto levels = GenerateLevels(*fileByteReader, *wadHeader, lumps);
+    
+    std::cin.get();
+    for (auto level : *levels)
+    {
+        // TODO: Code lol
+    }
+    
+    
     return 0;
 }
