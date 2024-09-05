@@ -478,21 +478,21 @@ std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader& fileByteReader, L
 
 void writeBMP(std::string &filename, DoomSprite &picture, PlayPal &playpal, uint8_t palleteIndex) {
     // BMP Header
-    const int fileHeaderSize = 14;
-    const int infoHeaderSize = 40;
-    const int width = picture.width;
-    const int height = picture.height;
-    const int paddingSize = (4 - (width * 3) % 4) % 4;  // BMP rows are aligned to 4-byte boundaries
-    const int fileSize = fileHeaderSize + infoHeaderSize + (width * 3 + paddingSize) * height;
+    const int32_t fileHeaderSize = 14;
+    const int32_t infoHeaderSize = 40;
+    const int32_t width = picture.width;
+    const int32_t height = picture.height;
+    const int32_t paddingSize = (4 - (width * 3) % 4) % 4;  // BMP rows are aligned to 4-byte boundaries
+    const int32_t fileSize = fileHeaderSize + infoHeaderSize + (width * 3 + paddingSize) * height;
 
-    unsigned char fileHeader[fileHeaderSize] = {
+    uint8_t fileHeader[fileHeaderSize] = {
         'B', 'M',             // Signature
         0, 0, 0, 0,           // Image file size in bytes
         0, 0, 0, 0,           // Reserved
         fileHeaderSize + infoHeaderSize, 0, 0, 0  // Start of pixel array
     };
 
-    unsigned char infoHeader[infoHeaderSize] = {
+    uint8_t infoHeader[infoHeaderSize] = {
         infoHeaderSize, 0, 0, 0,  // Header size
         0, 0, 0, 0,               // Image width
         0, 0, 0, 0,               // Image height
@@ -507,20 +507,20 @@ void writeBMP(std::string &filename, DoomSprite &picture, PlayPal &playpal, uint
     };
 
     // Fill file size
-    fileHeader[2] = static_cast<unsigned char>(fileSize);
-    fileHeader[3] = static_cast<unsigned char>(fileSize >> 8);
-    fileHeader[4] = static_cast<unsigned char>(fileSize >> 16);
-    fileHeader[5] = static_cast<unsigned char>(fileSize >> 24);
+    fileHeader[2] = static_cast<uint8_t>(fileSize);
+    fileHeader[3] = static_cast<uint8_t>(fileSize >> 8);
+    fileHeader[4] = static_cast<uint8_t>(fileSize >> 16);
+    fileHeader[5] = static_cast<uint8_t>(fileSize >> 24);
 
     // Fill width and height
-    infoHeader[4] = static_cast<unsigned char>(width);
-    infoHeader[5] = static_cast<unsigned char>(width >> 8);
-    infoHeader[6] = static_cast<unsigned char>(width >> 16);
-    infoHeader[7] = static_cast<unsigned char>(width >> 24);
-    infoHeader[8] = static_cast<unsigned char>(height);
-    infoHeader[9] = static_cast<unsigned char>(height >> 8);
-    infoHeader[10] = static_cast<unsigned char>(height >> 16);
-    infoHeader[11] = static_cast<unsigned char>(height >> 24);
+    infoHeader[4] = static_cast<uint8_t>(width);
+    infoHeader[5] = static_cast<uint8_t>(width >> 8);
+    infoHeader[6] = static_cast<uint8_t>(width >> 16);
+    infoHeader[7] = static_cast<uint8_t>(width >> 24);
+    infoHeader[8] = static_cast<uint8_t>(height);
+    infoHeader[9] = static_cast<uint8_t>(height >> 8);
+    infoHeader[10] = static_cast<uint8_t>(height >> 16);
+    infoHeader[11] = static_cast<uint8_t>(height >> 24);
 
     // Write headers
     std::ofstream file(filename, std::ios::out | std::ios::binary);

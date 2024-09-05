@@ -14,7 +14,7 @@
 #include "Reject.h"
 #include "BlockMap.h"
 #include "PlayPal.h"
-#include "DoomPicture.h"
+#include "DoomSprite.h"
 
 
 //ENDDOOM

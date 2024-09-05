@@ -1,5 +1,5 @@
-#ifndef DOOM_PICTURE_H
-#define DOOM_PICTURE_H
+#ifndef DOOM_SPRITE_H
+#define DOOM_SPRITE_H
 
 #include <cstdint>
 #include <memory>

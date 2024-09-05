@@ -18,7 +18,7 @@
 #include "Reject.h"
 #include "BlockMap.h"
 #include "PlayPal.h"
-#include "DoomPicture.h"
+#include "DoomSprite.h"
 
 struct LevelData {
     std::shared_ptr<Thing[]> things;
