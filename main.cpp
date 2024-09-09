@@ -107,7 +107,37 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
     {
         pic = SPRITE(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + lumps[picIndex].name +  ".bmp";
+        outputFileName = folder + "SPRITE_" + lumps[picIndex].name +  ".bmp";
+        writeBMP(outputFileName , *pic, playpal, 0);
+    }
+
+    size_t patchStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "P1_START");
+    size_t patchEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "P1_END");
+
+    #ifdef debugPrint
+        std::cout << "patchStartIndex" << patchStartIndex << std::endl;
+        std::cout << "patchEndIndex" << patchEndIndex << std::endl;
+    #endif
+
+    for (size_t picIndex = patchStartIndex + 1; picIndex < patchEndIndex; picIndex++)
+    {
+        pic = SPRITE(fileByteReader, lumps[picIndex]);
+        outputFileName = folder + "PATCH_" + lumps[picIndex].name +  ".bmp";
+        writeBMP(outputFileName , *pic, playpal, 0);
+    }
+
+    patchStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "P2_START");
+    patchEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "P2_END");
+
+    #ifdef debugPrint
+        std::cout << "patchStartIndex" << patchStartIndex << std::endl;
+        std::cout << "patchEndIndex" << patchEndIndex << std::endl;
+    #endif
+    
+    for (size_t picIndex = patchStartIndex + 1; picIndex < patchEndIndex; picIndex++)
+    {
+        pic = SPRITE(fileByteReader, lumps[picIndex]);
+        outputFileName = folder + "PATCH_" + lumps[picIndex].name +  ".bmp";
         writeBMP(outputFileName , *pic, playpal, 0);
     }
 }
@@ -226,6 +256,10 @@ int main() {
     size_t pnamesLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
     std::shared_ptr<std::string[]> pnames = PNAMES(*fileByteReader, lumps[pnamesLumpIndex], 0, wadHeader->numlumps);
     size_t pnameAmmount = (lumps[pnamesLumpIndex].size - 4) / 8;
+
+    tagname = "TEXTURE1";
+    size_t texture1LumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
+    std::shared_ptr<Texture[]> texture1 = TEXTURE(*fileByteReader, lumps[texture1LumpIndex], 0, wadHeader->numlumps);
 
     std::cout << endoom << std::endl;
     #ifdef debugPrint

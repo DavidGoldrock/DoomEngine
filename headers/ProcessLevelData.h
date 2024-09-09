@@ -15,6 +15,7 @@
 #include "BlockMap.h"
 #include "PlayPal.h"
 #include "DoomSprite.h"
+#include "Texture.h"
 
 
 //ENDDOOM
@@ -95,3 +96,5 @@ void writeBMP(std::string &filename, DoomSprite &picture, PlayPal &playpal, uint
 //
 
 std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to);
+
+std::shared_ptr<Texture[]> TEXTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to);

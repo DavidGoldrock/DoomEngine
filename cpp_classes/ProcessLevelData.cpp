@@ -539,9 +539,60 @@ std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader& fileByteReader
         pnames[i] = lumpDataByteReader->readBytesAsStr(8);
         // Print if debugPrint is on
         #ifdef debugPrint
-            std::cout << "Loaded std::string [" << (i+1) << "]" << " Out of [" << entryNum << "]" << pnames[i] << std::endl;
+            std::cout << "Loaded name [" << (i+1) << "]" << " Out of [" << entryNum << "]" << pnames[i] << std::endl;
         #endif
     }
     
     return pnames;
+}
+
+std::shared_ptr<Texture[]> TEXTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to) {
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
+
+    size_t entryNum = lumpDataByteReader->readBytesAsInt32();
+
+    // Create array
+    std::shared_ptr<int32_t[]> offsets = std::make_shared<int32_t[]>(entryNum);
+    std::shared_ptr<Texture[]> textures = std::make_shared<Texture[]>(entryNum);
+    // Read using format
+
+    for (size_t i = 0; i <entryNum; i++) {
+        offsets[i] = lumpDataByteReader->readBytesAsInt32();    
+    }
+
+    for (size_t i = 0; i <entryNum; i++) {
+        lumpDataByteReader->pointer = offsets[i];    
+        textures[i].name = lumpDataByteReader->readBytesAsStr(8);
+        textures[i].masked = (lumpDataByteReader->readBytesAsInt32() == 1);
+        textures[i].width = lumpDataByteReader->readBytesAsInt16();
+        textures[i].height = lumpDataByteReader->readBytesAsInt16();
+
+        // Skip unnecceary
+        lumpDataByteReader->pointer += 4;
+
+        textures[i].patchCount = lumpDataByteReader->readBytesAsInt16();
+        textures[i].patches = std::make_shared<Patch[]>(textures[i].patchCount);
+
+        for (size_t j = 0; j < textures[i].patchCount; j++)
+        {
+            textures[i].patches[j].originX = lumpDataByteReader->readBytesAsInt16();
+            textures[i].patches[j].originY = lumpDataByteReader->readBytesAsInt16();
+            textures[i].patches[j].patchNum = lumpDataByteReader->readBytesAsInt16();
+
+            // Skip unnecceary
+            lumpDataByteReader->pointer += 4;
+        }
+        
+        #ifdef debugPrint
+            std::cout << "Loaded texture [" << (i+1) << "]" << " Out of [" << entryNum << "]" << textures[i] << std::endl;
+        #endif
+    }
+    
+        // Print if debugPrint is on
+        
+
+    return textures;
 }
