@@ -660,7 +660,7 @@ void writeFlatToBMP(std::string &filename, Flat &flat, PlayPal &playpal, uint8_t
         for (int x = 0; x < width; ++x) {
             // Get the pointer to the part of the pallette corrisponsing to the correct color
             // You go to the correct pallette, and then to the right part of it, then * 3 for the size of color
-            color = &(playpal.getPallette(paletteIndex)[flat.getPixel(y,x) * 3]);
+            color = &(playpal.getPallette(paletteIndex)[flat.getPixel(x,y) * 3]);
             file.put(color[2]).put(color[1]).put(color[0]);
         }
         file.write("\0\0\0", paddingSize);  // Add padding

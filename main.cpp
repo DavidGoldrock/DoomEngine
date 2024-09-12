@@ -154,7 +154,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
     {
         flat = FLAT(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "Flat_" + lumps[picIndex].name +  ".bmp";
+        outputFileName = folder + "FLAT_" + lumps[picIndex].name +  ".bmp";
         writeFlatToBMP(outputFileName , *flat, playpal, 0);
     }
 
@@ -169,7 +169,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
     {
         flat = FLAT(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "Flat_" + lumps[picIndex].name +  ".bmp";
+        outputFileName = folder + "FLAT_" + lumps[picIndex].name +  ".bmp";
         writeFlatToBMP(outputFileName , *flat, playpal, 0);
     }
 

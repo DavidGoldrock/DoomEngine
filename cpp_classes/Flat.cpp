@@ -3,12 +3,12 @@
 
 Flat::Flat(std::shared_ptr<uint8_t[]> rawPixels): rawPixels(rawPixels) {}
 
-uint8_t Flat::getPixel(uint8_t i, uint8_t j) {
-    if (i > 64 || j > 64) {
-        std::string msg = "Out of bounds. i = " + std::to_string((int)i) +", j = " + std::to_string((int)j);
+uint8_t Flat::getPixel(uint8_t x, uint8_t y) {
+    if (y > 64 || x > 64) {
+        std::string msg = "Out of bounds. i = " + std::to_string((int)y) +", j = " + std::to_string((int)x);
         throw CustomException(msg);
     }
-    return rawPixels.get()[i * size + j];
+    return rawPixels.get()[y * size + x];
 }
 
 std::ostream &operator<<(std::ostream &os, const Flat &obj) { 
