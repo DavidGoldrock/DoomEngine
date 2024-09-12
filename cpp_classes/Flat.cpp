@@ -5,7 +5,7 @@ Flat::Flat(std::shared_ptr<uint8_t[]> rawPixels): rawPixels(rawPixels) {}
 
 uint8_t Flat::getPixel(uint8_t x, uint8_t y) {
     if (y > 64 || x > 64) {
-        std::string msg = "Out of bounds. i = " + std::to_string((int)y) +", j = " + std::to_string((int)x);
+        std::string msg = "Out of bounds. y = " + std::to_string((int)y) +", x = " + std::to_string((int)x);
         throw CustomException(msg);
     }
     return rawPixels.get()[y * size + x];

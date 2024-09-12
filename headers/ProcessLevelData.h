@@ -17,6 +17,7 @@
 #include "DoomSprite.h"
 #include "Texture.h"
 #include "Flat.h"
+#include <functional>
 
 
 //ENDDOOM
@@ -90,11 +91,9 @@ std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader& fileByteReader, Lum
 
 std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump);
 
-void writeSpriteToBMP(std::string &filename, DoomSprite &picture, PlayPal &playpal, uint8_t paletteIndex);
+void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t,size_t)> getPixel,  PlayPal &playpal, uint8_t palleteIndex);
 
 std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader& fileByteReader, Lump& lump);
-
-void writeFlatToBMP(std::string &filename, Flat &picture, PlayPal &playpal, uint8_t paletteIndex);
 
 // """
 // PNAMES

@@ -7,6 +7,7 @@
 #include <cstdint>
 #include <cstring>
 #include <iostream>
+#include <functional>
 
 /**
  * @fileByteReaderief gets from a DOS screen format using ansi codes and implied \n to colored text running in CMD
@@ -459,12 +460,10 @@ std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader& fileByteReader, L
     return pic;
 }
 
-void writeSpriteToBMP(std::string &filename, DoomSprite &picture, PlayPal &playpal, uint8_t palleteIndex) {
+void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t,size_t)> getPixel,  PlayPal &playpal, uint8_t palleteIndex) {
     // BMP Header
     const int32_t fileHeaderSize = 14;
     const int32_t infoHeaderSize = 40;
-    const int32_t width = picture.width;
-    const int32_t height = picture.height;
     const int32_t paddingSize = (4 - (width * 3) % 4) % 4;  // BMP rows are aligned to 4-byte boundaries
     const int32_t fileSize = fileHeaderSize + infoHeaderSize + (width * 3 + paddingSize) * height;
 
@@ -515,7 +514,7 @@ void writeSpriteToBMP(std::string &filename, DoomSprite &picture, PlayPal &playp
         for (int x = 0; x < width; ++x) {
             // Get the pointer to the part of the pallette corrisponsing to the correct color
             // You go to the correct pallette, and then to the right part of it, then * 3 for the size of color
-            color = &(playpal.getPallette(palleteIndex)[picture.pixels[y * width + x] * 3]);
+            color = &(playpal.getPallette(palleteIndex)[getPixel(x,y) * 3]);
             file.put(color[2]).put(color[1]).put(color[0]);
         }
         file.write("\0\0\0", paddingSize);  // Add padding
@@ -602,69 +601,4 @@ std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader& fileByteReader, Lump& lum
     std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
     fileByteReader.readLumpData(data.get(), lump);
     return std::make_shared<Flat>(data);
-}
-
-void writeFlatToBMP(std::string &filename, Flat &flat, PlayPal &playpal, uint8_t paletteIndex) {
-    // BMP Header
-    const int32_t fileHeaderSize = 14;
-    const int32_t infoHeaderSize = 40;
-    const int32_t width = Flat::size;
-    const int32_t height = Flat::size;
-    const int32_t paddingSize = (4 - (width * 3) % 4) % 4;  // BMP rows are aligned to 4-byte boundaries
-    const int32_t fileSize = fileHeaderSize + infoHeaderSize + (width * 3 + paddingSize) * height;
-
-    uint8_t fileHeader[fileHeaderSize] = {
-        'B', 'M',             // Signature
-        0, 0, 0, 0,           // Image file size in bytes
-        0, 0, 0, 0,           // Reserved
-        fileHeaderSize + infoHeaderSize, 0, 0, 0  // Start of pixel array
-    };
-
-    uint8_t infoHeader[infoHeaderSize] = {
-        infoHeaderSize, 0, 0, 0,  // Header size
-        0, 0, 0, 0,               // Image width
-        0, 0, 0, 0,               // Image height
-        1, 0,                     // Number of color planes
-        24, 0,                    // Bits per pixel
-        0, 0, 0, 0,               // Compression (0 = none)
-        0, 0, 0, 0,               // Image size (can be 0 for uncompressed)
-        0, 0, 0, 0,               // Horizontal resolution (pixels per meter, not important)
-        0, 0, 0, 0,               // Vertical resolution (pixels per meter, not important)
-        0, 0, 0, 0,                // Number of colors in palette
-        0, 0, 0, 0                // Important colors (0 = all)
-    };
-
-    // Fill file size
-    fileHeader[2] = static_cast<uint8_t>(fileSize);
-    fileHeader[3] = static_cast<uint8_t>(fileSize >> 8);
-    fileHeader[4] = static_cast<uint8_t>(fileSize >> 16);
-    fileHeader[5] = static_cast<uint8_t>(fileSize >> 24);
-
-    // Fill width and height
-    infoHeader[4] = static_cast<uint8_t>(width);
-    infoHeader[5] = static_cast<uint8_t>(width >> 8);
-    infoHeader[6] = static_cast<uint8_t>(width >> 16);
-    infoHeader[7] = static_cast<uint8_t>(width >> 24);
-    infoHeader[8] = static_cast<uint8_t>(height);
-    infoHeader[9] = static_cast<uint8_t>(height >> 8);
-    infoHeader[10] = static_cast<uint8_t>(height >> 16);
-    infoHeader[11] = static_cast<uint8_t>(height >> 24);
-
-    // Write headers
-    std::ofstream file(filename, std::ios::out | std::ios::binary);
-    file.write(reinterpret_cast<char*>(fileHeader), fileHeaderSize);
-    file.write(reinterpret_cast<char*>(infoHeader), infoHeaderSize);
-    uint8_t* color;
-    // Write the image buffer to the BMP file
-    for (int y = height - 1; y >= 0; --y) {  // BMP files store pixels from bottom to top
-        for (int x = 0; x < width; ++x) {
-            // Get the pointer to the part of the pallette corrisponsing to the correct color
-            // You go to the correct pallette, and then to the right part of it, then * 3 for the size of color
-            color = &(playpal.getPallette(paletteIndex)[flat.getPixel(x,y) * 3]);
-            file.put(color[2]).put(color[1]).put(color[0]);
-        }
-        file.write("\0\0\0", paddingSize);  // Add padding
-    }
-
-    file.close();
 }

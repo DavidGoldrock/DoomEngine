@@ -96,19 +96,23 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
 
     std::string outputFileName = folder + lumps[titlePicIndex].name +  ".bmp";
 
-    writeSpriteToBMP(outputFileName , *titlePic, playpal, 0);
+    auto getTitlePicPixel = [titlePic](size_t x, size_t y) {return titlePic->getPixel(x,y);};
+
+    writeToBMP(outputFileName, titlePic->width, titlePic->height, getTitlePicPixel, playpal, 0);
 
 
     size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_START");
     size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_END");
 
     std::shared_ptr<DoomSprite> pic;
+    auto getPicPixel = [pic](size_t x, size_t y) {return pic->getPixel(x,y);};
+    
 
     for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
     {
         pic = SPRITE(fileByteReader, lumps[picIndex]);
         outputFileName = folder + "SPRITE_" + lumps[picIndex].name +  ".bmp";
-        writeSpriteToBMP(outputFileName , *pic, playpal, 0);
+        writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, 0);
     }
 
     size_t patchStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "P1_START");
@@ -123,7 +127,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     {
         pic = SPRITE(fileByteReader, lumps[picIndex]);
         outputFileName = folder + "PATCH_" + lumps[picIndex].name +  ".bmp";
-        writeSpriteToBMP(outputFileName , *pic, playpal, 0);
+        writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, 0);
     }
 
     patchStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "P2_START");
@@ -138,7 +142,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     {
         pic = SPRITE(fileByteReader, lumps[picIndex]);
         outputFileName = folder + "PATCH_" + lumps[picIndex].name +  ".bmp";
-        writeSpriteToBMP(outputFileName , *pic, playpal, 0);
+        writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, 0);
     }
 
     size_t flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F1_START");
@@ -150,12 +154,13 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     #endif
 
     std::shared_ptr<Flat> flat;
+    auto getFlatPixel = [&](size_t x, size_t y) {return (x,y);};
 
     for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
     {
         flat = FLAT(fileByteReader, lumps[picIndex]);
         outputFileName = folder + "FLAT_" + lumps[picIndex].name +  ".bmp";
-        writeFlatToBMP(outputFileName , *flat, playpal, 0);
+        writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, 0);
     }
 
     flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F2_START");
@@ -170,7 +175,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     {
         flat = FLAT(fileByteReader, lumps[picIndex]);
         outputFileName = folder + "FLAT_" + lumps[picIndex].name +  ".bmp";
-        writeFlatToBMP(outputFileName , *flat, playpal, 0);
+        writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, 0);
     }
 
 

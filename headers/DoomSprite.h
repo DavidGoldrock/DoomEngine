@@ -13,7 +13,7 @@ struct DoomSprite {
     int16_t topOffset;
     std::shared_ptr<uint8_t[]> pixels;
 
-
+    uint8_t getPixel(uint8_t x, uint8_t y);
     // Constructor
     DoomSprite(uint16_t width, uint16_t height, int16_t leftOffset, int16_t topOffset, std::shared_ptr<uint8_t[]> pixels);
     
