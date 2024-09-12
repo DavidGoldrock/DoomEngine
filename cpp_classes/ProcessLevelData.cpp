@@ -467,6 +467,11 @@ void writeToBMP(std::string &filename, const int32_t width, const int32_t height
     const int32_t paddingSize = (4 - (width * 3) % 4) % 4;  // BMP rows are aligned to 4-byte boundaries
     const int32_t fileSize = fileHeaderSize + infoHeaderSize + (width * 3 + paddingSize) * height;
 
+        // Written in a buffer and then written because writing to file many times is very expensive
+
+    auto buffer = std::make_unique<char[]>(fileSize);
+    size_t index = 0;
+
     uint8_t fileHeader[fileHeaderSize] = {
         'B', 'M',             // Signature
         0, 0, 0, 0,           // Image file size in bytes
@@ -505,21 +510,32 @@ void writeToBMP(std::string &filename, const int32_t width, const int32_t height
     infoHeader[11] = static_cast<uint8_t>(height >> 24);
 
     // Write headers
-    std::ofstream file(filename, std::ios::out | std::ios::binary);
-    file.write(reinterpret_cast<char*>(fileHeader), fileHeaderSize);
-    file.write(reinterpret_cast<char*>(infoHeader), infoHeaderSize);
+    std::memcpy(buffer.get() + index, &fileHeader, fileHeaderSize);
+    index += fileHeaderSize;
+    std::memcpy(buffer.get() + index, &infoHeader, infoHeaderSize);
+    index += infoHeaderSize;
+
+
     uint8_t* color;
+
     // Write the image buffer to the BMP file
     for (int y = height - 1; y >= 0; --y) {  // BMP files store pixels from bottom to top
         for (int x = 0; x < width; ++x) {
             // Get the pointer to the part of the pallette corrisponsing to the correct color
             // You go to the correct pallette, and then to the right part of it, then * 3 for the size of color
             color = &(playpal.getPallette(palleteIndex)[getPixel(x,y) * 3]);
-            file.put(color[2]).put(color[1]).put(color[0]);
+            buffer[index++] = color[2];
+            buffer[index++] = color[1];
+            buffer[index++] = color[0];
         }
-        file.write("\0\0\0", paddingSize);  // Add padding
+        for (size_t i = 0; i < paddingSize; i++)
+        {
+            buffer[index++] = 0;
+        }
     }
 
+    std::ofstream file(filename, std::ios::out | std::ios::binary);
+    file.write(buffer.get(), fileSize);
     file.close();
 }
 
