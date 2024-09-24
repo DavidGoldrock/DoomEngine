@@ -168,7 +168,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     size_t patchnum;
     DoomSprite texturePic = DoomSprite(0,0,0,0,nullptr);
     auto gettexturePicPixel = [&](size_t x, size_t y) {return texturePic.getPixel(x,y);};
-
+    uint8_t color;
     for (Texture t : textures) {
         
         // Start with transparent texture
@@ -202,7 +202,10 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
                     // std::cout << "FAIL I[" << i << "] Patch_" << pnames[t.patches[i].patchNum] << " X[" << x << "], y[" << y << "]" << std::endl;
                     size_t index = (t.patches[i].originY + y) * t.width + t.patches[i].originX + x;
                     if (index < t.width * t.height && index > 0) {
-                        texturePic.pixels[index] = pic->getPixel(x,y);
+                        color = pic->getPixel(x,y);
+                        if (color != PlayPal::TRANSPARENT_COLOR) {
+                            texturePic.pixels[index] = color;
+                        }
                     }
                     
                 }

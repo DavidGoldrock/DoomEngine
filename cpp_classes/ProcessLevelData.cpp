@@ -420,6 +420,13 @@ std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader& fileByteReader, L
     }
 
     std::shared_ptr<uint8_t[]> pixels = std::make_shared<uint8_t[]>(width * height);
+
+    for (size_t i = 0; i < width * height; i++)
+    {
+        pixels[i] = PlayPal::TRANSPARENT_COLOR;
+    }
+    
+
     std::shared_ptr<DoomSprite> pic = std::make_shared<DoomSprite>(width, height, leftOffset, topOffset, pixels);
     
     uint8_t rowstart;
