@@ -101,4 +101,4 @@ std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader& fileByteReader, Lump& lum
 
 std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to);
 
-std::shared_ptr<Texture[]> TEXTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to);
+void TEXTURE(ConsecutiveBytearrayReader& fileByteReader, Lump& lump, size_t from, size_t to, std::vector<Texture>& textures);

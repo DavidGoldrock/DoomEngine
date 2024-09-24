@@ -8,14 +8,13 @@
 
 struct Texture {
     std::string name;
-    bool masked;
     int16_t width;
     int16_t height;
     int16_t patchCount;
     std::shared_ptr<Patch[]> patches;
 
     // Constructor
-    Texture(std::string name, bool masked, int16_t width, int16_t height, int16_t patchCount);
+    Texture(std::string name,  int16_t width, int16_t height, int16_t patchCount);
     Texture();
 
     friend std::ostream& operator<<(std::ostream& os, const Texture& obj);
