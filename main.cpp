@@ -95,132 +95,142 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
     size_t titlePicIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "TITLEPIC");
     std::shared_ptr<DoomSprite> titlePic = SPRITE(fileByteReader, lumps[titlePicIndex]);
 
-    const std::string folder = "./results/";
-
+    std::string folder = "./results/";
     std::string outputFileName = folder + lumps[titlePicIndex].name + ".bmp";
 
     auto getTitlePicPixel = [titlePic](size_t x, size_t y)
     { return titlePic->getPixel(x, y); };
 
     writeToBMP(outputFileName, titlePic->width, titlePic->height, getTitlePicPixel, playpal, 0, colorMap, 0);
-
-    size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_START");
-    size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_END");
-
-    std::shared_ptr<DoomSprite> pic;
-    auto getPicPixel = [&](size_t x, size_t y)
-    { return pic->getPixel(x, y); };
-
-    for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
+    for (size_t playpalIndex = 0; playpalIndex < PlayPal::PLAYPAL_AMMOUNT; playpalIndex++)
     {
-        pic = SPRITE(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "Sprites/" + lumps[picIndex].name + ".bmp";
-        writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, 0, colorMap, 0);
-    }
-
-    size_t lumpIndex;
-
-    for (size_t picIndex = 0; picIndex < pnameAmmount; picIndex++)
-    {
-        lumpIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, pnames[picIndex]);
-        if (lumpIndex == -1)
+        for (size_t colorMapIndex = 0; colorMapIndex < ColorMap::COLORMAP_AMMOUNT; colorMapIndex++)
         {
-            std::cout << "FAILED ON [" << pnames[picIndex] << "]" << std::endl;
-            continue;
-        }
-        std::cout << pnames[picIndex] << ", " << (int)picIndex << ", " << lumpIndex << std::endl;
-        pic = SPRITE(fileByteReader, lumps[lumpIndex]);
-        outputFileName = folder + "Patches/" + pnames[picIndex] + ".bmp";
-        writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, 0, colorMap, 0);
-    }
+            folder = "./results/PLAYPAL" + std::to_string(playpalIndex) + "/COLORMAP" + std::to_string(colorMapIndex) + "/";
 
-    size_t flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F1_START");
-    size_t flatEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F1_END");
+            size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_START");
+            size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_END");
 
-#ifdef debugPrint
-    std::cout << "flatStartIndex" << flatStartIndex << std::endl;
-    std::cout << "flatEndIndex" << flatEndIndex << std::endl;
-#endif
+            std::shared_ptr<DoomSprite> pic;
+            auto getPicPixel = [&](size_t x, size_t y)
+            { return pic->getPixel(x, y); };
 
-    std::shared_ptr<Flat> flat;
-    auto getFlatPixel = [&](size_t x, size_t y)
-    { return flat->getPixel(x, y); };
-
-    for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
-    {
-        flat = FLAT(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "Flats/" + lumps[picIndex].name + ".bmp";
-        writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, 0, colorMap, 0);
-    }
-
-    flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F2_START");
-    flatEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F2_END");
-
-#ifdef debugPrint
-    std::cout << "flatStartIndex" << flatStartIndex << std::endl;
-    std::cout << "flatEndIndex" << flatEndIndex << std::endl;
-#endif
-
-    for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
-    {
-        flat = FLAT(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "Flats/" + lumps[picIndex].name + ".bmp";
-        writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, 0, colorMap, 0);
-    }
-
-    size_t patchLumpIndex;
-    size_t patchnum;
-    DoomSprite texturePic = DoomSprite(0, 0, 0, 0, nullptr);
-    auto gettexturePicPixel = [&](size_t x, size_t y)
-    { return texturePic.getPixel(x, y); };
-    uint8_t color;
-    for (Texture t : textures)
-    {
-
-        // Start with transparent texture
-        texturePic.height = t.height;
-        texturePic.width = t.width;
-        texturePic.pixels = std::make_shared<uint8_t[]>(t.width * t.height);
-
-        for (size_t i = 0; i < t.width * t.height; i++)
-        {
-            texturePic.pixels[i] = PlayPal::TRANSPARENT_COLOR;
-        }
-
-        // For every patch
-        for (size_t i = 0; i < t.patchCount; i++)
-        {
-
-            // Copy data into the bytearray
-            patchnum = t.patches[i].patchNum;
-            patchLumpIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, pnames[patchnum]);
-
-            if (patchLumpIndex == -1)
+            for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
             {
-                std::cout << "FAILED ON [" << pnames[patchnum] << "]" << std::endl;
-                continue;
+                pic = SPRITE(fileByteReader, lumps[picIndex]);
+                outputFileName = folder + "Sprites/" + lumps[picIndex].name + ".bmp";
+                writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, playpalIndex, colorMap, colorMapIndex);
             }
-            pic = SPRITE(fileByteReader, lumps[patchLumpIndex]);
-            for (size_t x = 0; x < pic->width; x++)
+
+            size_t lumpIndex;
+
+            for (size_t picIndex = 0; picIndex < pnameAmmount; picIndex++)
             {
-                for (size_t y = 0; y < pic->height; y++)
+                lumpIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, pnames[picIndex]);
+                if (lumpIndex == -1)
                 {
-                    // std::cout << "FAIL I[" << i << "] Patch_" << pnames[t.patches[i].patchNum] << " X[" << x << "], y[" << y << "]" << std::endl;
-                    size_t index = (t.patches[i].originY + y) * t.width + t.patches[i].originX + x;
-                    if (index < t.width * t.height && index >= 0)
+#ifdef debugPrint
+                    std::cout << "FAILED ON [" << pnames[picIndex] << "]" << std::endl;
+#endif
+                    continue;
+                }
+#ifdef debugPrint
+                std::cout << pnames[picIndex] << ", " << (int)picIndex << ", " << lumpIndex << std::endl;
+#endif
+                pic = SPRITE(fileByteReader, lumps[lumpIndex]);
+                outputFileName = folder + "Patches/" + pnames[picIndex] + ".bmp";
+                writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, playpalIndex, colorMap, colorMapIndex);
+            }
+
+            size_t flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F1_START");
+            size_t flatEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F1_END");
+
+#ifdef debugPrint
+            std::cout << "flatStartIndex" << flatStartIndex << std::endl;
+            std::cout << "flatEndIndex" << flatEndIndex << std::endl;
+#endif
+
+            std::shared_ptr<Flat> flat;
+            auto getFlatPixel = [&](size_t x, size_t y)
+            { return flat->getPixel(x, y); };
+
+            for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
+            {
+                flat = FLAT(fileByteReader, lumps[picIndex]);
+                outputFileName = folder + "Flats/" + lumps[picIndex].name + ".bmp";
+                writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, playpalIndex, colorMap, colorMapIndex);
+            }
+
+            flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F2_START");
+            flatEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F2_END");
+
+#ifdef debugPrint
+            std::cout << "flatStartIndex" << flatStartIndex << std::endl;
+            std::cout << "flatEndIndex" << flatEndIndex << std::endl;
+#endif
+
+            for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
+            {
+                flat = FLAT(fileByteReader, lumps[picIndex]);
+                outputFileName = folder + "Flats/" + lumps[picIndex].name + ".bmp";
+                writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, playpalIndex, colorMap, colorMapIndex);
+            }
+
+            size_t patchLumpIndex;
+            size_t patchnum;
+            DoomSprite texturePic = DoomSprite(0, 0, 0, 0, nullptr);
+            auto gettexturePicPixel = [&](size_t x, size_t y)
+            { return texturePic.getPixel(x, y); };
+            uint8_t color;
+            for (Texture t : textures)
+            {
+
+                // Start with transparent texture
+                texturePic.height = t.height;
+                texturePic.width = t.width;
+                texturePic.pixels = std::make_shared<uint8_t[]>(t.width * t.height);
+
+                for (size_t i = 0; i < t.width * t.height; i++)
+                {
+                    texturePic.pixels[i] = PlayPal::TRANSPARENT_COLOR;
+                }
+
+                // For every patch
+                for (size_t i = 0; i < t.patchCount; i++)
+                {
+
+                    // Copy data into the bytearray
+                    patchnum = t.patches[i].patchNum;
+                    patchLumpIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, pnames[patchnum]);
+
+                    if (patchLumpIndex == -1)
                     {
-                        color = pic->getPixel(x, y);
-                        if (color != PlayPal::TRANSPARENT_COLOR)
+                        std::cout << "FAILED ON [" << pnames[patchnum] << "]" << std::endl;
+                        continue;
+                    }
+                    pic = SPRITE(fileByteReader, lumps[patchLumpIndex]);
+                    for (size_t x = 0; x < pic->width; x++)
+                    {
+                        for (size_t y = 0; y < pic->height; y++)
                         {
-                            texturePic.pixels[index] = color;
+                            // std::cout << "FAIL I[" << i << "] Patch_" << pnames[t.patches[i].patchNum] << " X[" << x << "], y[" << y << "]" << std::endl;
+                            size_t index = (t.patches[i].originY + y) * t.width + t.patches[i].originX + x;
+                            if (index < t.width * t.height && index >= 0)
+                            {
+                                color = pic->getPixel(x, y);
+                                if (color != PlayPal::TRANSPARENT_COLOR)
+                                {
+                                    texturePic.pixels[index] = color;
+                                }
+                            }
                         }
                     }
                 }
+
+                outputFileName = folder + "Textures/" + t.name + ".bmp";
+                writeToBMP(outputFileName, t.width, t.height, gettexturePicPixel, playpal, playpalIndex, colorMap, colorMapIndex);
             }
         }
-
-        outputFileName = folder + "Textures/" + t.name + ".bmp";
-        writeToBMP(outputFileName, t.width, t.height, gettexturePicPixel, playpal, 0, colorMap, 0);
     }
 }
 
