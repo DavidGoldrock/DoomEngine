@@ -5,11 +5,15 @@
 #include <iostream>
 #include <memory>
 
-struct PlayPal
+class PlayPal
 {
-    constexpr static uint8_t TRANSPARENT_COLOR = 247;
-
+private:
     std::shared_ptr<uint8_t[]> rawRGBs;
+
+public:
+    constexpr static uint16_t PALLETE_DEPTH = 256;
+    constexpr static uint8_t TRANSPARENT_COLOR = 247;
+    constexpr static uint8_t PLAYPAL_AMMOUNT = 14;
 
     // Constructor
     PlayPal(std::shared_ptr<uint8_t[]> rawRGBs);

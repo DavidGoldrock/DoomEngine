@@ -426,6 +426,35 @@ std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader &fileByteReader, Lum
     return returnValue;
 }
 
+std::shared_ptr<ColorMap> COLORMAP(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to)
+{
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
+    // Create array
+    std::shared_ptr<uint8_t[]> levelPalleteData = std::make_shared<uint8_t[]>(lump.size);
+    // Read using format
+    for (size_t i = 0; i < lump.size; i ++)
+    {
+        levelPalleteData[i] = lumpDataByteReader->readBytesAsUint8();
+
+// Print if debugPrint is on
+#ifdef debugPrint
+        std::cout << "Loaded Indexes [" << ((i) + 1) << "]" << " Out of [" << lump.size << "]" << levelPalleteData[i] << std::endl;
+#endif
+    }
+
+    std::shared_ptr<ColorMap> returnValue = std::make_shared<ColorMap>(levelPalleteData);
+
+#ifdef debugPrint
+    std::cout << "Loaded ColorMap " << *returnValue << std::endl;
+    std::cin.get();
+
+#endif
+    return returnValue;
+}
+
 std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader &fileByteReader, Lump &lump)
 {
     std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
@@ -491,7 +520,7 @@ std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader &fileByteReader, L
     return pic;
 }
 
-void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t, size_t)> getPixel, PlayPal &playpal, uint8_t palleteIndex)
+void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t, size_t)> getPixel, PlayPal &playpal, uint8_t palleteIndex, ColorMap &colorMap, uint8_t MapIndex)
 {
     // BMP Header
     const int32_t fileHeaderSize = 14;
@@ -555,8 +584,9 @@ void writeToBMP(std::string &filename, const int32_t width, const int32_t height
         for (int x = 0; x < width; ++x)
         {
             // Get the pointer to the part of the pallette corrisponsing to the correct color
-            // You go to the correct pallette, and then to the right part of it, then * 3 for the size of color
-            color = &(playpal.getPallette(palleteIndex)[getPixel(x, y) * 3]);
+            // You go to the correct pallette, and then to the right part of it, then convert using colorMap
+            // then * 3 for the size of color
+            color = &(playpal.getPallette(palleteIndex)[colorMap.getMap(MapIndex)[getPixel(x, y)] * 3]);
             buffer[index++] = color[2];
             buffer[index++] = color[1];
             buffer[index++] = color[0];
@@ -587,6 +617,8 @@ std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader &fileByteReader
     for (size_t i = 0; i < entryNum; i++)
     {
         pnames[i] = lumpDataByteReader->readBytesAsStr(8);
+        // Capitalize
+        for (auto & c: pnames[i]) c = toupper(c);
 // Print if debugPrint is on
 #ifdef debugPrint
         std::cout << "Loaded name [" << (i + 1) << "]" << " Out of [" << entryNum << "]" << pnames[i] << std::endl;

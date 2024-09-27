@@ -18,6 +18,7 @@
 #include "Texture.h"
 #include "Flat.h"
 #include <functional>
+#include "ColorMap.h"
 
 // ENDDOOM
 
@@ -76,12 +77,18 @@ std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader &fileByteReader, L
 std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 // """
+// COLORMAP
+// """
+
+std::shared_ptr<ColorMap> COLORMAP(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
+
+// """
 // Pictures
 // """
 
 std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
 
-void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t, size_t)> getPixel, PlayPal &playpal, uint8_t palleteIndex);
+void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t, size_t)> getPixel, PlayPal &playpal, uint8_t palleteIndex, ColorMap &colorMap, uint8_t MapIndex);
 
 std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
 
