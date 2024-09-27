@@ -6,7 +6,8 @@
 #include <iostream>
 #include <vector>
 
-struct BlockMap {
+struct BlockMap
+{
     uint16_t gridX;
     uint16_t gridY;
     uint16_t columnNumber;
@@ -16,9 +17,7 @@ struct BlockMap {
     // Constructor
     BlockMap(uint16_t gridX, uint16_t gridY, uint16_t columnNumber, uint16_t rowNumber, std::shared_ptr<std::vector<uint16_t>[]> blocklists);
 
-    friend std::ostream& operator<<(std::ostream& os, const BlockMap& obj);
+    friend std::ostream &operator<<(std::ostream &os, const BlockMap &obj);
 };
 
 #endif
-
-

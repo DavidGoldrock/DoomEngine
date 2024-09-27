@@ -4,7 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
-struct SubSector {
+struct SubSector
+{
     uint16_t segCount;
     uint16_t firstSegNumber;
 
@@ -12,7 +13,7 @@ struct SubSector {
     SubSector(uint16_t segCount, uint16_t firstSegNumber);
     SubSector();
 
-    friend std::ostream& operator<<(std::ostream& os, const SubSector& obj);
+    friend std::ostream &operator<<(std::ostream &os, const SubSector &obj);
 };
 
 #endif

@@ -4,7 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
-struct Patch {
+struct Patch
+{
     int16_t originX;
     int16_t originY;
     int16_t patchNum;
@@ -12,7 +13,7 @@ struct Patch {
     Patch(int16_t originX, int16_t originY, int16_t patchNum);
     Patch();
 
-    friend std::ostream& operator<<(std::ostream& os, const Patch& obj);
+    friend std::ostream &operator<<(std::ostream &os, const Patch &obj);
 };
 
 #endif

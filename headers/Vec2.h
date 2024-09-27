@@ -4,13 +4,14 @@
 #include <cstdint>
 #include <iostream>
 
-struct Vec2 {
-    double x,y;
+struct Vec2
+{
+    double x, y;
 
     Vec2(double x, double y);
     Vec2();
 
-    friend std::ostream& operator<<(std::ostream& os, const Vec2& obj); 
+    friend std::ostream &operator<<(std::ostream &os, const Vec2 &obj);
 };
 
 #endif

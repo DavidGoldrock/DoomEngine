@@ -4,14 +4,15 @@
 #include <cstdint>
 #include <iostream>
 
-struct WADHeader {
+struct WADHeader
+{
     std::string header;
     uint32_t numlumps;
     uint32_t infotableofs;
 
     WADHeader(std::string header, uint32_t numlumps, uint32_t infotableofs);
 
-    friend std::ostream& operator<<(std::ostream& os, const WADHeader& obj); 
+    friend std::ostream &operator<<(std::ostream &os, const WADHeader &obj);
 };
 
 #endif

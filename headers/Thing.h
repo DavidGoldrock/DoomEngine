@@ -4,7 +4,8 @@
 #include <cstdint>
 #include <iostream>
 
-struct Thing {
+struct Thing
+{
     uint16_t x;
     uint16_t y;
     uint16_t angle;
@@ -21,7 +22,7 @@ struct Thing {
 
     Thing();
 
-    friend std::ostream& operator<<(std::ostream& os, const Thing& obj); 
+    friend std::ostream &operator<<(std::ostream &os, const Thing &obj);
 };
 
 #endif

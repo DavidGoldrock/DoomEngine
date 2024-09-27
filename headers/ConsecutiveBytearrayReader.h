@@ -6,21 +6,22 @@
 #include <cstring> // for std::memcpy
 #include "Lump.h"
 
-class ConsecutiveBytearrayReader {
+class ConsecutiveBytearrayReader
+{
 public:
     ConsecutiveBytearrayReader(std::shared_ptr<uint8_t[]> arr, size_t size);
 
     /**
      * @brief reads a number of bytes into a buffer and advances its pointer that same ammount
-     * 
+     *
      * @param buffer buffer to write to
      * @param num how many bytes
      * @return size_t how many bytes were changed
      */
-    size_t readBytes(uint8_t* buffer, size_t num);
+    size_t readBytes(uint8_t *buffer, size_t num);
 
     // wrapper to read into a char array (string like)
-    size_t readBytesAsChar(char* buffer, size_t num);
+    size_t readBytesAsChar(char *buffer, size_t num);
 
     // wrapper to read into a returned string
     std::string readBytesAsStr(size_t num);
@@ -47,7 +48,7 @@ public:
     Lump readLump();
 
     // copies the data of a lump as described in its descriptor into a uint8 array
-    void readLumpData(uint8_t* buffer, const Lump& l);
+    void readLumpData(uint8_t *buffer, const Lump &l);
 
     // pointer to the next byte to read in the array
     size_t pointer;

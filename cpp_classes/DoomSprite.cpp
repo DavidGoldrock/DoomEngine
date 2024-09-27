@@ -1,32 +1,37 @@
 #include "../headers/DoomSprite.h"
 #include "../headers/CustomException.h"
 // #define PRINT_PICTURES
-DoomSprite::DoomSprite(uint16_t width, uint16_t height, int16_t leftOffset, int16_t topOffset, std::shared_ptr<uint8_t[]> pixels): width(width), height(height), leftOffset(leftOffset), topOffset(topOffset), pixels(pixels) {}
+DoomSprite::DoomSprite(uint16_t width, uint16_t height, int16_t leftOffset, int16_t topOffset, std::shared_ptr<uint8_t[]> pixels) : width(width), height(height), leftOffset(leftOffset), topOffset(topOffset), pixels(pixels) {}
 
-uint8_t DoomSprite::getPixel(uint8_t x, uint8_t y) {
-    if (y > height || x > width) {
-        std::string msg = "Out of bounds. y = " + std::to_string((int)y) +", x = " + std::to_string((int)x);
+uint8_t DoomSprite::getPixel(uint8_t x, uint8_t y)
+{
+    if (y > height || x > width)
+    {
+        std::string msg = "Out of bounds. y = " + std::to_string((int)y) + ", x = " + std::to_string((int)x);
         throw CustomException(msg);
     }
     return pixels[y * width + x];
 }
 
-std::ostream &operator<<(std::ostream &os, const DoomSprite &obj) { 
+std::ostream &operator<<(std::ostream &os, const DoomSprite &obj)
+{
     os << "DoomSprite {" << std::endl;
-    os << "Width " << obj.width << std::endl; 
-    os << "Height " << obj.height << std::endl; 
+    os << "Width " << obj.width << std::endl;
+    os << "Height " << obj.height << std::endl;
     os << "Left offset " << obj.leftOffset << std::endl;
     os << "Top offset " << obj.topOffset << std::endl;
-    #ifdef PRINT_PICTURES
-        os << "Columns {" << std::endl;
-        for (size_t i = 0; i < obj.width; i++) {
-            for (size_t j = 0; j < obj.height; j++)
-            {
-                os << " " << (int) obj.pixels[i + j * obj.width];
-            }
-            os  << std::endl;
+#ifdef PRINT_PICTURES
+    os << "Columns {" << std::endl;
+    for (size_t i = 0; i < obj.width; i++)
+    {
+        for (size_t j = 0; j < obj.height; j++)
+        {
+            os << " " << (int)obj.pixels[i + j * obj.width];
         }
-    #endif
-    os << "    }" << std::endl << "}" << std::endl;
+        os << std::endl;
+    }
+#endif
+    os << "    }" << std::endl
+       << "}" << std::endl;
     return os;
 }

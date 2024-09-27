@@ -15,7 +15,7 @@ struct Flat
     Flat(std::shared_ptr<uint8_t[]> rawPixels);
 
     uint8_t getPixel(uint8_t x, uint8_t y);
-    
+
     friend std::ostream &operator<<(std::ostream &os, const Flat &obj);
 };
 
