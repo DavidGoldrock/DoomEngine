@@ -112,7 +112,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
     {
         pic = SPRITE(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "SPRITE_" + lumps[picIndex].name +  ".bmp";
+        outputFileName = folder + "Sprites/" + lumps[picIndex].name +  ".bmp";
         writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, 0);
     }
 
@@ -127,7 +127,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
         }
         std::cout << pnames[picIndex] << ", " << (int) picIndex << ", " << lumpIndex << std::endl;
         pic = SPRITE(fileByteReader, lumps[lumpIndex]);
-        outputFileName = folder + "PATCH_" + pnames[picIndex] +  ".bmp";
+        outputFileName = folder + "Patches/" + pnames[picIndex] +  ".bmp";
         writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, 0);
     }
 
@@ -145,7 +145,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
     {
         flat = FLAT(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "FLAT_" + lumps[picIndex].name +  ".bmp";
+        outputFileName = folder + "Flats/" + lumps[picIndex].name +  ".bmp";
         writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, 0);
     }
 
@@ -160,7 +160,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
     for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
     {
         flat = FLAT(fileByteReader, lumps[picIndex]);
-        outputFileName = folder + "FLAT_" + lumps[picIndex].name +  ".bmp";
+        outputFileName = folder + "Flats/" + lumps[picIndex].name +  ".bmp";
         writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, 0);
     }
 
@@ -211,7 +211,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader& fileByteReader, WADHeader& wadH
                 }
             }        }
 
-        outputFileName = folder + "TEXTURE_" + t.name +  ".bmp";
+        outputFileName = folder + "Textures/" + t.name +  ".bmp";
         writeToBMP(outputFileName, t.width, t.height, gettexturePicPixel, playpal, 0);
         
     }
