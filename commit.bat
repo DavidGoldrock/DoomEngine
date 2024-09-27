@@ -1,7 +1,7 @@
 IF [%1] == [] GOTO Error
 
 git add -A
-git commit -a -m %1
+git commit -a -m "%*"
 git push
 
 :Error
