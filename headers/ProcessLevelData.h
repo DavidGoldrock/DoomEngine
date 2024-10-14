@@ -19,6 +19,7 @@
 #include "Flat.h"
 #include <functional>
 #include "ColorMap.h"
+#include "Sound.h"
 
 // ENDDOOM
 
@@ -88,7 +89,11 @@ std::shared_ptr<ColorMap> COLORMAP(ConsecutiveBytearrayReader &fileByteReader, L
 
 std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
 
+std::shared_ptr<Sound> SOUND(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
+
 void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t, size_t)> getPixel, PlayPal &playpal, uint8_t palleteIndex, ColorMap &colorMap, uint8_t MapIndex);
+
+void writeToWav(std::string filename, Sound& sound);
 
 std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
 
@@ -99,3 +104,4 @@ std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader &fileByteReader, Lump &lum
 std::shared_ptr<std::string[]> PNAMES(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 void TEXTURE(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to, std::vector<Texture> &textures);
+

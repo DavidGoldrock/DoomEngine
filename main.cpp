@@ -77,9 +77,9 @@ std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader &fileByteReader
     for (int i = 0; i < numlumps; i++)
     {
         lumps[i] = fileByteReader.readLump();
-#ifdef debugPrint
+// #ifdef debugPrint
         std::cout << "Loaded Lump[" << (i + 1) << "] out of [" << (numlumps) << "] <" << lumps[i] << ">" << std::endl;
-#endif
+// #endif
     }
 
 #ifdef debugPrint
@@ -234,6 +234,24 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
     }
 }
 
+void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::shared_ptr<Lump[]> lumps) {
+    Lump lump;
+    std::string fileName;
+    std::string folderName  = "./results/Sound Effects/";
+    const std::string musicFolderName = "./results/Music/";
+    for (size_t i = 0; i < wadHeader.numlumps; i++)
+    {
+        lump = lumps[i];
+        if (lump.name.starts_with("DS")) {
+            fileName = folderName + lump.name + ".wav";
+            writeToWav(fileName, *SOUND(fileByteReader, lump));
+            std::cout << lump.name << std::endl;
+        }
+
+    }
+    
+}
+
 std::shared_ptr<WADHeader> GenerateWADHeader(ConsecutiveBytearrayReader &fileByteReader)
 {
     // File header found in the begginning of the file, should be IWAD or PWAD
@@ -375,8 +393,8 @@ int main()
     std::cin.get();
 #endif
 
-    SaveAllPictures(*fileByteReader, *wadHeader, lumps, *playpal, *colorMap, pnames, pnameAmmount, textures);
-
+    //SaveAllPictures(*fileByteReader, *wadHeader, lumps, *playpal, *colorMap, pnames, pnameAmmount, textures);
+    SaveAllSounds(*fileByteReader, *wadHeader, lumps);
     auto levels = GenerateLevels(*fileByteReader, *wadHeader, lumps);
 
     for (auto level : *levels)
