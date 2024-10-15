@@ -17,4 +17,8 @@ struct WADHeader
     friend std::ostream &operator<<(std::ostream &os, const WADHeader &obj);
 };
 
+std::shared_ptr<WADHeader> GenerateWADHeader(ConsecutiveBytearrayReader &fileByteReader);
+
+std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader &fileByteReader, size_t numlumps);
+
 #endif

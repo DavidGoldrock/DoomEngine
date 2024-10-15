@@ -2,15 +2,13 @@
 #define LEVEL_DATA_H
 
 #include <cstdint>
-#include "ConsecutiveBytearrayReader.h"
-#include "Lump.h"
 #include <memory>
 #include <vector>
 #include <iostream>
+#include "ConsecutiveBytearrayReader.h"
 #include "Lump.h"
 #include "Thing.h"
 #include "LineDef.h"
-#include "ConsecutiveBytearrayReader.h"
 #include "SideDef.h"
 #include "Seg.h"
 #include "SubSector.h"
@@ -21,6 +19,7 @@
 #include "BlockMap.h"
 #include "PlayPal.h"
 #include "DoomSprite.h"
+#include "SpecialClassFunctions.h"
 
 struct LevelData
 {
@@ -48,5 +47,9 @@ struct LevelData
 
     friend std::ostream &operator<<(std::ostream &os, const LevelData &obj);
 };
+
+std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader &fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to);
+
+std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::shared_ptr<Lump[]> lumps);
 
 #endif
