@@ -555,7 +555,7 @@ std::shared_ptr<Sound> SOUND(ConsecutiveBytearrayReader &fileByteReader, Lump &l
     }
 
     else {
-        std::cout << "Lump " << lump << "Has corrupted format number" << sound->formatNumber << std::endl;
+        std::cerr << "Lump " << lump << "Has corrupted format number" << sound->formatNumber << std::endl;
     }
 
     #ifdef debugPrint

@@ -77,9 +77,9 @@ std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader &fileByteReader
     for (int i = 0; i < numlumps; i++)
     {
         lumps[i] = fileByteReader.readLump();
-// #ifdef debugPrint
+#ifdef debugPrint
         std::cout << "Loaded Lump[" << (i + 1) << "] out of [" << (numlumps) << "] <" << lumps[i] << ">" << std::endl;
-// #endif
+#endif
     }
 
 #ifdef debugPrint
@@ -245,7 +245,6 @@ void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHea
         if (lump.name.starts_with("DS")) {
             fileName = folderName + lump.name + ".wav";
             writeToWav(fileName, *SOUND(fileByteReader, lump));
-            std::cout << lump.name << std::endl;
         }
 
     }
