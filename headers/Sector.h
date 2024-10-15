@@ -2,6 +2,8 @@
 #define SECTOR_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct Sector
@@ -20,5 +22,7 @@ struct Sector
 
     friend std::ostream &operator<<(std::ostream &os, const Sector &obj);
 };
+
+std::shared_ptr<Sector[]> SECTORS(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

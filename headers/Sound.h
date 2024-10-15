@@ -2,6 +2,8 @@
 #define SOUND_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 #include <memory>
 
@@ -18,5 +20,9 @@ struct Sound
 
     friend std::ostream &operator<<(std::ostream &os, const Sound &obj);
 };
+
+std::shared_ptr<Sound> SOUND(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
+
+void writeToWav(std::string filename, Sound& sound);
 
 #endif

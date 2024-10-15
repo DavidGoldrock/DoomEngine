@@ -2,6 +2,8 @@
 #define PLAYPAL_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 #include <memory>
 
@@ -22,5 +24,7 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const PlayPal &obj);
 };
+
+std::shared_ptr<PlayPal> PLAYPAL(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

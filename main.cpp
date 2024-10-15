@@ -4,7 +4,7 @@
 #include "./headers/ConsecutiveBytearrayReader.h"
 #include "./headers/Lump.h"
 #include "./headers/Vec2.h"
-#include "./headers/ProcessLevelData.h"
+#include "./headers/SpecialClassFunctions.h"
 #include "./headers/UtilFunctions.h"
 #include "./headers/LevelData.h"
 #include "WADHeader.h"

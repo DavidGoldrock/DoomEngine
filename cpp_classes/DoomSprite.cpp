@@ -35,3 +35,68 @@ std::ostream &operator<<(std::ostream &os, const DoomSprite &obj)
        << "}" << std::endl;
     return os;
 }
+
+std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader &fileByteReader, Lump &lump)
+{
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
+    uint16_t width = lumpDataByteReader->readBytesAsUint16();
+    uint16_t height = lumpDataByteReader->readBytesAsUint16();
+    int16_t leftOffset = lumpDataByteReader->readBytesAsInt16();
+    int16_t topOffset = lumpDataByteReader->readBytesAsInt16();
+
+    size_t offsets[width];
+
+    for (size_t i = 0; i < width; i++)
+    {
+        offsets[i] = lumpDataByteReader->readBytesAsUint32();
+    }
+
+    std::shared_ptr<uint8_t[]> pixels = std::make_shared<uint8_t[]>(width * height);
+
+    for (size_t i = 0; i < width * height; i++)
+    {
+        pixels[i] = PlayPal::TRANSPARENT_COLOR;
+    }
+
+    std::shared_ptr<DoomSprite> pic = std::make_shared<DoomSprite>(width, height, leftOffset, topOffset, pixels);
+
+    uint8_t rowstart;
+    uint8_t pixel;
+    uint8_t pixel_count;
+
+    for (size_t i = 0; i < width; i++)
+    {
+        // Seek to the start of the column data
+        lumpDataByteReader->pointer = offsets[i];
+        rowstart = lumpDataByteReader->readBytesAsUint8();
+        while (rowstart != 255)
+        {
+            if (rowstart == 255)
+            {
+                break;
+            }
+
+            pixel_count = lumpDataByteReader->readBytesAsUint8();
+            lumpDataByteReader->pointer++; // Read and ignore the dummy value
+
+            for (size_t j = 0; j < pixel_count; j++)
+            {
+                pixel = lumpDataByteReader->readBytesAsUint8();
+                // Write Pixel to the image (column i, row rowstart + j)
+                pic->pixels[i + (rowstart + j) * width] = pixel;
+            }
+
+            // Read and ignore the dummy value
+            lumpDataByteReader->pointer++;
+            rowstart = lumpDataByteReader->readBytesAsUint8();
+        }
+    }
+
+#ifdef debugPrint
+    std::cout << "Loaded Picture " << *pic << std::endl;
+#endif
+
+    return pic;
+}

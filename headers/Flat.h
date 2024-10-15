@@ -2,6 +2,8 @@
 #define FLAT_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 #include <memory>
 
@@ -18,5 +20,7 @@ struct Flat
 
     friend std::ostream &operator<<(std::ostream &os, const Flat &obj);
 };
+
+std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
 
 #endif

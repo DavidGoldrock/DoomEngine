@@ -2,6 +2,8 @@
 #define REJECT_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 #include <memory>
 
@@ -18,5 +20,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const Reject &obj);
     bool getRejectData(size_t row, size_t column);
 };
+
+std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t sectorAmmount, size_t from, size_t to);
 
 #endif

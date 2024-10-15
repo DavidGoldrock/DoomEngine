@@ -2,6 +2,8 @@
 #define NODE_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct Node
@@ -27,5 +29,7 @@ struct Node
 
     friend std::ostream &operator<<(std::ostream &os, const Node &obj);
 };
+
+std::shared_ptr<Node[]> NODES(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

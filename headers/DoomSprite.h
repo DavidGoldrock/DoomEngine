@@ -2,9 +2,13 @@
 #define DOOM_SPRITE_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <memory>
 #include <vector>
 #include <iostream>
+
+#include "PlayPal.h"
 
 struct DoomSprite
 {
@@ -20,5 +24,7 @@ struct DoomSprite
 
     friend std::ostream &operator<<(std::ostream &os, const DoomSprite &obj);
 };
+
+std::shared_ptr<DoomSprite> SPRITE(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
 
 #endif

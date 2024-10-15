@@ -2,6 +2,8 @@
 #define UTILS_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 #include <memory>
 #include "../headers/Lump.h"

@@ -22,3 +22,32 @@ std::ostream &operator<<(std::ostream &os, const ColorMap &obj)
     os << "}" << std::endl;
     return os;
 }
+
+std::shared_ptr<ColorMap> COLORMAP(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to)
+{
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
+    // Create array
+    std::shared_ptr<uint8_t[]> levelPalleteData = std::make_shared<uint8_t[]>(lump.size);
+    // Read using format
+    for (size_t i = 0; i < lump.size; i ++)
+    {
+        levelPalleteData[i] = lumpDataByteReader->readBytesAsUint8();
+
+// Print if debugPrint is on
+#ifdef debugPrint
+        std::cout << "Loaded Indexes [" << ((i) + 1) << "]" << " Out of [" << lump.size << "]" << levelPalleteData[i] << std::endl;
+#endif
+    }
+
+    std::shared_ptr<ColorMap> returnValue = std::make_shared<ColorMap>(levelPalleteData);
+
+#ifdef debugPrint
+    std::cout << "Loaded ColorMap " << *returnValue << std::endl;
+    std::cin.get();
+
+#endif
+    return returnValue;
+}

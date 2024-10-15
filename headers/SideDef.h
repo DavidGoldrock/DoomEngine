@@ -2,6 +2,8 @@
 #define SIDE_DEF_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct SideDef
@@ -19,5 +21,7 @@ struct SideDef
 
     friend std::ostream &operator<<(std::ostream &os, const SideDef &obj);
 };
+
+std::shared_ptr<SideDef[]> SIDEDEFS(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

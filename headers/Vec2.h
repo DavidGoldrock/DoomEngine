@@ -2,6 +2,8 @@
 #define VEC2_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct Vec2

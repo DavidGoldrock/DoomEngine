@@ -1,5 +1,7 @@
 #include "../headers/UtilFunctions.h"
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 #include <memory>
 #include <fstream>

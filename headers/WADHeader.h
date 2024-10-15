@@ -2,6 +2,8 @@
 #define WAD_HEADER_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct WADHeader

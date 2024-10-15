@@ -2,6 +2,8 @@
 #define LEVEL_DATA_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <memory>
 #include <vector>
 #include <iostream>

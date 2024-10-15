@@ -2,6 +2,10 @@
 #define BLOCKMAP_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <memory>
 #include <iostream>
 #include <vector>
@@ -19,5 +23,7 @@ struct BlockMap
 
     friend std::ostream &operator<<(std::ostream &os, const BlockMap &obj);
 };
+
+std::shared_ptr<BlockMap> BLOCKMAP(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

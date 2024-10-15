@@ -29,3 +29,11 @@ std::ostream &operator<<(std::ostream &os, const Flat &obj)
     os << "}" << std::endl;
     return os;
 }
+
+std::shared_ptr<Flat> FLAT(ConsecutiveBytearrayReader &fileByteReader, Lump &lump)
+{
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    return std::make_shared<Flat>(data);
+}

@@ -2,6 +2,8 @@
 #define THING_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct Thing
@@ -24,5 +26,7 @@ struct Thing
 
     friend std::ostream &operator<<(std::ostream &os, const Thing &obj);
 };
+
+std::shared_ptr<Thing[]> THINGS(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

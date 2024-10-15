@@ -32,3 +32,18 @@ std::ostream &operator<<(std::ostream &os, const Reject &obj)
     os << "}";
     return os;
 }
+
+std::shared_ptr<Reject> REJECT(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t sectorAmmount, size_t from, size_t to)
+{
+    // Read data to byteReader
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(lump.size);
+    fileByteReader.readLumpData(data.get(), lump);
+    std::shared_ptr<Reject> rejectPointer = std::make_shared<Reject>(data, sectorAmmount);
+
+#ifdef debugPrint
+    std::cout << "Loaded Reject map " << *rejectPointer << std::endl;
+
+#endif
+
+    return rejectPointer;
+}

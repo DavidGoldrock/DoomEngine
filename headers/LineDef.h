@@ -2,6 +2,8 @@
 #define LINEDEF_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct LineDef
@@ -33,5 +35,7 @@ struct LineDef
 
     friend std::ostream &operator<<(std::ostream &os, const LineDef &obj);
 };
+
+std::shared_ptr<LineDef[]> LINEDEFS(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

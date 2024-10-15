@@ -2,6 +2,8 @@
 #define TEXTURE_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 #include <memory>
 #include "Patch.h"

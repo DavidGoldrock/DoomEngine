@@ -2,6 +2,8 @@
 #define SEG_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct Seg
@@ -18,5 +20,7 @@ struct Seg
     Seg();
     friend std::ostream &operator<<(std::ostream &os, const Seg &obj);
 };
+
+std::shared_ptr<Seg[]> SEGS(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif

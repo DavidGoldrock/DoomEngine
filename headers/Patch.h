@@ -2,6 +2,8 @@
 #define PATCH_H
 
 #include <cstdint>
+#include "ConsecutiveBytearrayReader.h"
+#include "Lump.h"
 #include <iostream>
 
 struct Patch
