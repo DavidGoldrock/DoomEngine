@@ -103,68 +103,68 @@ std::ostream &operator<<(std::ostream &os, const LevelData &obj)
     return os;
 }
 
-std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader &fileByteReader, std::shared_ptr<Lump[]> lumps, size_t from, size_t to)
+std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, size_t from, size_t to)
 {
     std::string tagname = "THINGS";
 
-    size_t levelThingLumpIndex = findInLumpArray(lumps, from, to, tagname);
-    std::shared_ptr<Thing[]> things = THINGS(fileByteReader, lumps[levelThingLumpIndex], from, to);
+    size_t levelThingLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
+    std::shared_ptr<Thing[]> things = THINGS(fileByteReader, wadHeader.lumps[levelThingLumpIndex], from, to);
 
     // When I understand them I will comment them lol.
 
     tagname = "LINEDEFS";
-    size_t levelLineDefLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelLineDefLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<LineDef[]> lineDefs = LINEDEFS(fileByteReader, lumps[levelLineDefLumpIndex], from, to);
+    std::shared_ptr<LineDef[]> lineDefs = LINEDEFS(fileByteReader, wadHeader.lumps[levelLineDefLumpIndex], from, to);
 
     tagname = "SIDEDEFS";
-    size_t levelSideDefLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelSideDefLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<SideDef[]> sideDefs = SIDEDEFS(fileByteReader, lumps[levelSideDefLumpIndex], from, to);
+    std::shared_ptr<SideDef[]> sideDefs = SIDEDEFS(fileByteReader, wadHeader.lumps[levelSideDefLumpIndex], from, to);
 
     tagname = "SEGS";
-    size_t levelSegLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelSegLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<Seg[]> segs = SEGS(fileByteReader, lumps[levelSegLumpIndex], from, to);
+    std::shared_ptr<Seg[]> segs = SEGS(fileByteReader, wadHeader.lumps[levelSegLumpIndex], from, to);
 
     tagname = "SSECTORS";
-    size_t levelSubSectorLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelSubSectorLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<SubSector[]> subSectors = SSECTORS(fileByteReader, lumps[levelSubSectorLumpIndex], from, to);
+    std::shared_ptr<SubSector[]> subSectors = SSECTORS(fileByteReader, wadHeader.lumps[levelSubSectorLumpIndex], from, to);
 
     tagname = "NODES";
-    size_t levelNodeLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelNodeLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<Node[]> nodes = NODES(fileByteReader, lumps[levelNodeLumpIndex], from, to);
+    std::shared_ptr<Node[]> nodes = NODES(fileByteReader, wadHeader.lumps[levelNodeLumpIndex], from, to);
 
     tagname = "SECTORS";
-    size_t levelSectorLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelSectorLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<Sector[]> sectors = SECTORS(fileByteReader, lumps[levelSectorLumpIndex], from, to);
+    std::shared_ptr<Sector[]> sectors = SECTORS(fileByteReader, wadHeader.lumps[levelSectorLumpIndex], from, to);
 
     tagname = "VERTEXES";
-    size_t levelVertexLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelVertexLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<Vec2[]> vertexes = VERTEXES(fileByteReader, lumps[levelVertexLumpIndex], from, to);
+    std::shared_ptr<Vec2[]> vertexes = VERTEXES(fileByteReader, wadHeader.lumps[levelVertexLumpIndex], from, to);
 
     // Reject Lump tagName
     tagname = "REJECT";
     // Reject Lump index
-    size_t levelRejectLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelRejectLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<Reject> reject = REJECT(fileByteReader, lumps[levelRejectLumpIndex], lumps[levelSectorLumpIndex].size / 26, from, to);
+    std::shared_ptr<Reject> reject = REJECT(fileByteReader, wadHeader.lumps[levelRejectLumpIndex], wadHeader.lumps[levelSectorLumpIndex].size / 26, from, to);
 
     tagname = "BLOCKMAP";
-    size_t levelBlockMapLumpIndex = findInLumpArray(lumps, from, to, tagname);
+    size_t levelBlockMapLumpIndex = findInLumpArray(wadHeader.lumps, from, to, tagname);
 
-    std::shared_ptr<BlockMap> blockmap = BLOCKMAP(fileByteReader, lumps[levelBlockMapLumpIndex], from, to);
+    std::shared_ptr<BlockMap> blockmap = BLOCKMAP(fileByteReader, wadHeader.lumps[levelBlockMapLumpIndex], from, to);
 #ifdef debugPrint
     std::cin.get();
 #endif
-    return std::make_shared<LevelData>(things, lumps[levelThingLumpIndex].size / 10, lineDefs, lumps[levelLineDefLumpIndex].size / 14, sideDefs, lumps[levelSideDefLumpIndex].size / 30, segs, lumps[levelSegLumpIndex].size / 12, subSectors, lumps[levelSubSectorLumpIndex].size / 4, nodes, lumps[levelNodeLumpIndex].size / 28, sectors, lumps[levelSectorLumpIndex].size / 26, vertexes, lumps[levelVertexLumpIndex].size / 4, reject, blockmap);
+    return std::make_shared<LevelData>(things, wadHeader.lumps[levelThingLumpIndex].size / 10, lineDefs, wadHeader.lumps[levelLineDefLumpIndex].size / 14, sideDefs, wadHeader.lumps[levelSideDefLumpIndex].size / 30, segs, wadHeader.lumps[levelSegLumpIndex].size / 12, subSectors, wadHeader.lumps[levelSubSectorLumpIndex].size / 4, nodes, wadHeader.lumps[levelNodeLumpIndex].size / 28, sectors, wadHeader.lumps[levelSectorLumpIndex].size / 26, vertexes, wadHeader.lumps[levelVertexLumpIndex].size / 4, reject, blockmap);
 }
 
-std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::shared_ptr<Lump[]> lumps)
+std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader)
 {
     auto levels = std::make_shared<std::vector<std::shared_ptr<LevelData>>>();
     size_t level1Map1Index;
@@ -178,7 +178,7 @@ std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(Consecut
         mapname[3] = '0' + (i / 10);
         mapname[4] = '0' + (i % 10);
 
-        level1Map1Index = findInLumpArray(lumps, 0, wadHeader.numlumps, mapname);
+        level1Map1Index = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, mapname);
 
         if (level1Map1Index != -1)
         {
@@ -187,7 +187,7 @@ std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(Consecut
             std::cin.get();
 #endif
 
-            levels->push_back(GenerateLevelData(fileByteReader, lumps, level1Map1Index, level1Map1Index + 11));
+            levels->push_back(GenerateLevelData(fileByteReader, wadHeader, level1Map1Index, level1Map1Index + 11));
         }
     }
 
@@ -204,7 +204,7 @@ std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(Consecut
         for (size_t j = 1; j < 9; j++)
         {
             mapname[3]++;
-            level1Map1Index = findInLumpArray(lumps, 0, wadHeader.numlumps, mapname);
+            level1Map1Index = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, mapname);
             if (level1Map1Index != -1)
             {
 #ifdef debugPrint
@@ -212,7 +212,7 @@ std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(Consecut
                 std::cin.get();
 #endif
 
-                levels->push_back(GenerateLevelData(fileByteReader, lumps, level1Map1Index, level1Map1Index + 11));
+                levels->push_back(GenerateLevelData(fileByteReader, wadHeader, level1Map1Index, level1Map1Index + 11));
             }
         }
     }

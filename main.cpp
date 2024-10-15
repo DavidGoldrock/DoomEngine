@@ -32,47 +32,45 @@ int main()
 
     auto wadHeader = GenerateWADHeader(*fileByteReader);
 
-    fileByteReader->pointer = wadHeader->infotableofs;
-    auto lumps = GenerateLumps(*fileByteReader, wadHeader->numlumps);
 
     // The end message of the file. written in ANSI compatible syntax
 
     std::string tagname = "ENDOOM";
-    size_t endoomLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
+    size_t endoomLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
 
-    std::string endoom = ENDOOM(*fileByteReader, lumps[endoomLumpIndex], 0, wadHeader->numlumps);
+    std::string endoom = ENDOOM(*fileByteReader, wadHeader->lumps[endoomLumpIndex], 0, wadHeader->numLumps);
 
     tagname = "PLAYPAL";
-    size_t palleteLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
-    std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, lumps[palleteLumpIndex], 0, wadHeader->numlumps);
+    size_t palleteLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, wadHeader->lumps[palleteLumpIndex], 0, wadHeader->numLumps);
 
     tagname = "COLORMAP";
-    size_t colorMapLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
-    std::shared_ptr<ColorMap> colorMap = COLORMAP(*fileByteReader, lumps[colorMapLumpIndex], 0, wadHeader->numlumps);
+    size_t colorMapLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    std::shared_ptr<ColorMap> colorMap = COLORMAP(*fileByteReader, wadHeader->lumps[colorMapLumpIndex], 0, wadHeader->numLumps);
 
     tagname = "PNAMES";
-    size_t pnamesLumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
-    std::shared_ptr<std::string[]> pnames = PNAMES(*fileByteReader, lumps[pnamesLumpIndex], 0, wadHeader->numlumps);
-    size_t pnameAmmount = (lumps[pnamesLumpIndex].size - 4) / 8;
+    size_t pnamesLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    std::shared_ptr<std::string[]> pnames = PNAMES(*fileByteReader, wadHeader->lumps[pnamesLumpIndex], 0, wadHeader->numLumps);
+    size_t pnameAmmount = (wadHeader->lumps[pnamesLumpIndex].size - 4) / 8;
 
     auto textures = std::vector<Texture>();
 
     tagname = "TEXTURE1";
-    size_t texture1LumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
-    TEXTURE(*fileByteReader, lumps[texture1LumpIndex], 0, wadHeader->numlumps, textures);
+    size_t texture1LumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    TEXTURE(*fileByteReader, wadHeader->lumps[texture1LumpIndex], 0, wadHeader->numLumps, textures);
 
     tagname = "TEXTURE2";
-    size_t texture2LumpIndex = findInLumpArray(lumps, 0, wadHeader->numlumps, tagname);
-    TEXTURE(*fileByteReader, lumps[texture2LumpIndex], 0, wadHeader->numlumps, textures);
+    size_t texture2LumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    TEXTURE(*fileByteReader, wadHeader->lumps[texture2LumpIndex], 0, wadHeader->numLumps, textures);
 
     std::cout << endoom << std::endl;
 #ifdef debugPrint
     std::cin.get();
 #endif
 
-    //SaveAllPictures(*fileByteReader, *wadHeader, lumps, *playpal, *colorMap, pnames, pnameAmmount, textures);
-    SaveAllSounds(*fileByteReader, *wadHeader, lumps);
-    auto levels = GenerateLevels(*fileByteReader, *wadHeader, lumps);
+    // SaveAllPictures(*fileByteReader, *wadHeader, *playpal, *colorMap, pnames, pnameAmmount, textures);
+    SaveAllSounds(*fileByteReader, *wadHeader);
+    auto levels = GenerateLevels(*fileByteReader, *wadHeader);
 
     for (auto level : *levels)
     {

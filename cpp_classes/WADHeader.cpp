@@ -1,12 +1,12 @@
 #include "../headers/WADHeader.h"
 
-WADHeader::WADHeader(std::string header, uint32_t numlumps, uint32_t infotableofs) : header(header), numlumps(numlumps), infotableofs(infotableofs) {}
+WADHeader::WADHeader(std::string header, uint32_t numLumps, uint32_t infotableofs, std::shared_ptr<Lump[]> lumps) : header(header), numLumps(numLumps), infotableofs(infotableofs), lumps(lumps) {}
 
 std::ostream &operator<<(std::ostream &os, const WADHeader &obj)
 {
     os << "WADHeader{ ";
     os << "header: " << obj.header << " ";
-    os << "numlumps: " << (int)obj.numlumps << " ";
+    os << "numLumps: " << (int)obj.numLumps << " ";
     os << "infotableofs: " << (int)obj.infotableofs << " ";
     os << "}";
     return os;
@@ -25,27 +25,30 @@ std::shared_ptr<WADHeader> GenerateWADHeader(ConsecutiveBytearrayReader &fileByt
     }
 
     // Number of LUMP objects in the file
-    uint32_t numlumps = fileByteReader.readBytesAsUint32();
+    uint32_t numLumps = fileByteReader.readBytesAsUint32();
     // Offset to the infotables, the place where the lumps descriptions are found
     uint32_t infotableofs = fileByteReader.readBytesAsUint32();
+    
+    fileByteReader.pointer = infotableofs;
+    auto lumps = GenerateLumps(fileByteReader, numLumps);
 
 #ifdef debugPrint
-    std::cout << "Numlumps is: " << numlumps << " and infotablesOffset is: " << infotableofs << std::endl;
+    std::cout << "numLumps is: " << numLumps << " and infotablesOffset is: " << infotableofs << std::endl;
     std::cin.get();
 #endif
 
-    return std::make_shared<WADHeader>(header, numlumps, infotableofs);
+    return std::make_shared<WADHeader>(header, numLumps, infotableofs, lumps);
 }
 
-std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader &fileByteReader, size_t numlumps)
+std::shared_ptr<Lump[]> GenerateLumps(ConsecutiveBytearrayReader &fileByteReader, size_t numLumps)
 {
     // array of all Lump descriptions in the file
-    std::shared_ptr<Lump[]> lumps = std::make_shared<Lump[]>(numlumps);
-    for (int i = 0; i < numlumps; i++)
+    std::shared_ptr<Lump[]> lumps = std::make_shared<Lump[]>(numLumps);
+    for (int i = 0; i < numLumps; i++)
     {
         lumps[i] = fileByteReader.readLump();
 #ifdef debugPrint
-        std::cout << "Loaded Lump[" << (i + 1) << "] out of [" << (numlumps) << "] <" << lumps[i] << ">" << std::endl;
+        std::cout << "Loaded Lump[" << (i + 1) << "] out of [" << (numLumps) << "] <" << lumps[i] << ">" << std::endl;
 #endif
     }
 

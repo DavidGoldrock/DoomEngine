@@ -38,6 +38,6 @@ void TEXTURE(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from
 
 void writeToBMP(std::string &filename, const int32_t width, const int32_t height, std::function<uint8_t(size_t, size_t)> getPixel, PlayPal &playpal, uint8_t palleteIndex, ColorMap &colorMap, uint8_t MapIndex);
 
-void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::shared_ptr<Lump[]> lumps, PlayPal &playpal, ColorMap &colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures);
+void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, PlayPal &playpal, ColorMap &colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures);
 
-void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::shared_ptr<Lump[]> lumps);
+void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader);

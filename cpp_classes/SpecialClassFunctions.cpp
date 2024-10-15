@@ -81,7 +81,6 @@ std::string VGA_16BIT_COLOR_MEMORY_TO_STRING(uint8_t *ansicode, size_t size)
  * @fileByteReaderief reads the ENDOOM message in the correct format
  *
  * @param fileByteReader The byte reader with the file bytearray contained
- * @param lumps descriptions of every lump object
  * @param numlumps the number of lumps in the file
  * @return the ENDOOM message in the correct format
  */
@@ -288,13 +287,13 @@ void writeToBMP(std::string &filename, const int32_t width, const int32_t height
     file.close();
 }
 
-void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::shared_ptr<Lump[]> lumps, PlayPal &playpal, ColorMap &colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures)
+void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, PlayPal &playpal, ColorMap &colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures)
 {
-    size_t titlePicIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "TITLEPIC");
-    std::shared_ptr<DoomSprite> titlePic = SPRITE(fileByteReader, lumps[titlePicIndex]);
+    size_t titlePicIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, "TITLEPIC");
+    std::shared_ptr<DoomSprite> titlePic = SPRITE(fileByteReader, wadHeader.lumps[titlePicIndex]);
 
     std::string folder = "./results/";
-    std::string outputFileName = folder + lumps[titlePicIndex].name + ".bmp";
+    std::string outputFileName = folder + wadHeader.lumps[titlePicIndex].name + ".bmp";
 
     auto getTitlePicPixel = [titlePic](size_t x, size_t y)
     { return titlePic->getPixel(x, y); };
@@ -306,8 +305,8 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
         {
             folder = "./results/PLAYPAL" + std::to_string(playpalIndex) + "/COLORMAP" + std::to_string(colorMapIndex) + "/";
 
-            size_t spriteStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_START");
-            size_t spriteEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "S_END");
+            size_t spriteStartIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, "S_START");
+            size_t spriteEndIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, "S_END");
 
             std::shared_ptr<DoomSprite> pic;
             auto getPicPixel = [&](size_t x, size_t y)
@@ -315,8 +314,8 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
 
             for (size_t picIndex = spriteStartIndex + 1; picIndex < spriteEndIndex; picIndex++)
             {
-                pic = SPRITE(fileByteReader, lumps[picIndex]);
-                outputFileName = folder + "Sprites/" + lumps[picIndex].name + ".bmp";
+                pic = SPRITE(fileByteReader, wadHeader.lumps[picIndex]);
+                outputFileName = folder + "Sprites/" + wadHeader.lumps[picIndex].name + ".bmp";
                 writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, playpalIndex, colorMap, colorMapIndex);
             }
 
@@ -324,7 +323,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
 
             for (size_t picIndex = 0; picIndex < pnameAmmount; picIndex++)
             {
-                lumpIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, pnames[picIndex]);
+                lumpIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, pnames[picIndex]);
                 if (lumpIndex == -1)
                 {
 #ifdef debugPrint
@@ -335,13 +334,13 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
 #ifdef debugPrint
                 std::cout << pnames[picIndex] << ", " << (int)picIndex << ", " << lumpIndex << std::endl;
 #endif
-                pic = SPRITE(fileByteReader, lumps[lumpIndex]);
+                pic = SPRITE(fileByteReader, wadHeader.lumps[lumpIndex]);
                 outputFileName = folder + "Patches/" + pnames[picIndex] + ".bmp";
                 writeToBMP(outputFileName, pic->width, pic->height, getPicPixel, playpal, playpalIndex, colorMap, colorMapIndex);
             }
 
-            size_t flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F1_START");
-            size_t flatEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F1_END");
+            size_t flatStartIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, "F1_START");
+            size_t flatEndIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, "F1_END");
 
 #ifdef debugPrint
             std::cout << "flatStartIndex" << flatStartIndex << std::endl;
@@ -354,13 +353,13 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
 
             for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
             {
-                flat = FLAT(fileByteReader, lumps[picIndex]);
-                outputFileName = folder + "Flats/" + lumps[picIndex].name + ".bmp";
+                flat = FLAT(fileByteReader, wadHeader.lumps[picIndex]);
+                outputFileName = folder + "Flats/" + wadHeader.lumps[picIndex].name + ".bmp";
                 writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, playpalIndex, colorMap, colorMapIndex);
             }
 
-            flatStartIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F2_START");
-            flatEndIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, "F2_END");
+            flatStartIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, "F2_START");
+            flatEndIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, "F2_END");
 
 #ifdef debugPrint
             std::cout << "flatStartIndex" << flatStartIndex << std::endl;
@@ -369,8 +368,8 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
 
             for (size_t picIndex = flatStartIndex + 1; picIndex < flatEndIndex; picIndex++)
             {
-                flat = FLAT(fileByteReader, lumps[picIndex]);
-                outputFileName = folder + "Flats/" + lumps[picIndex].name + ".bmp";
+                flat = FLAT(fileByteReader, wadHeader.lumps[picIndex]);
+                outputFileName = folder + "Flats/" + wadHeader.lumps[picIndex].name + ".bmp";
                 writeToBMP(outputFileName, Flat::size, Flat::size, getFlatPixel, playpal, playpalIndex, colorMap, colorMapIndex);
             }
 
@@ -399,14 +398,14 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
 
                     // Copy data into the bytearray
                     patchnum = t.patches[i].patchNum;
-                    patchLumpIndex = findInLumpArray(lumps, 0, wadHeader.numlumps, pnames[patchnum]);
+                    patchLumpIndex = findInLumpArray(wadHeader.lumps, 0, wadHeader.numLumps, pnames[patchnum]);
 
-                    if (patchLumpIndex == -1)
+                if (patchLumpIndex == -1)
                     {
                         std::cout << "FAILED ON [" << pnames[patchnum] << "]" << std::endl;
                         continue;
                     }
-                    pic = SPRITE(fileByteReader, lumps[patchLumpIndex]);
+                    pic = SPRITE(fileByteReader, wadHeader.lumps[patchLumpIndex]);
                     for (size_t x = 0; x < pic->width; x++)
                     {
                         for (size_t y = 0; y < pic->height; y++)
@@ -432,14 +431,14 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
     }
 }
 
-void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::shared_ptr<Lump[]> lumps) {
+void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader) {
     Lump lump;
     std::string fileName;
     std::string folderName  = "./results/Sound Effects/";
     const std::string musicFolderName = "./results/Music/";
-    for (size_t i = 0; i < wadHeader.numlumps; i++)
+    for (size_t i = 0; i < wadHeader.numLumps; i++)
     {
-        lump = lumps[i];
+        lump = wadHeader.lumps[i];
         if (lump.name.starts_with("DS")) {
             fileName = folderName + lump.name + ".wav";
             writeToWav(fileName, *SOUND(fileByteReader, lump));
