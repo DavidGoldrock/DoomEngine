@@ -1,7 +1,7 @@
 #include "../headers/Sound.h"
 #include "fstream"
-Sound::Sound(uint16_t formatNumber, uint16_t sampleRate, uint32_t adjustedSampleNumber, std::shared_ptr<uint8_t[]> samples)
-    : formatNumber(formatNumber), sampleRate(sampleRate), sampleNumber(adjustedSampleNumber), samples(samples)
+Sound::Sound(std::string name, uint16_t formatNumber, uint16_t sampleRate, uint32_t adjustedSampleNumber, std::shared_ptr<uint8_t[]> samples)
+    : name(name), formatNumber(formatNumber), sampleRate(sampleRate), sampleNumber(adjustedSampleNumber), samples(samples)
 {
 }
 
@@ -34,6 +34,7 @@ std::shared_ptr<Sound> SOUND(ConsecutiveBytearrayReader &fileByteReader, Lump &l
     std::unique_ptr<ConsecutiveBytearrayReader> lumpDataByteReader = std::make_unique<ConsecutiveBytearrayReader>(data, lump.size);
 
     std::shared_ptr<Sound> sound = std::make_shared<Sound>();
+    sound->name = lump.name;
     sound->formatNumber = lumpDataByteReader->readBytesAsUint16();
 
     if (sound->formatNumber == 0) {

@@ -40,4 +40,6 @@ void writeToBMP(std::string &filename, const int32_t width, const int32_t height
 
 void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, PlayPal &playpal, ColorMap &colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures);
 
-void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader);
+void SOUNDS(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::vector<Sound> &sounds);
+
+void SaveAllSounds(std::string folderName, std::vector<Sound> &sounds);

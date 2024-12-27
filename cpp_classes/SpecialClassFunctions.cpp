@@ -431,7 +431,7 @@ void SaveAllPictures(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadH
     }
 }
 
-void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader) {
+void SOUNDS(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, std::vector<Sound> &sounds) {
     Lump lump;
     std::string fileName;
     std::string folderName  = "./results/Sound Effects/";
@@ -440,10 +440,16 @@ void SaveAllSounds(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHea
     {
         lump = wadHeader.lumps[i];
         if (lump.name.starts_with("DS")) {
-            fileName = folderName + lump.name + ".wav";
-            writeToWav(fileName, *SOUND(fileByteReader, lump));
+            sounds.push_back(*SOUND(fileByteReader, lump));
         }
 
     }
-    
+}
+
+void SaveAllSounds(std::string folderName, std::vector<Sound> &sounds) {
+    for (Sound sound : sounds)
+    {
+        writeToWav(folderName + sound.name + ".wav", sound);    
+    }
+       
 }

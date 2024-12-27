@@ -9,13 +9,14 @@
 
 struct Sound
 {
+    std::string name;
     uint16_t formatNumber;
     uint16_t sampleRate;
     uint32_t sampleNumber;
     std::shared_ptr<uint8_t[]> samples;
 
     // Constructor
-    Sound(uint16_t formatNumber, uint16_t sampleRate, uint32_t adjustedSampleNumber, std::shared_ptr<uint8_t[]> samples);
+    Sound(std::string name, uint16_t formatNumber, uint16_t sampleRate, uint32_t adjustedSampleNumber, std::shared_ptr<uint8_t[]> samples);
     Sound();
 
     friend std::ostream &operator<<(std::ostream &os, const Sound &obj);
