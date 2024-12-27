@@ -2,7 +2,7 @@
 #include <UtilFunctions.h>
 #include "FileDescriptor.h"
 
-FileDescriptor::FileDescriptor(std::shared_ptr<WADHeader> wadHeader, std::string endoom, std::shared_ptr<PlayPal> playpal, std::shared_ptr<ColorMap> colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures, std::vector<Sound> sounds, std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> levels):wadHeader(wadHeader), endoom(endoom), playpal(playpal), colorMap(colorMap), pnames(pnames), pnameAmmount(pnameAmmount), textures(textures), sounds(sounds), levels(levels) {
+FileDescriptor::FileDescriptor(std::shared_ptr<WADHeader> wadHeader, std::string endoom, std::shared_ptr<PlayPal> playpal, std::shared_ptr<ColorMap> colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures, std::vector<Sound> sounds, std::vector<LevelData> levels):wadHeader(wadHeader), endoom(endoom), playpal(playpal), colorMap(colorMap), pnames(pnames), pnameAmmount(pnameAmmount), textures(textures), sounds(sounds), levels(levels) {
 
 }
 
@@ -38,9 +38,9 @@ std::ostream &operator<<(std::ostream &os, const FileDescriptor &obj) {
     os << "}" << std::endl;
 
     os << "levels {" << std::endl;
-    for (std::shared_ptr<LevelData> level : *obj.levels)
+    for (LevelData level : obj.levels)
     {
-        os << "    " << *level << std::endl;
+        os << "    " << level << std::endl;
     }
 
     os << "}" << std::endl;
@@ -110,7 +110,7 @@ std::shared_ptr<FileDescriptor> FileDescriptor::fromFile(const std::string filen
     SaveAllSounds("./results/Sound Effects/", sounds);
     auto levels = GenerateLevels(*fileByteReader, *wadHeader);
 
-    for (auto level : *levels)
+    for (auto level : levels)
     {
         // TODO: Code lol
     }

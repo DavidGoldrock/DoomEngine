@@ -164,9 +164,9 @@ std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader &fileByt
     return std::make_shared<LevelData>(things, wadHeader.lumps[levelThingLumpIndex].size / 10, lineDefs, wadHeader.lumps[levelLineDefLumpIndex].size / 14, sideDefs, wadHeader.lumps[levelSideDefLumpIndex].size / 30, segs, wadHeader.lumps[levelSegLumpIndex].size / 12, subSectors, wadHeader.lumps[levelSubSectorLumpIndex].size / 4, nodes, wadHeader.lumps[levelNodeLumpIndex].size / 28, sectors, wadHeader.lumps[levelSectorLumpIndex].size / 26, vertexes, wadHeader.lumps[levelVertexLumpIndex].size / 4, reject, blockmap);
 }
 
-std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader)
+std::vector<LevelData> GenerateLevels(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader)
 {
-    auto levels = std::make_shared<std::vector<std::shared_ptr<LevelData>>>();
+    auto levels = std::vector<LevelData>();
     size_t level1Map1Index;
     // Name of level lump
     char mapname[] = {'M', 'A', 'P', '0', '0', 0};
@@ -187,7 +187,7 @@ std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(Consecut
             std::cin.get();
 #endif
 
-            levels->push_back(GenerateLevelData(fileByteReader, wadHeader, level1Map1Index, level1Map1Index + 11));
+            levels.push_back(*GenerateLevelData(fileByteReader, wadHeader, level1Map1Index, level1Map1Index + 11));
         }
     }
 
@@ -212,7 +212,7 @@ std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(Consecut
                 std::cin.get();
 #endif
 
-                levels->push_back(GenerateLevelData(fileByteReader, wadHeader, level1Map1Index, level1Map1Index + 11));
+                levels.push_back(*GenerateLevelData(fileByteReader, wadHeader, level1Map1Index, level1Map1Index + 11));
             }
         }
     }

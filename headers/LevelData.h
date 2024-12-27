@@ -50,6 +50,6 @@ struct LevelData
 
 std::shared_ptr<LevelData> GenerateLevelData(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, size_t from, size_t to);
 
-std::shared_ptr<std::vector<std::shared_ptr<LevelData>>> GenerateLevels(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader);
+std::vector<LevelData> GenerateLevels(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader);
 
 #endif
