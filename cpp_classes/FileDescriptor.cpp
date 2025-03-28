@@ -126,7 +126,7 @@ if(endoomLumpIndex == -1) {
         return nullptr;
     }
     TEXTURE(*fileByteReader, wadHeader->lumps[texture2LumpIndex], 0, wadHeader->numLumps, textures);
-    std::cout << endoom << std::endl;
+    // std::cout << endoom << std::endl;
 #ifdef debugPrint
     std::cin.get();
 #endif
@@ -134,7 +134,7 @@ if(endoomLumpIndex == -1) {
     std::vector<Sound> sounds = std::vector<Sound>();
     SOUNDS(*fileByteReader, *wadHeader, sounds);
     // SaveAllPictures(*fileByteReader, *wadHeader, *playpal, *colorMap, pnames, pnameAmmount, textures);
-    SaveAllSounds("./results/Sound Effects/", sounds);
+    // SaveAllSounds("./results/Sound Effects/", sounds);
     auto levels = GenerateLevels(*fileByteReader, *wadHeader);
 
     for (auto level : levels)
