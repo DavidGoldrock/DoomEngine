@@ -6,19 +6,30 @@
 int main()
 {
     // The name of the wad. might be picked from directory or something in the future
-    const std::string filename = "./resources/DOOM.wad";
+    std::string filename;
     std::shared_ptr<FileDescriptor> fileDescriptor;
-    try {
-        fileDescriptor = FileDescriptor::fromFile(filename);
-    }
-    catch (const std::exception& e) {
-        std::cout << "Exception " << e.what() << std::endl;
-        return -1;
-    }
+    bool flag = true;
+    while (flag) {
+        std::cout << "Enter your filename" << std::endl;
+        std::cin >> filename;
+        std::cout << std::endl;
+        try {
+            fileDescriptor = FileDescriptor::fromFile(filename);
+        }
+        catch (const std::exception& e) {
+            std::cout << "Exception " << e.what() << std::endl;
+            std::cout << "Try again with another file " << std::endl << std::endl;
+        }
 
-    if (fileDescriptor == nullptr) {
-        return -1;
+        if (fileDescriptor == nullptr) {
+            std::cout << "File wasn't read successfully, try again with another file" << std::endl << std::endl;
+        }
+        else {
+            std::cout << "File read successfully" << std::endl;
+            flag = false;
+        }
     }
+    
 
     return 0;
 }
