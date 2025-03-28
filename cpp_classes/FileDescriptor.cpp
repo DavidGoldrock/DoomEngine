@@ -69,24 +69,43 @@ std::shared_ptr<FileDescriptor> FileDescriptor::fromFile(const std::string filen
 
     auto wadHeader = GenerateWADHeader(*fileByteReader);
 
+    if (wadHeader == nullptr) {
+        return nullptr;
+    }
 
     // The end message of the file. written in ANSI compatible syntax
 
     std::string tagname = "ENDOOM";
     size_t endoomLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+if(endoomLumpIndex == -1) {
+    std::out << "Error: endoomLumpIndex is not found" << std::endl;
+    return nullptr;
+}
 
     std::string endoom = ENDOOM(*fileByteReader, wadHeader->lumps[endoomLumpIndex], 0, wadHeader->numLumps);
 
     tagname = "PLAYPAL";
     size_t palleteLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    if(palleteLumpIndex == -1) {
+        std::out << "Error: palleteLumpIndex is not found" << std::endl;
+        return nullptr;
+    }
     std::shared_ptr<PlayPal> playpal = PLAYPAL(*fileByteReader, wadHeader->lumps[palleteLumpIndex], 0, wadHeader->numLumps);
 
     tagname = "COLORMAP";
     size_t colorMapLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    if(colorMapLumpIndex == -1) {
+        std::out << "Error: colorMapLumpIndex is not found" << std::endl;
+        return nullptr;
+    }
     std::shared_ptr<ColorMap> colorMap = COLORMAP(*fileByteReader, wadHeader->lumps[colorMapLumpIndex], 0, wadHeader->numLumps);
 
     tagname = "PNAMES";
     size_t pnamesLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    if(pnamesLumpIndex == -1) {
+        std::out << "Error: pnamesLumpIndex is not found" << std::endl;
+        return nullptr;
+    }
     std::shared_ptr<std::string[]> pnames = PNAMES(*fileByteReader, wadHeader->lumps[pnamesLumpIndex], 0, wadHeader->numLumps);
     size_t pnameAmmount = (wadHeader->lumps[pnamesLumpIndex].size - 4) / 8;
 
@@ -94,10 +113,18 @@ std::shared_ptr<FileDescriptor> FileDescriptor::fromFile(const std::string filen
 
     tagname = "TEXTURE1";
     size_t texture1LumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    if(texture1LumpIndex == -1) {
+        std::out << "Error: texture1LumpIndex is not found" << std::endl;
+        return nullptr;
+    }
     TEXTURE(*fileByteReader, wadHeader->lumps[texture1LumpIndex], 0, wadHeader->numLumps, textures);
 
     tagname = "TEXTURE2";
     size_t texture2LumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);
+    if(texture2LumpIndex == -1) {
+        std::out << "Error: texture2LumpIndex is not found" << std::endl;
+        return nullptr;
+    }
     TEXTURE(*fileByteReader, wadHeader->lumps[texture2LumpIndex], 0, wadHeader->numLumps, textures);
     std::cout << endoom << std::endl;
 #ifdef debugPrint
