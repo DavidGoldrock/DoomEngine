@@ -25,6 +25,7 @@ struct FileDescriptor
     FileDescriptor(std::shared_ptr<WADHeader> wadHeader, std::string endoom, std::shared_ptr<PlayPal> playpal, std::shared_ptr<ColorMap> colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures, std::vector<Sound> sounds, std::vector<LevelData> levels);
 
     static std::shared_ptr<FileDescriptor> fromFile(const std::string filename);
+    static std::shared_ptr<FileDescriptor> getFileDescriptorFromUser();
     friend std::ostream &operator<<(std::ostream &os, const FileDescriptor &obj);
 };
 

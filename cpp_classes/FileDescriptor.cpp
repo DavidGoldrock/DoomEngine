@@ -1,6 +1,8 @@
 #include "../headers/FileDescriptor.h"
 #include <UtilFunctions.h>
 #include "FileDescriptor.h"
+#include <windows.h>
+
 
 FileDescriptor::FileDescriptor(std::shared_ptr<WADHeader> wadHeader, std::string endoom, std::shared_ptr<PlayPal> playpal, std::shared_ptr<ColorMap> colorMap, std::shared_ptr<std::string[]> pnames, size_t pnameAmmount, std::vector<Texture> textures, std::vector<Sound> sounds, std::vector<LevelData> levels):wadHeader(wadHeader), endoom(endoom), playpal(playpal), colorMap(colorMap), pnames(pnames), pnameAmmount(pnameAmmount), textures(textures), sounds(sounds), levels(levels) {
 
@@ -143,5 +145,49 @@ if(endoomLumpIndex == -1) {
     }
 
     std::shared_ptr<FileDescriptor> fileDescriptor = std::make_shared<FileDescriptor>(wadHeader, endoom, playpal, colorMap, pnames, pnameAmmount, textures, sounds, levels);
+    return fileDescriptor;
+}
+
+std::shared_ptr<FileDescriptor> FileDescriptor::getFileDescriptorFromUser() {
+
+    std::shared_ptr<FileDescriptor> fileDescriptor = nullptr;
+
+    // The name of the wad. might be picked from directory or something in the future
+    std::string filename;
+    // It's buffer (MAX_PATH is a windows constant for maximum fileSize)
+    char filenameBuffer[MAX_PATH] = {0};
+    
+    OPENFILENAMEA windowsFileSelectionIOObject;
+    ZeroMemory(&windowsFileSelectionIOObject, sizeof(windowsFileSelectionIOObject));  // Initialize structure with zeros
+    windowsFileSelectionIOObject.lStructSize = sizeof(windowsFileSelectionIOObject);  // Set size of struct
+    windowsFileSelectionIOObject.hwndOwner = NULL;  // No parent window
+    windowsFileSelectionIOObject.lpstrFile = filenameBuffer;  // Buffer to store selected file
+    windowsFileSelectionIOObject.nMaxFile = MAX_PATH;
+    windowsFileSelectionIOObject.lpstrTitle = "Select a Doom Wad File";  // Dialog title
+    windowsFileSelectionIOObject.lpstrFilter = "DoomFiles (.wad, .pwad, .iwad)\0*.wad;*.iwad;*.pwad\0";  // File filters
+    windowsFileSelectionIOObject.Flags = OFN_FILEMUSTEXIST | OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR; // file and path must exist, and forces the function not to change directory
+
+    std::cout << "Enter your filename" << std::endl;
+    if(!GetOpenFileNameA(&windowsFileSelectionIOObject)) {
+        std::cout << "Must choose a file" << std::endl << std::endl;
+    }
+    else {
+        filename = std::string(filenameBuffer);
+    }
+
+    try {
+        fileDescriptor = FileDescriptor::fromFile(filename);
+    }
+    catch (const std::exception& e) {
+        std::cout << "Exception " << e.what() << std::endl;
+        std::cout << "Try again with another file " << std::endl << std::endl;
+    }
+
+    if (fileDescriptor == nullptr) {
+        std::cout << "File wasn't read successfully, try again with another file" << std::endl << std::endl;
+    }
+    else {
+        std::cout << "File read successfully" << std::endl;
+    }
     return fileDescriptor;
 }
