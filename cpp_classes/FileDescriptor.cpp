@@ -100,7 +100,7 @@ if(endoomLumpIndex == -1) {
         std::cout << "Error: colorMapLumpIndex is not found" << std::endl;
         return nullptr;
     }
-    std::shared_ptr<ColorMap> colorMap = COLORMAP(*fileByteReader, wadHeader->lumps[colorMapLumpIndex], 0, wadHeader->numLumps);
+    std::shared_ptr<ColorMap> colorMap = COLORMAP_FROM_READER(*fileByteReader, wadHeader->lumps[colorMapLumpIndex], 0, wadHeader->numLumps);
 
     tagname = "PNAMES";
     size_t pnamesLumpIndex = findInLumpArray(wadHeader->lumps, 0, wadHeader->numLumps, tagname);

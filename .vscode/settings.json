@@ -59,5 +59,6 @@
         "codecvt": "cpp",
         "ratio": "cpp",
         "iomanip": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "enabled"
 }

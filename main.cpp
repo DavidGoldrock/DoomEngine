@@ -1,25 +1,52 @@
 #include <windows.h>
+#include <commctrl.h>  // Required for toolbar
 #include "FileDescriptor.h"
 #include <iostream>
 struct AppData {
     std::shared_ptr<FileDescriptor> fileDescriptor;
 };
 
+HMENU hMenu;
+void AddMenus(HWND hwnd);
+
+#define OPEN_FILE_MENU_ID 1
+
 // Window Procedure: Handles messages sent to the window
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     AppData* appData = (AppData*)GetWindowLongPtr(hwnd, GWLP_USERDATA); // Retrieve the appData pointer
     switch (uMsg) {
+        case WM_CREATE:
+            AddMenus(hwnd);
+            return 0;
         case WM_CLOSE:
             PostQuitMessage(0);
             return 0;
         case WM_DESTROY:
             return 0;
         case WM_LBUTTONDOWN:
-            appData->fileDescriptor = FileDescriptor::getFileDescriptorFromUser();
+            return 0;
+
+        case WM_COMMAND:
+            switch(wParam) {
+                case OPEN_FILE_MENU_ID:
+                    appData->fileDescriptor = FileDescriptor::getFileDescriptorFromUser();
+                    break;
+            }
             return 0;
         default:
             return DefWindowProc(hwnd, uMsg, wParam, lParam);
     }
+}
+
+void AddMenus(HWND hwnd) {
+    hMenu = CreateMenu();
+
+    HMENU hFileMenu = CreateMenu();
+
+
+    AppendMenuA(hFileMenu, MF_POPUP, OPEN_FILE_MENU_ID , "Open");
+    AppendMenuA(hMenu, MF_POPUP, (UINT_PTR) hFileMenu, "File");
+    SetMenu(hwnd, hMenu);
 }
 
 // Entry point for Windows applications

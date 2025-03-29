@@ -24,6 +24,6 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const ColorMap &obj);
 };
 
-std::shared_ptr<ColorMap> COLORMAP(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
+std::shared_ptr<ColorMap> COLORMAP_FROM_READER(ConsecutiveBytearrayReader &fileByteReader, Lump &lump, size_t from, size_t to);
 
 #endif
