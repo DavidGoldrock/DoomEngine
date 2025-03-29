@@ -65,20 +65,27 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     //
 
         // Define a window class (settings for the window)
-        WNDCLASSW wc = {};  // Use WNDCLASSW for wide-character support
-        // A name for all these settings, registered later to be used any time you create this kind of window
-        const wchar_t CLASS_NAME[] = L"Doom_Proccessor_Windows_Class";
+        WNDCLASSEXA wc = {0}; // Properly zero-out the struct to avoid uninitialized fields
+        wc.cbSize = sizeof(WNDCLASSEXA); // Required to specify the size of the struct
+        LPCSTR CLASS_NAME = "Doom_Proccessor_Windows_Class";
         wc.lpszClassName = CLASS_NAME;
         wc.lpfnWndProc = WindowProc; // The function to be called to process the window events
         wc.hInstance = hInstance; // Instance of the window
         wc.hCursor = LoadCursor(NULL, IDC_ARROW); // Default cursor, nothing fancy
         wc.hbrBackground = GetSysColorBrush(COLOR_WINDOW);
-
-        RegisterClassW(&wc);  // Use RegisterClassW
+        
+        // Register the class
+        if (!RegisterClassExA(&wc)) {
+            // If registration fails, use GetLastError to debug the issue
+            DWORD dwError = GetLastError();
+            std::cout << "[CLASS REGISTER ERROR #" << dwError << "]" << std::endl;
+            // Handle the error or log it (for debugging purposes)
+            return 0; // Or some other error handling
+        }
 
     // Create the window
-    HWND hwnd = CreateWindowExW(
-        0, CLASS_NAME, L"Doom Reader", // Open a new regular window with the previously created window class
+    HWND hwnd = CreateWindowExA(
+        0, CLASS_NAME, "Doom Reader", // Open a new regular window with the previously created window class
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, // Open in default location with default style
         500, 400, NULL, NULL, hInstance, NULL
     );
