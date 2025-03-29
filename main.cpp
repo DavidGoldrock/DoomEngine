@@ -6,11 +6,10 @@ struct AppData {
     std::shared_ptr<FileDescriptor> fileDescriptor;
 };
 
-HMENU hMenu;
 void AddMenus(HWND hwnd);
 
 #define OPEN_FILE_MENU_ID 1
-
+#define TREE_ID 1001
 // Window Procedure: Handles messages sent to the window
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
     AppData* appData = (AppData*)GetWindowLongPtr(hwnd, GWLP_USERDATA); // Retrieve the appData pointer
@@ -30,7 +29,21 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
             switch(wParam) {
                 case OPEN_FILE_MENU_ID:
                     appData->fileDescriptor = FileDescriptor::getFileDescriptorFromUser();
-                    break;
+                    return 0;
+            }
+            return 0;
+
+            case WM_NOTIFY:
+            if (((LPNMHDR)lParam)->idFrom == TREE_ID) {
+                LPNMTREEVIEW pnmTreeView = (LPNMTREEVIEW)lParam;
+                switch (pnmTreeView->hdr.code) {
+                    case TVN_SELCHANGED:
+                        // Handle selection change
+                        return 0;
+                    case TVN_ITEMEXPANDING:
+                        // Handle item expanding
+                        return 0;
+                }
             }
             return 0;
         default:
@@ -39,7 +52,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) 
 }
 
 void AddMenus(HWND hwnd) {
-    hMenu = CreateMenu();
+    HMENU hMenu = CreateMenu();
 
     HMENU hFileMenu = CreateMenu();
 
@@ -94,6 +107,29 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)appData);
 
+    HWND hwndTreeView = CreateWindowEx(
+        0, WC_TREEVIEW, TEXT(""),
+        WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_LINESATROOT | TVS_HASBUTTONS,
+        10, 10, 300, 400,
+        hwnd, (HMENU)TREE_ID, hInstance, nullptr);
+
+    TVINSERTSTRUCT tvis;
+    tvis.hParent = TVI_ROOT;  // Root of the tree
+    tvis.hInsertAfter = TVI_LAST;  // Insert at the end
+    tvis.item.mask = TVIF_TEXT;  // We're inserting text
+
+
+    // Add root item
+    tvis.item.pszText = TEXT("");
+    HTREEITEM hRoot = TreeView_InsertItem(hwndTreeView, &tvis);
+
+    // Add a child item
+    tvis.hParent = hRoot;
+    tvis.item.pszText = TEXT("Sounds");
+    TreeView_InsertItem(hwndTreeView, &tvis);
+    // Add another child item
+    tvis.item.pszText = TEXT("Title Pic");
+    TreeView_InsertItem(hwndTreeView, &tvis);
     ShowWindow(hwnd, nCmdShow);
 
     // Message loop
