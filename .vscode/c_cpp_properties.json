@@ -13,7 +13,7 @@
             "cStandard": "c11",
             "cppStandard": "c++23",
             "intelliSenseMode": "windows-gcc-x64",
-            "compilerPath": "C:\\Users\\TAL\\Documents\\Compiler\\bin\\g++.exe"
+            "compilerPath": "C:/Users/TAL/Documents/Compiler/bin/gcc.exe"
         }
     ],
     "version": 4
