@@ -11,7 +11,7 @@ struct AppData;
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 void AddMenus(HWND hwnd);
 void CreateProgram(AppData* appData, HWND hwnd);
-void HandleMenuEvent(AppData* appData, WPARAM wParam, HWND hwnd, HINSTANCE hInstance);
+void HandleMenuEvent(AppData* appData, WPARAM wParam, HWND hwnd);
 void HandleTreeviewEvent(AppData* appData, LPARAM lParam);
 bool RegisterWindowsClass(LPCSTR CLASS_NAME, HINSTANCE hInstance);
 HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance);

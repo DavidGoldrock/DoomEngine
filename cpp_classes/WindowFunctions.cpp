@@ -11,21 +11,20 @@
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     CREATESTRUCT* createStruct = nullptr;  // Declare here to avoid jump errors
-    std::shared_ptr<AppData> appDataCreation; // Used only in WM_CREATE
     AppData *appData = (AppData *)GetWindowLongPtr(hwnd, GWLP_USERDATA); // Retrieve the appData pointer
     switch (uMsg)
     {
         // Create window
         case WM_CREATE:
         
-            appDataCreation = std::make_shared<AppData>();
-            appDataCreation->fileDescriptor = nullptr;
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)appDataCreation.get());
+            appData = new AppData();
+            appData->fileDescriptor = nullptr;
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)appData);
         
             createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
             
-            appDataCreation->hInstance = createStruct->hInstance;
-            CreateProgram(appDataCreation.get(), hwnd);
+            appData->hInstance = createStruct->hInstance;
+            CreateProgram(appData, hwnd);
             return 0;
         // Close window
         case WM_CLOSE:
@@ -33,6 +32,10 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             return 0;
         // Crash
         case WM_DESTROY:
+            if (appData) {
+                delete appData;
+                SetWindowLongPtr(hwnd, GWLP_USERDATA, 0); // Optional but good practice
+            }
             return 0;
 
         // Left button Down
@@ -41,7 +44,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         // Event handler for file menu
         case WM_COMMAND:
-            HandleMenuEvent(appData, wParam, hwnd, appData->hInstance);
+            HandleMenuEvent(appData, wParam, hwnd);
             return 0;
 
         // Event handler for treeview
@@ -69,16 +72,27 @@ void CreateProgram(AppData *appData, HWND hwnd)
     AddMenus(hwnd);
 }
 
-void HandleMenuEvent(AppData *appData, WPARAM wParam, HWND hwnd, HINSTANCE hInstance)
+void HandleMenuEvent(AppData *appData, WPARAM wParam, HWND hwnd)
 {
     switch (wParam)
     {
     case OPEN_FILE_MENU_ID:
-        std::cout << "REACHED HERE" << std::endl;
-        appData->fileDescriptor = FileDescriptor::getFileDescriptorFromUser();
+
+        std::shared_ptr<FileDescriptor> fd = FileDescriptor::getFileDescriptorFromUser();
+        try {
+            appData->fileDescriptor = fd;
+        }
+        catch (const std::exception& e) {
+            std::cout << "Exception " << e.what() << std::endl;
+        }
+        if(appData->hInstance == NULL) {
+            return;
+        }
         if(appData->fileDescriptor != nullptr) {
-            HWND hwndTreeView = ConstructTreeview(appData, hwnd, hInstance);
+            HWND hwndTreeView = ConstructTreeview(appData, hwnd, appData->hInstance);
         } 
+        else {
+        }
         return;
     }
 }
@@ -137,7 +151,7 @@ HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance)
         WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_LINESATROOT | TVS_HASBUTTONS,
         10, 10, 300, 400,
         hwnd, (HMENU)TREE_ID, hInstance, nullptr);
-
+    
     TVINSERTSTRUCT tvis;
     tvis.hParent = TVI_ROOT;      // Root of the tree
     tvis.hInsertAfter = TVI_LAST; // Insert at the end
@@ -145,22 +159,27 @@ HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance)
 
     // Add root item
     tvis.item.pszText = TEXT((LPSTR) const_cast<LPSTR>(appData->fileDescriptor->wadHeader->header.c_str())); 
+
     HTREEITEM hRoot = TreeView_InsertItem(hwndTreeView, &tvis);
+
 
     // Add a child item
     tvis.hParent = hRoot;
     tvis.item.pszText = TEXT((LPSTR) "Sounds");
     HTREEITEM hSounds = TreeView_InsertItem(hwndTreeView, &tvis);
 
+
     // Add another child item
     tvis.item.pszText = TEXT((LPSTR) "Title Pic");
     TreeView_InsertItem(hwndTreeView, &tvis);
+
 
     for(Sound sound : appData->fileDescriptor->sounds) {
         tvis.hParent = hSounds;
         tvis.item.pszText = TEXT((LPSTR) const_cast<LPSTR>(sound.name.c_str()));
         TreeView_InsertItem(hwndTreeView, &tvis);
     }
+
 
     return hwndTreeView;
 }
