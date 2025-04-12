@@ -7,7 +7,12 @@
 #include <commctrl.h>
 #define OPEN_FILE_MENU_ID 1
 #define CLOSE_FILE_MENU_ID 2
+#define PLAY_BUTTON_ID 3
+#define TRACKBAR_ID 4
 #define TREE_ID 1001
+#define SOUND_WINDOW_ID 1002
+
+#pragma comment(lib, "comctl32.lib")
 
 // Window Procedure: Handles messages sent to the window
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -18,7 +23,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     {
         // Create window
         case WM_CREATE:
-        
+
             appData = new AppData();
             appData->fileDescriptor = nullptr;
             SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)appData);
@@ -26,6 +31,16 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             createStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
             
             appData->hInstance = createStruct->hInstance;
+
+            // Step 1: Initialize common controls
+                INITCOMMONCONTROLSEX icex;
+                icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
+                icex.dwICC = ICC_WIN95_CLASSES;  // Use appropriate flag(s)
+
+                if (!InitCommonControlsEx(&icex)) {
+                    MessageBoxA(NULL, "InitCommonControlsEx failed!", "Error", MB_ICONERROR);
+                    return 1;
+                }
             CreateProgram(appData, hwnd);
             return 0;
         // Close window
@@ -78,6 +93,8 @@ void CreateProgram(AppData *appData, HWND hwnd)
 void HandleMenuEvent(AppData *appData, WPARAM wParam, HWND hwnd)
 {
     HWND hwndTreeView;
+    HWND hwndPlayButton;
+    HWND hwndTrackBar;
     std::shared_ptr<FileDescriptor> fd;
     switch (wParam)
     {
@@ -95,12 +112,21 @@ void HandleMenuEvent(AppData *appData, WPARAM wParam, HWND hwnd)
             }
             if(appData->fileDescriptor != nullptr) {
                 hwndTreeView = ConstructTreeview(appData, hwnd, appData->hInstance);
+                ConstructSoundView(appData, hwnd, appData->hInstance);
             } 
             return;
         case CLOSE_FILE_MENU_ID:
             hwndTreeView = GetDlgItem(hwnd, TREE_ID);
+            hwndPlayButton = GetDlgItem(hwnd, PLAY_BUTTON_ID);
+            hwndTrackBar = GetDlgItem(hwnd, TRACKBAR_ID);
             if(hwndTreeView != NULL) {
                 DestroyWindow(hwndTreeView);
+            }
+            if(hwndPlayButton != NULL) {
+                DestroyWindow(hwndPlayButton);
+            }
+            if(hwndTrackBar != NULL) {
+                DestroyWindow(hwndTrackBar);
             }
             return;
     }
@@ -197,6 +223,24 @@ HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance)
 
 
     return hwndTreeView;
+}
+
+void ConstructSoundView(AppData *appData, HWND hwnd, HINSTANCE hInstance){
+    HWND hPlayButton = GetDlgItem(hwnd, PLAY_BUTTON_ID);
+    if(hPlayButton == NULL) {
+        hPlayButton = CreateWindowA("BUTTON", "Play",
+            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+            1020, 20, 80, 30, hwnd, (HMENU)PLAY_BUTTON_ID, NULL, NULL);
+    }
+    HWND hTrackbar = GetDlgItem(hwnd, TRACKBAR_ID);
+    if(hTrackbar == NULL) {
+        hTrackbar = CreateWindowEx(0, TRACKBAR_CLASS, "",
+            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
+            1120, 20, 300, 30, hwnd, (HMENU)TRACKBAR_ID, NULL, NULL);
+    }
+
+    // Set range to be 0 -> 100
+    SendMessage(hTrackbar, TBM_SETRANGE, TRUE, MAKELONG(0, 100));
 }
 
 void SetConsoleUp()

@@ -20,7 +20,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     HWND hwnd = CreateWindowExA(
         0, CLASS_NAME, "Doom Reader", // Open a new regular window with the previously created window class
         WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, // Open in default location with default style
-        500, 400, NULL, NULL, hInstance, NULL
+        1920, 1080, NULL, NULL, hInstance, NULL
     );
 
     if (!hwnd) return 0;
