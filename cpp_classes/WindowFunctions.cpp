@@ -5,14 +5,16 @@
 #include <codecvt>  // for std::wstring_convert
 #include <locale>
 #include <commctrl.h>
+#include <mmsystem.h>
+
+#pragma comment(lib, "winmm.lib")
+
 #define OPEN_FILE_MENU_ID 1
 #define CLOSE_FILE_MENU_ID 2
 #define PLAY_BUTTON_ID 3
-#define TRACKBAR_ID 4
 #define TREE_ID 1001
 #define SOUND_WINDOW_ID 1002
 
-#pragma comment(lib, "comctl32.lib")
 
 // Window Procedure: Handles messages sent to the window
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -32,15 +34,6 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             
             appData->hInstance = createStruct->hInstance;
 
-            // Step 1: Initialize common controls
-                INITCOMMONCONTROLSEX icex;
-                icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
-                icex.dwICC = ICC_WIN95_CLASSES;  // Use appropriate flag(s)
-
-                if (!InitCommonControlsEx(&icex)) {
-                    MessageBoxA(NULL, "InitCommonControlsEx failed!", "Error", MB_ICONERROR);
-                    return 1;
-                }
             CreateProgram(appData, hwnd);
             return 0;
         // Close window
@@ -61,7 +54,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
         // Event handler for file menu
         case WM_COMMAND:
-            HandleMenuEvent(appData, wParam, hwnd);
+            HandleCommandEvent(appData, wParam, hwnd);
             return 0;
 
         // Event handler for treeview
@@ -90,12 +83,13 @@ void CreateProgram(AppData *appData, HWND hwnd)
     AddMenus(hwnd);
 }
 
-void HandleMenuEvent(AppData *appData, WPARAM wParam, HWND hwnd)
+void HandleCommandEvent(AppData *appData, WPARAM wParam, HWND hwnd)
 {
     HWND hwndTreeView;
     HWND hwndPlayButton;
-    HWND hwndTrackBar;
     std::shared_ptr<FileDescriptor> fd;
+    std::string soundName;
+    HTREEITEM hSelectedItem;
     switch (wParam)
     {
         case OPEN_FILE_MENU_ID:
@@ -118,19 +112,41 @@ void HandleMenuEvent(AppData *appData, WPARAM wParam, HWND hwnd)
         case CLOSE_FILE_MENU_ID:
             hwndTreeView = GetDlgItem(hwnd, TREE_ID);
             hwndPlayButton = GetDlgItem(hwnd, PLAY_BUTTON_ID);
-            hwndTrackBar = GetDlgItem(hwnd, TRACKBAR_ID);
             if(hwndTreeView != NULL) {
                 DestroyWindow(hwndTreeView);
             }
             if(hwndPlayButton != NULL) {
                 DestroyWindow(hwndPlayButton);
             }
-            if(hwndTrackBar != NULL) {
-                DestroyWindow(hwndTrackBar);
+            return;
+        case PLAY_BUTTON_ID:
+            hwndTreeView = GetDlgItem(hwnd, TREE_ID);
+            if(!hwndTreeView) {
+                return;
+            }
+            hSelectedItem = TreeView_GetSelection(hwndTreeView);
+            if(!hSelectedItem) {
+                return;
+            }
+            soundName = GetTreeViewItemName(hwndTreeView, hSelectedItem);
+
+            for(Sound sound : appData->fileDescriptor->sounds) {
+                if (sound.name == soundName) {
+                    playSound(sound);
+                    return;
+                }
             }
             return;
     }
 }
+
+bool playSound(Sound& sound) { 
+    // PlaySound uses memory directly; SND_SYNC blocks until done
+    BOOL success = PlaySoundA(reinterpret_cast<const char*>(soundToWav(sound).get()), nullptr, SND_MEMORY | SND_SYNC | SND_NODEFAULT);
+
+    return success == TRUE;
+}
+
 void HandleTreeviewEvent(AppData *appData, LPARAM lParam)
 {
     // If it is the main tree
@@ -232,15 +248,6 @@ void ConstructSoundView(AppData *appData, HWND hwnd, HINSTANCE hInstance){
             WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
             1020, 20, 80, 30, hwnd, (HMENU)PLAY_BUTTON_ID, NULL, NULL);
     }
-    HWND hTrackbar = GetDlgItem(hwnd, TRACKBAR_ID);
-    if(hTrackbar == NULL) {
-        hTrackbar = CreateWindowEx(0, TRACKBAR_CLASS, "",
-            WS_CHILD | WS_VISIBLE | TBS_AUTOTICKS,
-            1120, 20, 300, 30, hwnd, (HMENU)TRACKBAR_ID, NULL, NULL);
-    }
-
-    // Set range to be 0 -> 100
-    SendMessage(hTrackbar, TBM_SETRANGE, TRUE, MAKELONG(0, 100));
 }
 
 void SetConsoleUp()

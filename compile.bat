@@ -1,1 +1,1 @@
-g++ -std=c++23 -g -o main *.cpp ./cpp_classes/*.cpp -Iheaders -lcomdlg32 -mwindows -lcomctl32
+g++ -std=c++23 -g -o main *.cpp ./cpp_classes/*.cpp -Iheaders -lcomdlg32 -lcomctl32 -lwinmm -mwindows
