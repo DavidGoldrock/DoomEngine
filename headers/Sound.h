@@ -26,6 +26,6 @@ std::shared_ptr<Sound> SOUND(ConsecutiveBytearrayReader &fileByteReader, Lump &l
 
 std::shared_ptr<uint8_t[]> soundToWav(Sound& sound);
 
-void writeToWav(std::string filename, Sound& sound);
+void writeToWav(std::string filename, std::shared_ptr<Sound> sound);
 
 #endif

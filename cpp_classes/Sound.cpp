@@ -121,18 +121,19 @@ std::shared_ptr<uint8_t[]> soundToWav(Sound& sound) {
 }
 
 // Function to write WAV file
-void writeToWav(std::string filename, Sound& sound) {
+void writeToWav(std::string filename, std::shared_ptr<Sound> sound) {
     std::ofstream file(filename, std::ios::binary);
     if (!file) {
         std::cerr << "Error opening file\n";
         return;
     }
 
-    std::shared_ptr<uint8_t[]> data = soundToWav(sound);
-    size_t length = (sound.sampleNumber * NUM_CHANNELS * BITS_PER_SAMPLE / 8) + 44;
+    std::shared_ptr<uint8_t[]> data = soundToWav(*sound);
+    size_t length = (sound->sampleNumber * NUM_CHANNELS * BITS_PER_SAMPLE / 8) + 44;
 
     // Write the sample data
     file.write(reinterpret_cast<const char*>(data.get()), length);
 
     file.close();
+    std::cout << "FILE CLOSED" << std::endl;
 }

@@ -16,9 +16,10 @@ void HandleTreeviewEvent(AppData* appData, LPARAM lParam);
 bool RegisterWindowsClass(LPCSTR CLASS_NAME, HINSTANCE hInstance);
 HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance);
 void ConstructSoundView(AppData *appData, HWND hwnd, HINSTANCE hInstance);
-bool playSound(std::shared_ptr<Sound> sound);
+bool PlayDoomSound(std::shared_ptr<Sound> sound);
 int GetTreeViewItemDepth(HWND hTreeView, HTREEITEM hItem);
 std::string GetTreeViewItemName(HWND hTreeView, HTREEITEM hItem);
+std::string SaveFileDialog(LPCSTR lpstrFilter, LPCSTR lpstrDefExt, std::string defaultName);
 void SetConsoleUp();
 
 // Optional: if you use std::cout inside RegisterClass

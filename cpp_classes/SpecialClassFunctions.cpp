@@ -447,9 +447,11 @@ void SOUNDS(ConsecutiveBytearrayReader &fileByteReader, WADHeader &wadHeader, st
 }
 
 void SaveAllSounds(std::string folderName, std::vector<Sound> &sounds) {
+    std::shared_ptr<Sound> soundPtr;
     for (Sound sound : sounds)
     {
-        writeToWav(folderName + sound.name + ".wav", sound);    
+        soundPtr = std::make_shared<Sound>(sound);
+        writeToWav(folderName + sound.name + ".wav", soundPtr);    
     }
        
 }

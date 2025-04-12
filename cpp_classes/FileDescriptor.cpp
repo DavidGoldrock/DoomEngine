@@ -136,7 +136,7 @@ if(endoomLumpIndex == -1) {
     std::vector<Sound> sounds = std::vector<Sound>();
     SOUNDS(*fileByteReader, *wadHeader, sounds);
     // SaveAllPictures(*fileByteReader, *wadHeader, *playpal, *colorMap, pnames, pnameAmmount, textures);
-    SaveAllSounds("./results/Sound Effects/", sounds);
+    // SaveAllSounds("./results/Sound Effects/", sounds);
     auto levels = GenerateLevels(*fileByteReader, *wadHeader);
 
     for (auto level : levels)
@@ -157,8 +157,7 @@ std::shared_ptr<FileDescriptor> FileDescriptor::getFileDescriptorFromUser() {
     // It's buffer (MAX_PATH is a windows constant for maximum fileSize)
     char filenameBuffer[MAX_PATH] = {0};
     
-    OPENFILENAMEA windowsFileSelectionIOObject;
-    ZeroMemory(&windowsFileSelectionIOObject, sizeof(windowsFileSelectionIOObject));  // Initialize structure with zeros
+    OPENFILENAME windowsFileSelectionIOObject = { 0 };
     windowsFileSelectionIOObject.lStructSize = sizeof(windowsFileSelectionIOObject);  // Set size of struct
     windowsFileSelectionIOObject.hwndOwner = NULL;  // No parent window
     windowsFileSelectionIOObject.lpstrFile = filenameBuffer;  // Buffer to store selected file

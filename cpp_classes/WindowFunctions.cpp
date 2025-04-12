@@ -13,6 +13,8 @@
 #define OPEN_FILE_MENU_ID 1
 #define CLOSE_FILE_MENU_ID 2
 #define PLAY_BUTTON_ID 3
+#define SAVE_BUTTON_ID 4
+
 #define TREE_ID 1001
 #define SOUND_WINDOW_ID 1002
 
@@ -87,10 +89,15 @@ void CreateProgram(AppData *appData, HWND hwnd)
 void HandleCommandEvent(AppData *appData, WPARAM wParam, HWND hwnd)
 {
     HWND hwndTreeView;
-    HWND hwndPlayButton;
+    HWND hPlayButton;
+    HWND hSaveButton;
     std::shared_ptr<FileDescriptor> fd;
+
     std::string soundName;
     std::shared_ptr<Sound> soundPtr;
+
+    std::string fileLocation;
+
     HTREEITEM hSelectedItem;
     switch (wParam)
     {
@@ -113,12 +120,17 @@ void HandleCommandEvent(AppData *appData, WPARAM wParam, HWND hwnd)
             return;
         case CLOSE_FILE_MENU_ID:
             hwndTreeView = GetDlgItem(hwnd, TREE_ID);
-            hwndPlayButton = GetDlgItem(hwnd, PLAY_BUTTON_ID);
             if(hwndTreeView != NULL) {
                 DestroyWindow(hwndTreeView);
             }
-            if(hwndPlayButton != NULL) {
-                DestroyWindow(hwndPlayButton);
+            hPlayButton = GetDlgItem(hwnd, PLAY_BUTTON_ID);
+            if(hPlayButton != NULL) {
+                DestroyWindow(hPlayButton);
+            }
+
+            hSaveButton = GetDlgItem(hwnd, SAVE_BUTTON_ID);
+            if(hSaveButton != NULL) {
+                DestroyWindow(hSaveButton);
             }
             return;
         case PLAY_BUTTON_ID:
@@ -135,16 +147,66 @@ void HandleCommandEvent(AppData *appData, WPARAM wParam, HWND hwnd)
             for(Sound sound : appData->fileDescriptor->sounds) {
                 if (sound.name == soundName) {
                     soundPtr = std::make_shared<Sound>(sound);
-                    std::thread(playSound, soundPtr).detach();
+                    std::thread(PlayDoomSound, soundPtr).detach();
                     return;
                 }
             }
             return;
+        case SAVE_BUTTON_ID:            
+            hwndTreeView = GetDlgItem(hwnd, TREE_ID);
+            if(!hwndTreeView) {
+                return;
+            }
+            hSelectedItem = TreeView_GetSelection(hwndTreeView);
+            if(!hSelectedItem) {
+                return;
+            }
+            soundName = GetTreeViewItemName(hwndTreeView, hSelectedItem);            
+            for(Sound sound : appData->fileDescriptor->sounds) {
+                if (sound.name == soundName) {
+                    std::cout << "SOUND FOUND " << std::endl;  
+                    
+                    fileLocation = SaveFileDialog("Wav files\0*.wav\0", "wav", sound.name);
+                    if(fileLocation == std::string()) {
+                        std::cout << "FILE LOCATION NOT FOUND" << std::endl;
+                        return;
+                    }
+                    std::cout << "FILE LOCATION FOUND \"" << fileLocation << "\"" << std::endl;
+                    
+                    soundPtr = std::make_shared<Sound>(sound);
+                    std::thread(writeToWav, fileLocation, soundPtr).detach();
+                    return;
+                }
+            }
+            std::cout << "SOUND NOT FOUND " << std::endl;            
+            return;
     }
 }
 
-bool playSound(std::shared_ptr<Sound> sound) { 
-    // PlaySound uses memory directly; SND_SYNC blocks until done
+std::string SaveFileDialog(LPCSTR lpstrFilter, LPCSTR lpstrDefExt, std::string defaultName) {
+    // Buffer to receive the file path
+    char filePath[MAX_PATH] = {};
+    strncpy(filePath, defaultName.c_str(), MAX_PATH - 1); // Safe copy
+    // Set up the OPENFILENAME structure
+    OPENFILENAME windowsFileSelectionIOObject = { 0 };
+    windowsFileSelectionIOObject.lStructSize = sizeof(windowsFileSelectionIOObject);
+    windowsFileSelectionIOObject.hwndOwner = NULL;
+    windowsFileSelectionIOObject.lpstrFile = filePath;
+    windowsFileSelectionIOObject.nMaxFile = MAX_PATH;
+    windowsFileSelectionIOObject.lpstrTitle = "Save sound file";  // Dialog title
+    windowsFileSelectionIOObject.lpstrFilter = lpstrFilter;
+    windowsFileSelectionIOObject.lpstrDefExt = lpstrDefExt;           // Default extension
+    windowsFileSelectionIOObject.Flags = OFN_PATHMUSTEXIST | OFN_OVERWRITEPROMPT;  // Prompt if file exists
+
+    if (GetSaveFileName(&windowsFileSelectionIOObject)) {
+        return std::string(filePath);
+    } else {
+        return std::string();
+    }
+}
+
+bool PlayDoomSound(std::shared_ptr<Sound> sound) { 
+    // PlayDoomSound uses memory directly; SND_SYNC blocks until done
     BOOL success = PlaySoundA(reinterpret_cast<const char*>(soundToWav(*sound).get()), nullptr, SND_MEMORY | SND_SYNC | SND_NODEFAULT);
 
     return success == TRUE;
@@ -245,6 +307,12 @@ HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance)
 }
 
 void ConstructSoundView(AppData *appData, HWND hwnd, HINSTANCE hInstance){
+    HWND hSaveButton = GetDlgItem(hwnd, SAVE_BUTTON_ID);
+    if(hSaveButton == NULL) {
+        hSaveButton = CreateWindowA("BUTTON", "Save",
+            WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_DEFPUSHBUTTON,
+            920, 20, 80, 30, hwnd, (HMENU)SAVE_BUTTON_ID, NULL, NULL);
+    }
     HWND hPlayButton = GetDlgItem(hwnd, PLAY_BUTTON_ID);
     if(hPlayButton == NULL) {
         hPlayButton = CreateWindowA("BUTTON", "Play",
