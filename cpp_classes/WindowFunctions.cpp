@@ -4,7 +4,9 @@
 #include <sstream>
 #include <codecvt>  // for std::wstring_convert
 #include <locale>
+#include <commctrl.h>
 #define OPEN_FILE_MENU_ID 1
+#define CLOSE_FILE_MENU_ID 2
 #define TREE_ID 1001
 
 // Window Procedure: Handles messages sent to the window
@@ -63,6 +65,7 @@ void AddMenus(HWND hwnd)
     HMENU hFileMenu = CreateMenu();
 
     AppendMenuA(hFileMenu, MF_POPUP, OPEN_FILE_MENU_ID, "Open");
+    AppendMenuA(hFileMenu, MF_POPUP, CLOSE_FILE_MENU_ID, "Close");
     AppendMenuA(hMenu, MF_POPUP, (UINT_PTR)hFileMenu, "File");
     SetMenu(hwnd, hMenu);
 }
@@ -74,26 +77,32 @@ void CreateProgram(AppData *appData, HWND hwnd)
 
 void HandleMenuEvent(AppData *appData, WPARAM wParam, HWND hwnd)
 {
+    HWND hwndTreeView;
+    std::shared_ptr<FileDescriptor> fd;
     switch (wParam)
     {
-    case OPEN_FILE_MENU_ID:
+        case OPEN_FILE_MENU_ID:
 
-        std::shared_ptr<FileDescriptor> fd = FileDescriptor::getFileDescriptorFromUser();
-        try {
-            appData->fileDescriptor = fd;
-        }
-        catch (const std::exception& e) {
-            std::cout << "Exception " << e.what() << std::endl;
-        }
-        if(appData->hInstance == NULL) {
+            fd = FileDescriptor::getFileDescriptorFromUser();
+            try {
+                appData->fileDescriptor = fd;
+            }
+            catch (const std::exception& e) {
+                std::cout << "Exception " << e.what() << std::endl;
+            }
+            if(appData->hInstance == NULL) {
+                return;
+            }
+            if(appData->fileDescriptor != nullptr) {
+                hwndTreeView = ConstructTreeview(appData, hwnd, appData->hInstance);
+            } 
             return;
-        }
-        if(appData->fileDescriptor != nullptr) {
-            HWND hwndTreeView = ConstructTreeview(appData, hwnd, appData->hInstance);
-        } 
-        else {
-        }
-        return;
+        case CLOSE_FILE_MENU_ID:
+            hwndTreeView = GetDlgItem(hwnd, TREE_ID);
+            if(hwndTreeView != NULL) {
+                DestroyWindow(hwndTreeView);
+            }
+            return;
     }
 }
 void HandleTreeviewEvent(AppData *appData, LPARAM lParam)
@@ -146,11 +155,17 @@ bool RegisterWindowsClass(LPCSTR CLASS_NAME, HINSTANCE hInstance)
 
 HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance)
 {
-    HWND hwndTreeView = CreateWindowEx(
-        0, WC_TREEVIEW, TEXT(""),
-        WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_LINESATROOT | TVS_HASBUTTONS,
-        10, 10, 300, 400,
-        hwnd, (HMENU)TREE_ID, hInstance, nullptr);
+    HWND hwndTreeView = GetDlgItem(hwnd, TREE_ID);
+    if(hwndTreeView == NULL) {
+        hwndTreeView = CreateWindowEx(
+            0, WC_TREEVIEW, TEXT(""),
+            WS_VISIBLE | WS_CHILD | WS_BORDER | TVS_LINESATROOT | TVS_HASBUTTONS,
+            10, 10, 300, 400,
+            hwnd, (HMENU)TREE_ID, hInstance, nullptr);
+    }
+    else {
+        TreeView_DeleteAllItems(hwndTreeView);
+    }
     
     TVINSERTSTRUCT tvis;
     tvis.hParent = TVI_ROOT;      // Root of the tree
