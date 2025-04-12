@@ -24,6 +24,8 @@ struct Sound
 
 std::shared_ptr<Sound> SOUND(ConsecutiveBytearrayReader &fileByteReader, Lump &lump);
 
+std::shared_ptr<uint8_t[]> soundToWav(Sound& sound);
+
 void writeToWav(std::string filename, Sound& sound);
 
 #endif

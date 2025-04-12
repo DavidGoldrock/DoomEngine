@@ -136,7 +136,7 @@ if(endoomLumpIndex == -1) {
     std::vector<Sound> sounds = std::vector<Sound>();
     SOUNDS(*fileByteReader, *wadHeader, sounds);
     // SaveAllPictures(*fileByteReader, *wadHeader, *playpal, *colorMap, pnames, pnameAmmount, textures);
-    // SaveAllSounds("./results/Sound Effects/", sounds);
+    SaveAllSounds("./results/Sound Effects/", sounds);
     auto levels = GenerateLevels(*fileByteReader, *wadHeader);
 
     for (auto level : levels)

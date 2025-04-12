@@ -82,14 +82,8 @@ constexpr uint16_t NUM_CHANNELS = 1;     // Mono
 constexpr uint16_t BITS_PER_SAMPLE = 8;  // 8 bits per sample
 constexpr char DATA_HEADER[4] = {'d', 'a', 't', 'a'};
 
-// Function to write WAV file
-void writeToWav(std::string filename, Sound& sound) {
-    std::ofstream file(filename, std::ios::binary);
-    if (!file) {
-        std::cerr << "Error opening file\n";
-        return;
-    }
 
+std::shared_ptr<uint8_t[]> soundToWav(Sound& sound) {
     // Calculate required sizes
     uint32_t byte_rate = sound.sampleRate * NUM_CHANNELS * BITS_PER_SAMPLE / 8;
     uint16_t block_align = NUM_CHANNELS * BITS_PER_SAMPLE / 8;
@@ -119,11 +113,26 @@ void writeToWav(std::string filename, Sound& sound) {
     std::memcpy(header + 36, DATA_HEADER, 4); // "data"
     std::memcpy(header + 40, &data_bytes, 4); // Data size
 
-    // Write the header to file
-    file.write(reinterpret_cast<const char*>(header), sizeof(header));
+    std::shared_ptr<uint8_t[]> data = std::make_shared<uint8_t[]>(data_bytes + 44);
+    std::memcpy(data.get(), header, 44);
+    std::memcpy(data.get() + 44, sound.samples.get(), data_bytes);
+
+    return data;
+}
+
+// Function to write WAV file
+void writeToWav(std::string filename, Sound& sound) {
+    std::ofstream file(filename, std::ios::binary);
+    if (!file) {
+        std::cerr << "Error opening file\n";
+        return;
+    }
+
+    std::shared_ptr<uint8_t[]> data = soundToWav(sound);
+    size_t length = (sound.sampleNumber * NUM_CHANNELS * BITS_PER_SAMPLE / 8) + 44;
 
     // Write the sample data
-    file.write(reinterpret_cast<const char*>(sound.samples.get()), data_bytes);
+    file.write(reinterpret_cast<const char*>(data.get()), length);
 
     file.close();
 }
