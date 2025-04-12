@@ -58,7 +58,10 @@
         "filesystem": "cpp",
         "codecvt": "cpp",
         "ratio": "cpp",
-        "iomanip": "cpp"
+        "iomanip": "cpp",
+        "semaphore": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "C_Cpp.default.compilerPath": "C:/Users/TAL/Documents/Compiler/bin/gcc.exe"

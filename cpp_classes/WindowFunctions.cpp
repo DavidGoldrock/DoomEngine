@@ -6,6 +6,7 @@
 #include <locale>
 #include <commctrl.h>
 #include <mmsystem.h>
+#include <thread>
 
 #pragma comment(lib, "winmm.lib")
 
@@ -89,6 +90,7 @@ void HandleCommandEvent(AppData *appData, WPARAM wParam, HWND hwnd)
     HWND hwndPlayButton;
     std::shared_ptr<FileDescriptor> fd;
     std::string soundName;
+    std::shared_ptr<Sound> soundPtr;
     HTREEITEM hSelectedItem;
     switch (wParam)
     {
@@ -132,7 +134,8 @@ void HandleCommandEvent(AppData *appData, WPARAM wParam, HWND hwnd)
 
             for(Sound sound : appData->fileDescriptor->sounds) {
                 if (sound.name == soundName) {
-                    playSound(sound);
+                    soundPtr = std::make_shared<Sound>(sound);
+                    std::thread(playSound, soundPtr).detach();
                     return;
                 }
             }
@@ -140,9 +143,9 @@ void HandleCommandEvent(AppData *appData, WPARAM wParam, HWND hwnd)
     }
 }
 
-bool playSound(Sound& sound) { 
+bool playSound(std::shared_ptr<Sound> sound) { 
     // PlaySound uses memory directly; SND_SYNC blocks until done
-    BOOL success = PlaySoundA(reinterpret_cast<const char*>(soundToWav(sound).get()), nullptr, SND_MEMORY | SND_SYNC | SND_NODEFAULT);
+    BOOL success = PlaySoundA(reinterpret_cast<const char*>(soundToWav(*sound).get()), nullptr, SND_MEMORY | SND_SYNC | SND_NODEFAULT);
 
     return success == TRUE;
 }

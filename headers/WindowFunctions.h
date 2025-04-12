@@ -16,7 +16,7 @@ void HandleTreeviewEvent(AppData* appData, LPARAM lParam);
 bool RegisterWindowsClass(LPCSTR CLASS_NAME, HINSTANCE hInstance);
 HWND ConstructTreeview(AppData *appData, HWND hwnd, HINSTANCE hInstance);
 void ConstructSoundView(AppData *appData, HWND hwnd, HINSTANCE hInstance);
-bool playSound(Sound& sound);
+bool playSound(std::shared_ptr<Sound> sound);
 int GetTreeViewItemDepth(HWND hTreeView, HTREEITEM hItem);
 std::string GetTreeViewItemName(HWND hTreeView, HTREEITEM hItem);
 void SetConsoleUp();
