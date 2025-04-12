@@ -6,9 +6,7 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE"
+                "_DEBUG"
             ],
             "cStandard": "c11",
             "cppStandard": "c++23",
